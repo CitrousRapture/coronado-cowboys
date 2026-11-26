@@ -1,0 +1,9 @@
+{
+  "name": "Coronado Cowboys",
+  "short_name": "Coronado",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#041630",
+  "theme_color": "#041630"
+}
