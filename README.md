@@ -1,18 +1,12 @@
 # Coronado Cowboys
 
-Top-down 1986 U.S. Navy F-14A Tomcat roguelike extraction survivor (5 Theaters + Secret).
+Top-down 1986 U.S. Navy F-14A Tomcat roguelike extraction survivor (5 Theaters + Secret) with full 7-track custom soundtrack.
 
-## Repo Structure
-- `index.html` — Main game application
-- `assets/` — Transparent 16-bit sprites (`sprite_*.png`) and audio tracks (`level1_bgm.mp3`, etc.)
-- `manifest.json` — Mobile Add-to-Home-Screen fullscreen config
-- `.nojekyll` — Tells GitHub Pages to serve static files directly
-
-## Deploying on GitHub Pages
-1. Create a public GitHub repository (e.g., `coronado-cowboys`) and upload/push all files from this folder to the `main` branch root.
-2. In your repository, go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to `Deploy from a branch`, select `main` and `/ (root)`, and click **Save**.
-4. *(Optional)* To connect a custom subdomain (like `play.topgunbuilders.net`), add a `CNAME` DNS record at your domain registrar pointing `play` to `<your-github-username>.github.io`, then enter `play.topgunbuilders.net` under **Custom domain** in GitHub Pages settings and enable **Enforce HTTPS**.
-
-## Swapping Art & Music
-Replace any PNG inside `assets/` with your own hand-drawn sprite using the same filename, or add new level music tracks as we build toward v1.0.
+## Soundtrack Map (`./assets/`)
+- Main Menu / Hangar: `level1_bgm.mp3`
+- Level 1 — Indian Ocean: `bgm_m1_indian_ocean.mp3`
+- Level 2 — NAS Miramar: `bgm_m2_miramar.mp3`
+- Level 3 — NAS Patuxent River: `bgm_m3_pax_river.mp3`
+- Level 4 — NAWS China Lake: `bgm_m4_china_lake.mp3`
+- Level 5 — Coronado Island (NASNI): `bgm_m5_coronado.mp3`
+- Secret Level 6 — Area 51: `bgm_m6_area51.mp3`

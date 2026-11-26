@@ -60,133 +60,235 @@
     </div>
   </div>
 
-  <!-- ACTIVE COCKPIT HUD -->
-  <div id="hudLayer" class="fixed inset-0 z-20 pointer-events-none hidden flex-col justify-between p-2.5 sm:p-4 pt-12 sm:pt-14">
+  <!-- ACTIVE COCKPIT HUD (SLIM LOW-PROFILE DESKTOP + MOBILE) -->
+  <div id="hudLayer" class="fixed inset-0 z-20 pointer-events-none hidden flex-col justify-between p-1.5 sm:p-2.5 pt-8 sm:pt-10">
     <!-- Top Row -->
-    <div class="flex items-start justify-between gap-2">
-      <!-- Top Left: USN F-14 Hull, Rank & At-Risk Cargo Hold -->
-      <div class="cockpit-panel rounded-xl px-3 py-2 w-56 sm:w-64 pointer-events-auto shadow-lg">
-        <div class="flex items-center justify-between text-[11px] font-bold tracking-wider mb-1">
-          <span class="text-amber-300 font-arcade">VF-1 <span id="altInlineBadge" class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 text-[9px]">DECK</span></span>
-          <span id="hpText" class="text-white tabular-nums">100 / 100</span>
+    <div class="flex items-start justify-between gap-1.5">
+      <!-- Top Left: Compact Hull, Fuel, EGO & Cargo -->
+      <div class="cockpit-panel rounded-lg px-2 py-1 sm:px-2.5 sm:py-1.5 w-36 sm:w-48 pointer-events-auto shadow-md">
+        <div class="flex items-center justify-between text-[8px] sm:text-[9px] font-bold tracking-wider mb-0.5">
+          <span class="text-amber-300 font-arcade truncate"><span id="altInlineBadge" class="px-1 py-0.2 rounded bg-amber-500/20 text-amber-200 text-[8px]">DECK</span></span>
+          <span id="hpText" class="text-white tabular-nums">100/100</span>
         </div>
-        <div class="w-full h-2.5 bg-slate-950/90 rounded-full overflow-hidden border border-amber-500/35 mb-1.5">
+        <div class="w-full h-1.5 bg-slate-950/90 rounded-full overflow-hidden border border-amber-500/35 mb-1">
           <div id="hpBar" class="h-full bg-gradient-to-r from-red-600 via-amber-400 to-emerald-400 transition-all duration-150" style="width: 100%"></div>
         </div>
 
-        <div class="flex items-center justify-between text-[10px] font-bold tracking-wider mb-0.5">
-          <span class="text-sky-300 font-arcade">⛽ FUEL</span>
+        <div class="flex items-center justify-between text-[8px] font-bold tracking-wider mb-0.5">
+          <span class="text-sky-300 font-arcade">⛽</span>
           <span id="fuelText" class="text-sky-200 tabular-nums font-arcade">100%</span>
         </div>
-        <div class="w-full h-1.5 bg-slate-950/90 rounded-full overflow-hidden border border-sky-500/35 mb-1.5">
+        <div class="w-full h-1 bg-slate-950/90 rounded-full overflow-hidden border border-sky-500/35 mb-1">
           <div id="fuelBar" class="h-full bg-gradient-to-r from-sky-400 to-emerald-400 transition-all duration-150" style="width: 100%"></div>
         </div>
 
-        <div class="flex items-center justify-between text-[10px] font-semibold mb-1">
-          <span id="levelBadge" class="text-sky-300 font-arcade">ENSIGN • L1</span>
-          <span id="xpText" class="text-slate-300 tabular-nums">0 / 25 XP</span>
+        <div class="flex items-center justify-between text-[8px] font-semibold mb-0.5 gap-1">
+          <span id="levelBadge" class="text-sky-300 font-arcade truncate">L1</span>
+          <span id="xpText" class="text-slate-300 tabular-nums shrink-0">0/38 EGO</span>
         </div>
-        <div class="w-full h-1.5 bg-slate-950/90 rounded-full overflow-hidden border border-slate-700/70 mb-2">
+        <div class="w-full h-1 bg-slate-950/90 rounded-full overflow-hidden border border-slate-700/70 mb-1">
           <div id="xpBar" class="h-full bg-gradient-to-r from-amber-400 to-rose-500 transition-all duration-150" style="width: 0%"></div>
         </div>
 
-        <div class="flex items-center justify-between text-[10px] font-arcade pt-1 border-t border-slate-700/70">
-          <span class="text-emerald-300 font-bold">CARGO HOLD:</span>
+        <div class="flex items-center justify-between text-[8px] sm:text-[9px] font-arcade pt-0.5 border-t border-slate-700/60">
+          <span class="text-emerald-300 font-bold hidden sm:inline">HOLD</span>
           <span id="cargoSummary" class="text-amber-200 font-black tabular-nums">🪙0 📦0 ⚙️0</span>
         </div>
       </div>
 
-      <!-- Top Center: Distance from Carrier, Threat Zone, Clock & Streak -->
-      <div class="cockpit-panel rounded-xl px-3.5 py-2 text-center shadow-lg hidden sm:flex flex-col items-center pointer-events-auto">
-        <div class="flex items-center justify-center gap-2.5">
-          <span id="distBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-400/70 font-arcade text-[11px] font-black text-emerald-300 tabular-nums">
+      <!-- Top Center: Slim Tactical Bar (Desktop) -->
+      <div class="cockpit-panel rounded-lg px-2.5 py-1 text-center shadow-md hidden sm:flex flex-col items-center pointer-events-auto">
+        <div class="flex items-center justify-center gap-1.5">
+          <span id="distBadge" class="px-1.5 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-400/60 font-arcade text-[9px] font-black text-emerald-300 tabular-nums">
             ⚓ 0.0 NM
           </span>
-          <span id="threatZoneText" class="font-arcade text-xs font-black tracking-wider text-emerald-300">
-            CARRIER PERIMETER
+          <span id="threatZoneText" class="font-arcade text-[10px] font-black tracking-wider text-emerald-300">
+            SAFE ZONE
           </span>
-          <span id="streakPill" class="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 font-arcade text-[10px] font-black text-slate-300">
-            STREAK 0/10
+          <span id="streakPill" class="px-1.5 py-0.5 rounded-full bg-slate-900 border border-slate-700 font-arcade text-[8px] font-black text-slate-300">
+            0/10
           </span>
         </div>
-        <div class="flex items-center justify-center gap-2.5 text-[10px] font-semibold text-sky-300/90 mt-1">
+        <div class="flex items-center justify-center gap-1.5 text-[9px] font-semibold text-sky-300/90 mt-0.5">
           <span id="timerText" class="font-arcade text-white tabular-nums">00:00</span>
           <span class="text-slate-600">•</span>
-          <span id="lootMultText" class="text-amber-300 font-arcade">LOOT 1.0×</span>
+          <span id="lootMultText" class="text-amber-300 font-arcade">1.0×</span>
           <span class="text-slate-600">•</span>
-          <span id="zoneBossProgress" class="text-rose-300 font-arcade">PUSH OUT &gt;5 NM</span>
+          <span id="zoneBossProgress" class="text-rose-300 font-arcade">FLY &gt;3.5 NM</span>
           <span class="text-slate-600">•</span>
           <span id="scoreText" class="text-white tabular-nums">0 PTS</span>
           <span class="text-slate-600">•</span>
-          <span id="killsText" class="text-rose-300 tabular-nums">0 SPLASHES</span>
-          <span class="text-slate-600">•</span>
-          <span id="geoStatusText" class="text-emerald-300 font-arcade text-[9px] tabular-nums">32.70°N 117.22°W</span>
+          <span id="killsText" class="text-rose-300 tabular-nums">0</span>
+          <span class="hidden lg:inline text-slate-600">•</span>
+          <span id="geoStatusText" class="hidden lg:inline text-emerald-300 font-arcade text-[8px] tabular-nums">CVN-65</span>
         </div>
       </div>
 
-      <!-- Top Right: Audio & Pause -->
-      <div class="flex items-center gap-1.5 pointer-events-auto">
-        <div class="cockpit-panel rounded-xl px-2.5 py-1.5 text-right sm:hidden">
-          <div id="distBadgeMobile" class="font-arcade text-[11px] font-black text-emerald-300 tabular-nums">⚓ 0.0 NM</div>
-          <div id="scoreTextMobile" class="text-[10px] font-bold text-amber-300 tabular-nums">0 PTS</div>
+      <!-- Top Right: Compact Mobile Stats + Audio & Pause -->
+      <div class="flex items-center gap-1 pointer-events-auto">
+        <div class="cockpit-panel rounded-lg px-1.5 py-1 text-right sm:hidden">
+          <div id="distBadgeMobile" class="font-arcade text-[9px] font-black text-emerald-300 tabular-nums leading-tight">⚓ 0.0 NM</div>
+          <div id="scoreTextMobile" class="text-[8px] font-bold text-amber-300 tabular-nums leading-tight">0 PTS</div>
         </div>
-        <button id="muteBtn" title="Toggle MIDI Score & SFX (M)" class="cockpit-panel hover:bg-amber-900/40 active:scale-95 transition rounded-xl p-2 sm:px-3 sm:py-2 text-xs font-bold text-amber-200 flex items-center gap-1.5 cursor-pointer">
+        <button id="muteBtn" title="Toggle Audio (M)" class="cockpit-panel hover:bg-amber-900/40 active:scale-95 transition rounded-lg p-1.5 sm:px-2 sm:py-1.5 text-[11px] font-bold text-amber-200 flex items-center gap-1 cursor-pointer">
           <span id="muteIcon">🔊</span>
-          <span class="hidden md:inline">MUSIC</span>
         </button>
-        <button id="pauseBtn" title="Pause (P / Esc)" class="cockpit-panel hover:bg-amber-900/40 active:scale-95 transition rounded-xl p-2 sm:px-3 sm:py-2 text-xs font-bold text-amber-200 flex items-center gap-1.5 cursor-pointer">
+        <button id="pauseBtn" title="Pause (P / Esc)" class="cockpit-panel hover:bg-amber-900/40 active:scale-95 transition rounded-lg p-1.5 sm:px-2 sm:py-1.5 text-[11px] font-bold text-amber-200 flex items-center gap-1 cursor-pointer">
           <span>⏸</span>
-          <span class="hidden md:inline">PAUSE</span>
         </button>
       </div>
     </div>
 
-    <!-- Center Callout Banner (positioned high so center flight area stays clear) -->
+    <!-- Center Callout Banner (slim) -->
     <div id="bannerToast" class="self-center -mt-auto mb-auto transition-all duration-300 opacity-0 -translate-y-2 pointer-events-none">
-      <div id="bannerToastInner" class="font-arcade text-xs sm:text-sm font-black tracking-widest px-4 py-1 rounded-full border shadow-xl bg-slate-950/88 border-amber-400/80 text-amber-300">
-        MIRAMAR SURVIVOR
+      <div id="bannerToastInner" class="font-arcade text-[10px] sm:text-xs font-black tracking-wider px-3 py-0.5 rounded-full border shadow-lg bg-slate-950/88 border-amber-400/80 text-amber-300">
+        CORONADO COWBOYS
       </div>
     </div>
 
-    <!-- Bottom Bar: Ordnance Strip + 1-Button Swap + Super State -->
-    <div class="flex items-end justify-between gap-2 pb-0.5">
-      <div id="weaponsHud" class="cockpit-panel rounded-xl px-2.5 py-1.5 hidden sm:flex items-center gap-2 pointer-events-auto max-w-xs overflow-x-auto">
+    <!-- Bottom Bar: Ultra-Slim Action Strip -->
+    <div class="flex items-end justify-between gap-1.5 pb-0.5">
+      <div id="weaponsHud" class="cockpit-panel rounded-lg px-2 py-1 hidden sm:flex items-center gap-1.5 pointer-events-auto max-w-[220px] overflow-x-auto text-[10px]">
       </div>
 
-      <div class="mx-auto sm:mx-0 flex items-center gap-2 pointer-events-auto">
-        <button id="afterburnerBtn" class="relative overflow-hidden rounded-xl px-3 py-2 border border-sky-400/55 bg-slate-950/90 min-w-[120px] sm:min-w-[148px] transition cursor-pointer text-left" title="Hold for Turbo Afterburner Boost (C / V / Ctrl)">
+      <div class="mx-auto sm:mx-0 flex items-center gap-1.5 pointer-events-auto">
+        <button id="afterburnerBtn" class="relative overflow-hidden rounded-lg px-2 py-1 sm:px-2.5 sm:py-1.5 border border-sky-400/55 bg-slate-950/85 min-w-[92px] sm:min-w-[122px] transition cursor-pointer text-left" title="Hold for Turbo Boost (C / V / Ctrl)">
           <div id="abFill" class="absolute inset-y-0 left-0 bg-gradient-to-r from-sky-500 via-cyan-400 to-amber-300 opacity-80 transition-all duration-75" style="width: 100%"></div>
-          <div class="relative z-10 flex items-center justify-between gap-1.5">
+          <div class="relative z-10 flex items-center justify-between gap-1">
             <div>
-              <div class="font-arcade text-[9px] sm:text-[10px] font-black tracking-wider text-white drop-shadow leading-tight">🔥 AFTERBURNER</div>
-              <div id="abPct" class="font-arcade text-[9px] font-bold text-sky-100 tabular-nums drop-shadow">100% READY</div>
+              <div class="font-arcade text-[8px] sm:text-[9px] font-black tracking-wider text-white drop-shadow leading-tight">🔥 BURNER</div>
+              <div id="abPct" class="font-arcade text-[7px] sm:text-[8px] font-bold text-sky-100 tabular-nums drop-shadow">100%</div>
             </div>
-            <span class="font-arcade text-[9px] font-black px-1 py-0.5 rounded bg-slate-900/80 text-cyan-300 border border-cyan-400/40">C</span>
+            <span class="hidden sm:inline-block font-arcade text-[8px] font-black px-1 py-0.5 rounded bg-slate-900/80 text-cyan-300 border border-cyan-400/40">C</span>
           </div>
         </button>
 
-        <button id="superBtn" class="relative overflow-hidden rounded-xl px-3.5 py-2 border border-amber-400/50 bg-slate-950/90 min-w-[205px] sm:min-w-[255px] transition cursor-pointer text-left">
+        <button id="superBtn" class="relative overflow-hidden rounded-lg px-2 py-1 sm:px-2.5 sm:py-1.5 border border-amber-400/50 bg-slate-950/85 min-w-[138px] sm:min-w-[196px] transition cursor-pointer text-left">
           <div id="superFill" class="absolute inset-y-0 left-0 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 opacity-80 transition-all duration-150" style="width: 0%"></div>
-          <div class="relative z-10 flex items-center justify-between gap-2">
-            <div>
-              <div id="superLabel" class="font-arcade text-[10px] sm:text-xs font-black tracking-wider text-white drop-shadow leading-tight">★ INVERTED MODE</div>
-              <div class="flex items-center gap-2 mt-0.5 text-[9px] font-arcade font-bold">
-                <span id="condCharge" class="text-amber-200">⚡ BURN 0%</span>
+          <div class="relative z-10 flex items-center justify-between gap-1.5">
+            <div class="min-w-0">
+              <div id="superLabel" class="font-arcade text-[8px] sm:text-[9px] font-black tracking-wider text-white drop-shadow leading-tight truncate">★ INVERTED</div>
+              <div class="flex items-center gap-1 mt-0.5 text-[7px] sm:text-[8px] font-arcade font-bold">
+                <span id="condCharge" class="text-amber-200 truncate">0%</span>
                 <span class="text-slate-500">|</span>
-                <span id="condStreak" class="text-slate-300">★ 10× STREAK</span>
+                <span id="condStreak" class="text-slate-300 truncate">0/10</span>
               </div>
             </div>
-            <span id="superKeyHint" class="font-arcade text-[10px] font-black px-1.5 py-0.5 rounded bg-slate-900/80 text-amber-300 border border-amber-400/40">SPACE</span>
+            <span id="superKeyHint" class="hidden sm:inline-block font-arcade text-[8px] font-black px-1 py-0.5 rounded bg-slate-900/80 text-amber-300 border border-amber-400/40 shrink-0">SPACE</span>
           </div>
         </button>
       </div>
 
-      <div class="hidden sm:block w-24"></div>
+      <div class="hidden sm:block w-16"></div>
+    </div>
+  </div>
+
+  <!-- SPLASH SCREEN 1: CLICK TO CONTINUE -->
+  <div id="splashOverlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-[4px] cursor-pointer select-none">
+    <div class="cockpit-panel rounded-2xl max-w-md w-full p-7 sm:p-9 text-center shadow-2xl border-amber-400/60">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-300 text-[11px] font-arcade font-bold tracking-widest mb-3">
+        ★ U.S. NAVY • FIGHTERTOWN USA • 1986 ★
+      </div>
+      <h1 class="font-stencil text-4xl sm:text-5xl tracking-wider topgun-chrome leading-none">
+        CORONADO<br/>COWBOYS
+      </h1>
+      <p class="font-arcade text-[11px] tracking-[0.22em] text-sky-300 font-bold mt-2 mb-6">
+        5 THEATERS + SECRET • F-14A EXTRACTION SURVIVOR
+      </p>
+      <div class="inline-block px-6 py-3 rounded-xl font-arcade text-xs sm:text-sm font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 shadow-lg shadow-orange-600/40 animate-pulse">
+        ▶ CLICK OR PRESS ANY KEY TO CONTINUE ▶
+      </div>
+      <div class="text-[10px] font-arcade text-slate-400 mt-4 tracking-widest">
+        SOUNDTRACK &amp; COCKPIT SYSTEMS READY
+      </div>
+    </div>
+  </div>
+
+  <!-- SPLASH SCREEN 2: PILOT SELECT / CREATE CUSTOM PILOT PROFILE -->
+  <div id="pilotSelectOverlay" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-[4px] overflow-y-auto">
+    <div class="cockpit-panel rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-sky-400/55 my-auto">
+      <div class="flex items-center justify-between gap-2 mb-3">
+        <div>
+          <div class="font-arcade text-[10px] text-amber-300 tracking-widest font-bold">VF-1 WOLFPACK • READY ROOM</div>
+          <h2 class="font-stencil text-2xl sm:text-3xl topgun-chrome leading-tight">SELECT YOUR PILOT</h2>
+        </div>
+        <button id="toggleCreatePilotBtn" class="px-3 py-2 rounded-xl font-arcade text-[10px] font-black tracking-wider bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-300/60 transition cursor-pointer">
+          + CREATE PILOT
+        </button>
+      </div>
+      <p class="text-xs text-slate-300 mb-3">Each pilot saves their own Career Level, Credits, Hangar upgrades, and Theater progress independently.</p>
+
+      <!-- Pilot Cards Grid (4 Built-in + Any Custom User Profiles) -->
+      <div id="pilotRosterCards" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4 max-h-64 overflow-y-auto pr-1"></div>
+
+      <!-- Custom Pilot Creator Form (Hidden until "+ CREATE PILOT" clicked) -->
+      <div id="createPilotBox" class="hidden rounded-xl bg-slate-950/90 border border-emerald-400/45 p-3.5 mb-4">
+        <div class="font-arcade text-[11px] font-black text-emerald-300 tracking-widest mb-2.5">★ ENLIST NEW CUSTOM PILOT PROFILE ★</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+          <div>
+            <label class="block font-arcade text-[9px] text-slate-300 mb-1">CALLSIGN (MAX 12 CHARS)</label>
+            <input id="customCallsignInput" type="text" maxlength="12" placeholder="e.g. GOOSE, STRIKER" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-sky-400/50 text-white font-arcade text-xs uppercase tracking-wider focus:outline-none focus:border-amber-400" />
+          </div>
+          <div>
+            <label class="block font-arcade text-[9px] text-slate-300 mb-1">FLIGHT SPECIALTY</label>
+            <select id="customSpecialtySelect" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-sky-400/50 text-white font-arcade text-[11px] focus:outline-none focus:border-amber-400">
+              <option value="hotshot">Hotshot (+10% Speed &amp; Burner)</option>
+              <option value="tactician">Tactician (+12% Weapon Dmg)</option>
+              <option value="veteran">Veteran (+25 Hull &amp; -15% Fuel)</option>
+              <option value="salvage">Salvage Ace (+20% EGO &amp; Credits)</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="font-arcade text-[9px] text-slate-300 mb-1.5">CHOOSE RETRO HELMET ICON</div>
+          <div id="customHelmetPicker" class="grid grid-cols-4 gap-2"></div>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button id="cancelCreatePilotBtn" class="px-3 py-1.5 rounded-lg font-arcade text-[10px] font-bold text-slate-300 bg-slate-800 hover:bg-slate-700 cursor-pointer">CANCEL</button>
+          <button id="confirmCreatePilotBtn" class="px-4 py-1.5 rounded-lg font-arcade text-[10px] font-black text-slate-950 bg-emerald-400 hover:bg-emerald-300 cursor-pointer">ENLIST &amp; SAVE PROFILE ▶</button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-700/70">
+        <div id="selectedPilotSummary" class="text-[11px] font-arcade text-amber-200 truncate"></div>
+        <button id="confirmPilotBtn" class="px-5 py-2.5 rounded-xl font-arcade text-xs font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 hover:brightness-110 transition cursor-pointer shrink-0">
+          CHOOSE AIRFRAME ▶
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPLASH SCREEN 3: SELECT AIRCRAFT & PILOT SYNERGIES -->
+  <div id="aircraftSelectOverlay" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-[4px] overflow-y-auto">
+    <div class="cockpit-panel rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-amber-400/55 my-auto">
+      <div class="flex items-center justify-between gap-2 mb-3">
+        <div>
+          <div class="font-arcade text-[10px] text-sky-300 tracking-widest font-bold">CARRIER AIR WING • HANGAR DECK</div>
+          <h2 class="font-stencil text-2xl sm:text-3xl topgun-chrome leading-tight">SELECT YOUR AIRCRAFT</h2>
+        </div>
+        <div id="aircraftSelectPilotPill" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-950/90 border border-sky-400/45">
+          <img id="acPilotIcon" src="" alt="Pilot" class="w-8 h-8 object-contain" />
+          <span id="acPilotLabel" class="font-arcade text-[10px] font-black text-amber-300">MAVERICK</span>
+        </div>
+      </div>
+      <p class="text-xs text-slate-300 mb-3">Aircraft unlocks are shared across all pilots. Pair your pilot's specialty with their signature jet for a <span class="text-amber-300 font-bold">★ Synergy Bonus</span>!</p>
+
+      <div id="splashAircraftCards" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4"></div>
+
+      <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-700/70">
+        <button id="backToPilotSelectBtn" class="px-3.5 py-2 rounded-xl font-arcade text-[10px] font-bold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-700 cursor-pointer">
+          ◀ PILOTS
+        </button>
+        <div id="splashSynergyStatus" class="text-[10px] font-arcade text-amber-300 truncate text-center flex-1"></div>
+        <button id="confirmAircraftBtn" class="px-5 py-2.5 rounded-xl font-arcade text-xs font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 hover:brightness-110 transition cursor-pointer shrink-0">
+          TO FLIGHT DECK ▶
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- TITLE OVERLAY -->
-  <div id="titleOverlay" class="fixed inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/55 backdrop-blur-[3px]">
+  <div id="titleOverlay" class="fixed inset-0 z-30 hidden items-center justify-center p-4 bg-slate-950/55 backdrop-blur-[3px]">
     <div class="cockpit-panel rounded-2xl max-w-lg w-full p-6 sm:p-8 text-center shadow-2xl border-amber-400/50">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-300 text-[11px] font-arcade font-bold tracking-widest mb-2">
         ★ U.S. NAVY • NAS NORTH ISLAND &amp; PACIFIC FLEET ★
@@ -218,6 +320,32 @@
           <div class="text-[11px] text-slate-100 font-semibold">SPACE / F</div>
           <div class="text-[10px] text-slate-400">100% Burn + 10× Streak</div>
         </div>
+      </div>
+
+      <!-- ACTIVE PILOT BADGE + SWITCH PILOT BUTTON -->
+      <div class="mb-3 flex items-center justify-between gap-2 rounded-xl bg-slate-950/85 border border-sky-400/45 px-3 py-2 text-left">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <img id="activePilotIcon" src="" alt="Pilot" class="w-10 h-10 rounded-lg bg-slate-900 border border-amber-400/50 object-contain shrink-0" />
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span id="activePilotName" class="font-arcade text-xs font-black text-white truncate">MAVERICK</span>
+              <span id="activePilotLvl" class="font-arcade text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-black">LV.1</span>
+            </div>
+            <div id="pilotPerkLine" class="font-arcade text-[9px] text-sky-300 truncate">+10% Speed &amp; Burner</div>
+          </div>
+        </div>
+        <button id="switchPilotBtn" class="px-2.5 py-1.5 rounded-lg font-arcade text-[9px] font-black text-amber-200 bg-slate-900 hover:bg-sky-950 border border-amber-400/45 transition cursor-pointer shrink-0">
+          SWITCH PILOT
+        </button>
+      </div>
+
+      <!-- CARRIER AIR WING AIRCRAFT INVENTORY BAR -->
+      <div class="mb-3 text-left">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-arcade text-[10px] font-bold text-amber-300 tracking-widest">AIRCRAFT BAY</span>
+          <span id="aircraftRoleLine" class="font-arcade text-[9px] text-sky-300 truncate ml-2">AIR-TO-AIR INTERCEPTOR</span>
+        </div>
+        <div id="titleAircraftGrid" class="grid grid-cols-3 gap-1.5"></div>
       </div>
 
       <!-- 6-MAP THEATER SELECTOR -->
@@ -276,6 +404,11 @@
       </div>
 
       <div class="font-arcade text-[11px] font-bold text-amber-300 tracking-widest mb-2">PERMANENT F-14A AIRFRAME UPGRADES</div>
+      <div class="mb-4">
+        <div class="font-arcade text-[10px] font-black text-sky-300 tracking-widest mb-1.5">✈ CARRIER AIR WING — AIRCRAFT INVENTORY</div>
+        <div id="hangarAircraftGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
+      </div>
+      <div class="font-arcade text-[10px] font-black text-amber-300 tracking-widest mb-1.5">🔧 PERMANENT AIRFRAME &amp; ORDNANCE UPGRADES</div>
       <div id="hangarUpgradesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mb-5"></div>
 
       <div class="flex flex-col sm:flex-row gap-2.5 pt-2 border-t border-slate-800">
@@ -366,12 +499,42 @@
       const ctx = canvas.getContext('2d');
       let W = window.innerWidth;
       let H = window.innerHeight;
-      let DPR = Math.min(window.devicePixelRatio || 1, 2);
+      // ============================================================
+      // ENGINE PERFORMANCE CONFIG & PRE-BAKED FX CACHE (FUTURE-READY)
+      // ============================================================
+      const ENGINE_CFG = {
+        maxDpr: 1.5,
+        maxParticles: 150,
+        maxShockwaves: 24,
+        maxFloatingTexts: 22,
+        maxTracers: 36,
+        hudRefreshInterval: 0.085
+      };
+
+      const FXCache = (() => {
+        function bakeCloud(rgbaInner, rgbaOuter) {
+          const c = document.createElement('canvas');
+          c.width = 160; c.height = 160;
+          const g = c.getContext('2d');
+          const grad = g.createRadialGradient(80, 80, 8, 80, 80, 78);
+          grad.addColorStop(0, rgbaInner);
+          grad.addColorStop(1, rgbaOuter);
+          g.fillStyle = grad;
+          g.fillRect(0, 0, 160, 160);
+          return c;
+        }
+        return {
+          cloudNormal: bakeCloud('rgba(224, 242, 254, 0.22)', 'rgba(224, 242, 254, 0)'),
+          cloudSuper:  bakeCloud('rgba(251, 146, 60, 0.24)', 'rgba(251, 146, 60, 0)')
+        };
+      })();
+
+      let DPR = Math.min(window.devicePixelRatio || 1, ENGINE_CFG.maxDpr);
 
       function resizeCanvas() {
         W = window.innerWidth;
         H = window.innerHeight;
-        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        DPR = Math.min(window.devicePixelRatio || 1, ENGINE_CFG.maxDpr);
         canvas.width = Math.floor(W * DPR);
         canvas.height = Math.floor(H * DPR);
         canvas.style.width = W + 'px';
@@ -385,7 +548,10 @@
       // ============================================================
       const SPRITE_URLS = {
         f14: "./assets/sprite_f14.png",
+        f14Swept: "./assets/sprite_f14_swept.png",
         f14Belly: "./assets/sprite_f14_belly.png",
+        f18: "./assets/sprite_f18.png",
+        a6: "./assets/sprite_a6.png",
         mig28: "./assets/sprite_mig28.png",
         boss: "./assets/sprite_boss.png",
         carrier: "./assets/sprite_carrier.png",
@@ -402,6 +568,12 @@
         groundBoss: "./assets/sprite_ground_boss.png",
         frigate: "./assets/sprite_frigate.png",
         moskva: "./assets/sprite_moskva.png"
+      };
+      const PORTRAIT_URLS = {
+        maverick:  "./assets/portrait_maverick.png",
+        iceman:    "./assets/portrait_iceman.png",
+        viper:     "./assets/portrait_viper.png",
+        hollywood: "./assets/portrait_hollywood.png"
       };
       const SPRITES = {};
       Object.keys(SPRITE_URLS).forEach((k) => {
@@ -428,8 +600,18 @@
 
         // 32-step Heroic Top Gun Anthem + Danger Zone 90s MIDI Score!
         // Ch 1: Heroic 80s/90s Top Gun Anthem Lead (soaring synth-guitar / FM brass)
-        // LEVEL 1 CUSTOM MP3 SOUNDTRACK CONTROLLER
+        // MULTI-THEATER CUSTOM MP3 SOUNDTRACK CONTROLLER (Menu + 6 Levels!)
+        const BGM_TRACKS = {
+          menu:      "./assets/level1_bgm.mp3",
+          ocean:     "./assets/bgm_m1_indian_ocean.mp3",
+          miramar:   "./assets/bgm_m2_miramar.mp3",
+          pax:       "./assets/bgm_m3_pax_river.mp3",
+          chinalake: "./assets/bgm_m4_china_lake.mp3",
+          coronado:  "./assets/bgm_m5_coronado.mp3",
+          area51:    "./assets/bgm_m6_area51.mp3"
+        };
         const bgmEl = document.getElementById('bgmAudio');
+        let currentTrackKey = 'menu';
         if (bgmEl) bgmEl.volume = 0.65;
 
         function ensureContext() {
@@ -583,16 +765,29 @@
             playNoise(0.45, 0.22, 650);
             [329.63, 440, 554.37, 659.25, 880, 1318.5].forEach((n, i) => setTimeout(() => playTone(n, n * 1.05, 0.2, 'sawtooth', 0.14), i * 45));
           },
-          resetMusic() {
+          playTrack(key = 'menu', restart = false) {
             if (!bgmEl) return;
+            const targetKey = BGM_TRACKS[key] ? key : 'menu';
             try {
-              bgmEl.currentTime = 0;
+              if (targetKey !== currentTrackKey) {
+                currentTrackKey = targetKey;
+                bgmEl.src = BGM_TRACKS[targetKey];
+                bgmEl.load();
+                bgmEl.currentTime = 0;
+              } else if (restart) {
+                bgmEl.currentTime = 0;
+              }
               bgmEl.muted = muted;
-              bgmEl.volume = 0.65;
+              bgmEl.volume = targetKey === 'menu' ? 0.58 : 0.65;
               bgmEl.playbackRate = 1.0;
-              const p = bgmEl.play();
-              if (p && p.catch) p.catch(() => {});
+              if (!muted) {
+                const p = bgmEl.play();
+                if (p && p.catch) p.catch(() => {});
+              }
             } catch (e) {}
+          },
+          resetMusic(trackKey = null) {
+            this.playTrack(trackKey || currentTrackKey || 'menu', true);
           },
           pauseMusic(paused) {
             if (!bgmEl) return;
@@ -963,10 +1158,28 @@
           ctx.restore();
         }
 
+        function pointInPoly(px, py, poly) {
+          let inside = false;
+          for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+            const xi = poly[i][0], yi = poly[i][1];
+            const xj = poly[j][0], yj = poly[j][1];
+            const intersect = ((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / ((yj - yi) || 1e-9) + xi);
+            if (intersect) inside = !inside;
+          }
+          return inside;
+        }
+
+        function isWaterAt(wx, wy) {
+          if (pointInPoly(wx, wy, MISSION_BAY_XY)) return true;
+          return !pointInPoly(wx, wy, SD_MAINLAND_XY);
+        }
+
         return {
           latLngToWorld,
           worldToLatLng,
           drawSanDiegoWorld,
+          pointInPoly,
+          isWaterAt,
           getLiveTileCount: () => liveTileCount
         };
       })();
@@ -1112,10 +1325,16 @@
         }
       };
 
+      const PAX_LAND_POLY = [
+        [-3200, -2400], [180, -1450], [310, -220],
+        [260, 240], [-140, 1020], [-760, 2600], [-3200, 2600]
+      ];
+
       function isOceanAt(x, y) {
         const cm = getCurrentMap();
         if (cm.theme === 'ocean') return true;
-        if (cm.theme === 'coronado') return x < -140;
+        if (cm.theme === 'coronado') return RealWorldGeo.isWaterAt(x, y);
+        if (cm.theme === 'pax') return !RealWorldGeo.pointInPoly(x, y, PAX_LAND_POLY);
         return false;
       }
 
@@ -1132,25 +1351,194 @@
         { id: 'titanium', name: 'Grumman Titanium Hull', icon: '🛡️', maxLvl: 5, crCost: 85, partCost: 1, desc: '+20 permanent starting Max Hull on every launch.' },
         { id: 'startSidewinder', name: 'Pre-Arm AIM-9L Rack', icon: '🚀', maxLvl: 2, crCost: 150, partCost: 2, desc: 'Launch off Catapult 1 already armed with AIM-9L Sidewinders!' },
         { id: 'startFlares', name: 'Pre-Arm Goose Flares', icon: '💥', maxLvl: 2, crCost: 140, partCost: 2, desc: 'Launch already equipped with automatic Chaff & Flare bursts!' },
-        { id: 'salvageRig', name: 'Pacific Salvage Scanner', icon: '🧲', maxLvl: 4, crCost: 95, partCost: 1, desc: '+25% Loot/XP magnet pull & higher Salvage drop rates!' }
+        { id: 'salvageRig', name: 'Pacific Salvage Scanner', icon: '🧲', maxLvl: 4, crCost: 95, partCost: 1, desc: '+25% Loot/EGO magnet pull & higher Salvage drop rates!' }
       ];
 
-      function loadProfile() {
-        const def = {
+      const SPECIALTIES = {
+        hotshot:   { title: 'Hotshot',     perk: '+10% Speed & Burner', speedMult: 1.10, dmgMult: 1.0,  hullBonus: 0,  fuelMult: 1.0,  lootMult: 1.0 },
+        tactician: { title: 'Tactician',   perk: '+12% Weapon Dmg',     speedMult: 1.0,  dmgMult: 1.12, hullBonus: 0,  fuelMult: 1.0,  lootMult: 1.0 },
+        veteran:   { title: 'Veteran',     perk: '+25 Hull & -15% Fuel',speedMult: 1.0,  dmgMult: 1.0,  hullBonus: 25, fuelMult: 0.85, lootMult: 1.0 },
+        salvage:   { title: 'Salvage Ace', perk: '+20% EGO & Credits',   speedMult: 1.0,  dmgMult: 1.0,  hullBonus: 0,  fuelMult: 1.0,  lootMult: 1.20 }
+      };
+
+      const BUILTIN_PILOTS = [
+        { id: 'maverick',  callsign: 'MAVERICK',  helmet: 'maverick',  specialty: 'hotshot',   ...SPECIALTIES.hotshot },
+        { id: 'iceman',    callsign: 'ICEMAN',    helmet: 'iceman',    specialty: 'tactician', ...SPECIALTIES.tactician },
+        { id: 'viper',     callsign: 'VIPER',     helmet: 'viper',     specialty: 'veteran',   ...SPECIALTIES.veteran },
+        { id: 'hollywood', callsign: 'HOLLYWOOD', helmet: 'hollywood', specialty: 'salvage',   ...SPECIALTIES.salvage }
+      ];
+
+      // ============================================================
+      // CARRIER AIR WING AIRCRAFT INVENTORY (EXTENSIBLE REGISTRY)
+      // ============================================================
+      const AIRCRAFT = [
+        {
+          id: 'f14', short: 'F-14A', name: 'F-14A TOMCAT', role: 'AIR-TO-AIR',
+          roleColor: 'text-sky-300', cost: 0,
+          sprite: 'f14', sweptSprite: 'f14Swept', bellySprite: 'f14Belly',
+          hasSwingWings: true, hasAfterburner: true, hasLexVapor: false, hasGroundSplash: false,
+          superType: 'inverted', superName: '★ INVERTED', superTag: '★ INVERTED ★', reversesControls: true,
+          superBanner: '★ "BECAUSE I WAS INVERTED!" — CONTROLS REVERSED! ★',
+          airDmgMult: 1.24, groundDmgMult: 0.92, speedMult: 1.08, turnMult: 1.0,
+          hullBonus: 0, fuelMax: 100, abMult: 1.85, abFuelMult: 1.0,
+          exhausts: [-6.5, 6.5], exhaustY: 22,
+          desc: '+24% Air-to-Air Dmg • Fastest top speed • 68° swing-wings on Afterburner.'
+        },
+        {
+          id: 'f18', short: 'F/A-18C', name: 'F/A-18C HORNET', role: 'HYBRID',
+          roleColor: 'text-amber-300', cost: 220,
+          sprite: 'f18', sweptSprite: null, bellySprite: null,
+          hasSwingWings: false, hasAfterburner: true, hasLexVapor: true, hasGroundSplash: false,
+          superType: 'amraam', superName: '★ AMRAAM SALVO', superTag: '★ FOX THREE ★', reversesControls: false,
+          superBanner: '★ HIGH-ALPHA AMRAAM SALVO — MULTI-LOCK ENGAGED! ★',
+          airDmgMult: 1.12, groundDmgMult: 1.12, speedMult: 1.02, turnMult: 1.28,
+          hullBonus: 15, fuelMax: 108, abMult: 1.78, abFuelMult: 0.85,
+          exhausts: [-4.5, 4.5], exhaustY: 24,
+          desc: '+12% Air & Ground Dmg • Razor-sharp agility • 15% better fuel economy.'
+        },
+        {
+          id: 'a6', short: 'A-6E', name: 'A-6E INTRUDER', role: 'AIR-TO-GROUND',
+          roleColor: 'text-emerald-300', cost: 280,
+          sprite: 'a6', sweptSprite: null, bellySprite: null,
+          hasSwingWings: false, hasAfterburner: false, hasLexVapor: false, hasGroundSplash: true,
+          superType: 'carpetBomb', superName: '★ CARPET BOMB', superTag: '★ IRON HAND ★', reversesControls: false,
+          superBanner: '★ IRON HAND CARPET BOMB — BOMBS AWAY! ★',
+          airDmgMult: 0.86, groundDmgMult: 1.38, speedMult: 0.92, turnMult: 0.92,
+          hullBonus: 45, fuelMax: 130, abMult: 1.52, abFuelMult: 0.72,
+          exhausts: [-9.5, 9.5], exhaustY: 12,
+          desc: '+38% Ground/Naval Dmg + HE Splash • +45 Hull • 130% Fuel • Mil-Power Overdrive.'
+        }
+      ];
+
+      function getOwnedAircraft() {
+        if (!Array.isArray(profileStore.ownedAircraft) || !profileStore.ownedAircraft.length) {
+          profileStore.ownedAircraft = ['f14'];
+        }
+        return profileStore.ownedAircraft;
+      }
+
+      function getSelectedAircraftCfg() {
+        const id = (profile && profile.selectedAircraft) || 'f14';
+        const owned = getOwnedAircraft();
+        const validId = owned.includes(id) ? id : 'f14';
+        return AIRCRAFT.find(a => a.id === validId) || AIRCRAFT[0];
+      }
+
+      function getPilotAircraftSynergy(pilotCfg = null, acCfg = null) {
+        const pl = pilotCfg || getSelectedPilotCfg();
+        const ac = acCfg || getSelectedAircraftCfg();
+        if (pl.specialty === 'hotshot' && ac.id === 'f14') {
+          return { name: '★ NEED FOR SPEED', desc: '+15% Air-to-Air Dmg & +20% Burner Recharge', airDmg: 1.15, groundDmg: 1.0, hull: 0, loot: 1.0, abCharge: 1.20, splashR: 1.0 };
+        }
+        if (pl.specialty === 'tactician' && ac.id === 'f18') {
+          return { name: '★ ICE COLD STRIKE', desc: '+15% All-Target Weapon Dmg & Precision', airDmg: 1.15, groundDmg: 1.15, hull: 0, loot: 1.0, abCharge: 1.0, splashR: 1.0 };
+        }
+        if (pl.specialty === 'veteran' && ac.id === 'a6') {
+          return { name: '★ IRON HAND', desc: '+30 Armor Hull & +45% HE Splash Radius', airDmg: 1.0, groundDmg: 1.12, hull: 30, loot: 1.0, abCharge: 1.0, splashR: 1.45 };
+        }
+        if (pl.specialty === 'salvage' && (ac.id === 'f18' || ac.id === 'a6')) {
+          return { name: '★ GOLDEN HAUL', desc: '+25% Bonus Credits & EGO Drops', airDmg: 1.0, groundDmg: 1.0, hull: 0, loot: 1.25, abCharge: 1.0, splashR: 1.0 };
+        }
+        return null;
+      }
+
+      function defaultPilotRecord() {
+        return {
+          level: 1, xp: 0, xpNext: 120, sorties: 0, clears: 0,
           highScore: 0, extractions: 0, credits: 0, intel: 0, parts: 0,
+          currentCampaignIdx: 0, clearedMaps: {},
+          ownedAircraft: ['f14'],
+          selectedAircraft: 'f14',
           upgrades: { engines: 0, vulcanCore: 0, titanium: 0, startSidewinder: 0, startFlares: 0, salvageRig: 0 }
         };
+      }
+
+      const PROFILE_STORE_KEY = 'tomcat86_profiles_v2';
+      function loadProfileStore() {
+        const store = { selectedPilot: 'maverick', ownedAircraft: ['f14'], customPilots: [], profiles: {} };
+        BUILTIN_PILOTS.forEach(pl => { store.profiles[pl.id] = defaultPilotRecord(); });
         try {
-          const raw = localStorage.getItem('tomcat86_navy_profile');
-          if (!raw) return def;
-          const parsed = JSON.parse(raw);
-          return { ...def, ...parsed, upgrades: { ...def.upgrades, ...(parsed.upgrades || {}) } };
-        } catch (e) { return def; }
+          const raw = localStorage.getItem(PROFILE_STORE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            store.selectedPilot = parsed.selectedPilot || 'maverick';
+            store.ownedAircraft = Array.isArray(parsed.ownedAircraft) && parsed.ownedAircraft.length ? parsed.ownedAircraft : ['f14'];
+            store.customPilots = Array.isArray(parsed.customPilots) ? parsed.customPilots : [];
+            if (parsed.profiles) {
+              Object.keys(parsed.profiles).forEach(k => {
+                const p = parsed.profiles[k];
+                store.profiles[k] = {
+                  ...defaultPilotRecord(), ...p,
+                  clearedMaps: { ...(p.clearedMaps || {}) },
+                  ownedAircraft: Array.isArray(p.ownedAircraft) && p.ownedAircraft.length ? p.ownedAircraft : ['f14'],
+                  selectedAircraft: p.selectedAircraft || 'f14',
+                  upgrades: { ...defaultPilotRecord().upgrades, ...(p.upgrades || {}) }
+                };
+              });
+            }
+          }
+        } catch (e) {}
+        return store;
       }
+      const profileStore = loadProfileStore();
+
+      function getAllPilots() {
+        const customs = (profileStore.customPilots || []).map(cp => ({
+          ...cp,
+          ...(SPECIALTIES[cp.specialty] || SPECIALTIES.hotshot),
+          isCustom: true
+        }));
+        return [...BUILTIN_PILOTS, ...customs];
+      }
+
+      // Live proxy object `profile` always points to the currently selected pilot's individual saved profile!
+      let profile = profileStore.profiles[profileStore.selectedPilot] || defaultPilotRecord();
+      profileStore.profiles[profileStore.selectedPilot] = profile;
+
+      function switchActivePilot(pilotId) {
+        profileStore.selectedPilot = pilotId;
+        if (!profileStore.profiles[pilotId]) profileStore.profiles[pilotId] = defaultPilotRecord();
+        profile = profileStore.profiles[pilotId];
+        selectedMapIdx = Math.max(0, Math.min(MAPS.length - 1, profile.currentCampaignIdx || 0));
+        saveProfile();
+        if (typeof refreshRecordLine === 'function') refreshRecordLine();
+        if (typeof renderMapSelector === 'function') renderMapSelector();
+        if (typeof renderPilotSelector === 'function') renderPilotSelector();
+        if (typeof renderAircraftBayUI === 'function') renderAircraftBayUI();
+      }
+
       function saveProfile() {
-        try { localStorage.setItem('tomcat86_navy_profile', JSON.stringify(profile)); } catch (e) {}
+        try {
+          profileStore.profiles[profileStore.selectedPilot] = profile;
+          localStorage.setItem(PROFILE_STORE_KEY, JSON.stringify(profileStore));
+        } catch (e) {}
       }
-      const profile = loadProfile();
+      selectedMapIdx = Math.max(0, Math.min(MAPS.length - 1, profile.currentCampaignIdx || 0));
+
+      function getSelectedPilotCfg() {
+        return getAllPilots().find(pl => pl.id === profileStore.selectedPilot) || BUILTIN_PILOTS[0];
+      }
+      function getSelectedPilotData() {
+        return profile;
+      }
+      function addCareerXP(amount) {
+        const pd = getSelectedPilotData();
+        const pc = getSelectedPilotCfg();
+        pd.xp += Math.round(amount * (pc.lootMult || 1));
+        let leveled = false;
+        while (pd.xp >= pd.xpNext) {
+          pd.xp -= pd.xpNext;
+          pd.level++;
+          pd.xpNext = Math.round(120 * Math.pow(1.32, pd.level - 1));
+          leveled = true;
+        }
+        saveProfile();
+        if (leveled && state && state.player) {
+          AudioFX.levelUp();
+          addFloatingText(state.player.x, state.player.y - 54, `★ ${pc.callsign} PROMOTED TO LV.${pd.level}!`, '#fde047', 13);
+          showBanner(`★ PERMANENT CAREER LEVEL UP: ${pc.callsign} LV.${pd.level}! (+3% DMG, +5 HULL) ★`, 'border-amber-400 text-amber-200');
+        }
+      }
 
       // ============================================================
       // 2 NORMAL COMBAT PLANES + 1 EXCLUSIVE SUPER PLANE
@@ -1192,7 +1580,12 @@
 
       function createInitialState(mode = 'title') {
         const up = profile.upgrades;
-        const baseMaxHp = 100 + up.titanium * 20;
+        const pCfg = getSelectedPilotCfg();
+        const pData = getSelectedPilotData();
+        const careerLvlBonus = Math.max(0, (pData.level || 1) - 1);
+        const acCfg = getSelectedAircraftCfg();
+        const syn = getPilotAircraftSynergy(pCfg, acCfg);
+        const baseMaxHp = 100 + up.titanium * 20 + (pCfg.hullBonus || 0) + (acCfg.hullBonus || 0) + (syn ? syn.hull : 0) + careerLvlBonus * 5;
         return {
           mode,
           time: 0,
@@ -1206,6 +1599,10 @@
           bossDefeatedStages: {},
           surfaceBossSpawnedStages: {},
           surfaceBossDefeatedStages: {},
+          allBossesCleared: false,
+          buzzPhase: null, // 'buggedOut' -> 'permission'
+          buzzPhaseTimer: 0,
+          towerBuzz: null,
           screenShake: 0,
           xpCombo: 0,
           xpComboTimer: 0,
@@ -1219,6 +1616,7 @@
           trapGrace: mode === 'playing' ? 4.0 : 0,
           trapProgress: 0,
           ciwsTimer: 0,
+          hudTimer: 0,
           levelUpDelay: 0,
           pendingLevelUps: 0,
 
@@ -1232,13 +1630,13 @@
             wingSweep: 0.25,
             hp: baseMaxHp, maxHp: baseMaxHp,
             level: 1, xp: 0, xpNext: 38,
-            fuel: 100, maxFuel: 100, bingoBeepTimer: 0,
+            fuel: acCfg.fuelMax || 100, maxFuel: acCfg.fuelMax || 100, bingoBeepTimer: 0,
             invuln: 2.0,
             rollTimer: 0, rollDir: 1, swapCooldown: 0,
 
             burnCharge: 0, aceStreak: 0,
             abFuel: 100, abActive: false, abSoundTimer: 0,
-            superArmed: false, superActive: false,
+            superArmed: false, superActive: false, superCooldown: 0, superCooldownMax: 24,
             superTimer: 0, superMaxDuration: 9.5,
 
             weapons: {
@@ -1324,20 +1722,68 @@
       // ============================================================
       // CARRIER EXTRACTION & HANGAR INVENTORY
       // ============================================================
+      function startTowerBuzzCutscene() {
+        state.mode = 'towerBuzz';
+        state.towerBuzz = {
+          timer: 0,
+          boomPlayed: false,
+          spillPlayed: false,
+          callsign: getSelectedPilotCfg().callsign
+        };
+        AudioFX.planeSwap(true);
+      }
+
+      function finishTowerBuzz() {
+        const curMap = getCurrentMap();
+        const c = state.cargo;
+        const clearBonusCr = 500;
+        const rangeBonus = Math.round(state.maxDistNM * 2.5);
+        const totalCr = c.credits + rangeBonus + clearBonusCr;
+
+        profile.credits += totalCr;
+        profile.intel += c.intel + 2;
+        profile.parts += c.parts + 2;
+        profile.extractions += 1;
+        profile.clearedMaps[curMap.id] = true;
+        const pd = getSelectedPilotData();
+        pd.clears = (pd.clears || 0) + 1;
+        addCareerXP(250);
+
+        // Advance campaign to the next theater automatically!
+        selectedMapIdx = (selectedMapIdx + 1) % MAPS.length;
+        profile.currentCampaignIdx = selectedMapIdx;
+        if (state.score > profile.highScore) profile.highScore = state.score;
+        saveProfile();
+        refreshRecordLine();
+        renderMapSelector();
+        renderPilotSelector();
+
+        AudioFX.playTrack('menu', false);
+        openHangar({
+          credits: totalCr, intel: c.intel + 2, parts: c.parts + 2,
+          maxNM: state.maxDistNM,
+          buzzCleared: true,
+          nextMapName: getCurrentMap().name
+        });
+      }
+
       function completeExtraction() {
         const c = state.cargo;
         const rangeBonus = Math.round(state.maxDistNM * 2.5);
-        const totalCr = c.credits + rangeBonus;
+        const totalCr = Math.round((c.credits + rangeBonus) * (getSelectedPilotCfg().lootMult || 1));
 
         profile.credits += totalCr;
         profile.intel += c.intel;
         profile.parts += c.parts;
         profile.extractions += 1;
+        addCareerXP(60 + Math.round(state.maxDistNM * 2));
         if (state.score > profile.highScore) profile.highScore = state.score;
         saveProfile();
         refreshRecordLine();
+        renderPilotSelector();
 
         AudioFX.carrierTrap();
+        AudioFX.playTrack('menu', false);
         openHangar({ credits: totalCr, intel: c.intel, parts: c.parts, maxNM: state.maxDistNM });
       }
 
@@ -1350,7 +1796,9 @@
         const haulBox = document.getElementById('extractionHaulBox');
         if (haul) {
           haulBox.classList.remove('hidden');
-          document.getElementById('haulText').textContent = `🪙 +${haul.credits} CR • 📦 +${haul.intel} INTEL • ⚙️ +${haul.parts} PARTS (Peak ${haul.maxNM.toFixed(1)} NM)`;
+          document.getElementById('haulText').textContent = haul.buzzCleared
+            ? `☕ TOWER BUZZED! +${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS → NEXT: ${haul.nextMapName}`
+            : `🪙 +${haul.credits} CR • 📦 +${haul.intel} INTEL • ⚙️ +${haul.parts} PARTS (Peak ${haul.maxNM.toFixed(1)} NM)`;
         } else {
           haulBox.classList.add('hidden');
         }
@@ -1367,6 +1815,7 @@
         sellBtn.disabled = profile.intel <= 0;
         sellBtn.textContent = profile.intel > 0 ? `DEBRIEF ${profile.intel} INTEL (+${profile.intel * 60} CR)` : 'NO INTEL TO DEBRIEF';
 
+        renderAircraftBayUI();
         const grid = document.getElementById('hangarUpgradesGrid');
         grid.innerHTML = '';
         HANGAR_UPGRADES.forEach((u) => {
@@ -1411,7 +1860,7 @@
       // ============================================================
       function checkSuperArmed() {
         const p = state.player;
-        if (p.superActive || p.superArmed) return;
+        if (p.superActive || p.superArmed || p.superCooldown > 0) return;
         if (p.burnCharge >= 100 && p.aceStreak >= 10) {
           p.superArmed = true;
           AudioFX.armed();
@@ -1427,6 +1876,9 @@
         const next = targetPlane !== null ? targetPlane : p.savedPlane;
         p.superActive = false;
         p.superTimer = 0;
+        p.superCooldown = p.superCooldownMax || 24;
+        p.superArmed = false;
+        p.burnCharge = 0;
         p.plane = next;
         p.swapCooldown = 0.32;
         p.rollTimer = 0.38;
@@ -1506,6 +1958,10 @@
           exitSuperState(nearBase ? 0 : p.savedPlane);
           return;
         }
+        if (p.superCooldown > 0) {
+          addFloatingText(p.x, p.y - 34, `INVERTED COOLDOWN ${Math.ceil(p.superCooldown)}s`, '#fbbf24', 11);
+          return;
+        }
         if (!p.superArmed) return;
 
         p.superActive = true; p.superArmed = false; p.burnCharge = 0;
@@ -1514,9 +1970,10 @@
         p.superTimer = p.superMaxDuration; p.rollTimer = 0.45;
         state.superCount++; state.screenShake = 14;
 
+        const ac = getSelectedAircraftCfg();
         AudioFX.superIgnite();
-        showBanner('★ "BECAUSE I WAS INVERTED!" — 4G NEGATIVE STUNT MODE! ★', 'border-rose-400 text-amber-300');
-        addFloatingText(p.x, p.y - 42, '4G NEGATIVE DIVE!', '#38bdf8', 13);
+        showBanner(ac.superBanner || '★ SUPER STATE ENGAGED! ★', 'border-rose-400 text-amber-300');
+        addFloatingText(p.x, p.y - 42, ac.superTag || '★ SUPER ★', '#38bdf8', 13);
         spawnRing(p.x, p.y, '#fde047', 24, 280, 2);
         spawnRing(p.x, p.y, '#38bdf8', 16, 200, 2);
         state.enemyBullets.length = 0;
@@ -1525,24 +1982,36 @@
       // ============================================================
       // FX HELPERS (WORLD COORDINATES)
       // ============================================================
+      function pushParticle(pt) {
+        if (state.particles.length >= ENGINE_CFG.maxParticles) {
+          state.particles.shift();
+        }
+        state.particles.push(pt);
+      }
       function spawnExplosion(x, y, plane, color, count = 16, big = false) {
-        for (let i = 0; i < count; i++) {
+        // Dynamically scale burst density when many particles are already active (keeps Going Ballistic locked at 60fps!)
+        const load = state.particles.length / ENGINE_CFG.maxParticles;
+        const effCount = Math.max(4, Math.round(count * (load > 0.75 ? 0.45 : (load > 0.45 ? 0.7 : 1.0))));
+        for (let i = 0; i < effCount; i++) {
           const ang = Math.random() * Math.PI * 2;
           const spd = (big ? 95 : 55) + Math.random() * (big ? 210 : 140);
-          state.particles.push({
+          const life = 0.26 + Math.random() * (big ? 0.45 : 0.30);
+          pushParticle({
             x, y, plane, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
-            life: 0.3 + Math.random() * (big ? 0.55 : 0.35), maxLife: 0.65,
-            size: (big ? 4.5 : 2.5) + Math.random() * (big ? 6 : 3.5),
+            life, maxLife: life,
+            size: (big ? 4.2 : 2.4) + Math.random() * (big ? 5.2 : 3.0),
             color: i % 3 === 0 ? '#ffffff' : (i % 2 === 0 ? '#fde047' : color)
           });
         }
         if (big) { spawnRing(x, y, color, 10, 100, plane); state.screenShake = Math.max(state.screenShake, 9); }
       }
       function spawnRing(x, y, color, startR, maxR, plane) {
-        state.shockwaves.push({ x, y, plane, color, r: startR, maxR, life: 0.36, maxLife: 0.36 });
+        if (state.shockwaves.length >= ENGINE_CFG.maxShockwaves) state.shockwaves.shift();
+        state.shockwaves.push({ x, y, plane, color, r: startR, maxR, life: 0.34, maxLife: 0.34 });
       }
       function addFloatingText(x, y, text, color = '#ffffff', size = 11) {
-        state.floatingTexts.push({ x, y, text, color, size, life: 0.9, maxLife: 0.9 });
+        if (state.floatingTexts.length >= ENGINE_CFG.maxFloatingTexts) state.floatingTexts.shift();
+        state.floatingTexts.push({ x, y, text, color, size, life: 0.85, maxLife: 0.85 });
       }
 
       // ============================================================
@@ -1697,7 +2166,9 @@
         const p = state.player;
         const w = p.weapons;
         const t = p.timers;
-        const dmgMult = 1 + profile.upgrades.vulcanCore * 0.18;
+        const _pc = getSelectedPilotCfg();
+        const _pd = getSelectedPilotData();
+        const dmgMult = (1 + profile.upgrades.vulcanCore * 0.18 + Math.max(0, (_pd.level || 1) - 1) * 0.03) * (_pc.dmgMult || 1);
 
         if (abFill && abPct) {
           abFill.style.width = p.abFuel.toFixed(1) + '%';
@@ -1708,6 +2179,85 @@
         }
 
         if (p.superActive) {
+          const ac = getSelectedAircraftCfg();
+          if (ac.superType === 'amraam') {
+            // F/A-18C HORNET: HIGH-ALPHA MULTI-LOCK AMRAAM SALVO (4-target simultaneous radar locks across BOTH planes!)
+            t.superPhoenix -= dt;
+            if (t.superPhoenix <= 0) {
+              t.superPhoenix = 0.22;
+              const sorted = [...state.enemies]
+                .filter(e => e.hp > 0)
+                .sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y));
+              for (let k = 0; k < 4; k++) {
+                const target = sorted[k % Math.max(1, sorted.length)] || null;
+                const spread = (k - 1.5) * 0.35;
+                const ang = p.heading + spread;
+                state.bullets.push({
+                  kind: 'sparrow',
+                  x: p.x + Math.cos(ang) * 16, y: p.y + Math.sin(ang) * 16,
+                  vx: Math.cos(ang) * 390, vy: Math.sin(ang) * 390,
+                  plane: target ? target.plane : p.plane, hitsAllPlanes: true, target,
+                  dmg: (42 + p.level * 5) * dmgMult, r: 7, color: '#38bdf8', life: 2.3
+                });
+              }
+              AudioFX.sparrow();
+            }
+            t.superBoom -= dt;
+            if (t.superBoom <= 0) {
+              t.superBoom = 0.65;
+              spawnRing(p.x, p.y, '#38bdf8', 20, 230, 2);
+              if (Math.random() < 0.45) {
+                const quips = ['FOX THREE! MULTI-LOCK!', 'HIGH-ALPHA LOCK!', 'HORNET STING!'];
+                addFloatingText(p.x, p.y - 34, quips[Math.floor(Math.random() * quips.length)], '#7dd3fc', 11);
+              }
+            }
+            return;
+          }
+
+          if (ac.superType === 'carpetBomb') {
+            // A-6E INTRUDER: IRON HAND CARPET BOMB & AGM-65 MAVERICK SATURATION RUN!
+            t.superPhoenix -= dt;
+            if (t.superPhoenix <= 0) {
+              t.superPhoenix = 0.24;
+              // Drop twin staggered heavy Mk-82 carpet bomb blasts behind/under the Intruder!
+              const perp = p.heading + Math.PI / 2;
+              for (const side of [-1, 1]) {
+                const bx = p.x - Math.cos(p.heading) * 26 + Math.cos(perp) * (side * (24 + Math.random() * 24));
+                const by = p.y - Math.sin(p.heading) * 26 + Math.sin(perp) * (side * (24 + Math.random() * 24));
+                spawnExplosion(bx, by, 0, '#f97316', 14, true);
+                spawnRing(bx, by, '#fb923c', 12, 138, 0);
+                for (const e of state.enemies) {
+                  if (e.hp > 0 && Math.hypot(e.x - bx, e.y - by) < 142) {
+                    const groundMult = (e.plane === 0 || e.isSurface) ? 1.35 : 0.8;
+                    damageEnemy(e, (52 + p.level * 6) * dmgMult * groundMult, true);
+                  }
+                }
+              }
+              // Plus fire an AGM-65 Maverick at the nearest surface/boss target!
+              const surfTgt = findTarget(p.x, p.y, 0, 'same') || findTarget(p.x, p.y, 1, 'any');
+              if (surfTgt) {
+                state.bullets.push({
+                  kind: 'phoenix',
+                  x: p.x, y: p.y,
+                  vx: Math.cos(p.heading) * 320, vy: Math.sin(p.heading) * 320,
+                  plane: surfTgt.plane, hitsAllPlanes: true, target: surfTgt,
+                  dmg: (62 + p.level * 6) * dmgMult, r: 9, blastR: 96, life: 2.4
+                });
+              }
+              AudioFX.explode(true);
+            }
+            t.superBoom -= dt;
+            if (t.superBoom <= 0) {
+              t.superBoom = 0.72;
+              if (Math.random() < 0.5) {
+                const quips = ['BOMBS AWAY!', 'SHACK! DIRECT HIT!', 'IRON HAND RUN!'];
+                addFloatingText(p.x, p.y - 34, quips[Math.floor(Math.random() * quips.length)], '#fdba74', 11);
+              }
+            }
+            return;
+          }
+
+          // F-14A TOMCAT: ★ INVERTED MODE (4G Negative Dive!)
           t.superPhoenix -= dt;
           if (t.superPhoenix <= 0) {
             t.superPhoenix = 0.13;
@@ -1897,9 +2447,24 @@
       // ============================================================
       // DAMAGE, SPLASHES & DISTANCE-SCALED SALVAGE LOOT
       // ============================================================
-      function damageEnemy(e, amount) {
+      function damageEnemy(e, amount, isSplash = false) {
         if (e.hp <= 0) return;
-        e.hp -= amount; e.hitFlash = 0.09;
+        const ac = getSelectedAircraftCfg();
+        const syn = getPilotAircraftSynergy();
+        const synMult = syn ? ((e.plane === 0 || e.isSurface) ? syn.groundDmg : syn.airDmg) : 1;
+        const roleMult = ((e.plane === 0 || e.isSurface) ? (ac.groundDmgMult || 1) : (ac.airDmgMult || 1)) * synMult;
+        const finalDmg = amount * (isSplash ? 1 : roleMult);
+        e.hp -= finalDmg; e.hitFlash = 0.09;
+        // A-6E Intruder signature Air-to-Ground HE splash on Hard Deck surface targets!
+        if (!isSplash && ac.hasGroundSplash && (e.plane === 0 || e.isSurface) && finalDmg >= 6) {
+          const spRad = Math.round(46 * (syn ? syn.splashR : 1));
+          spawnRing(e.x, e.y, '#fb923c', 6, spRad, 0);
+          for (const other of state.enemies) {
+            if (other !== e && other.hp > 0 && (other.plane === 0 || other.isSurface) && Math.hypot(other.x - e.x, other.y - e.y) < spRad + 4) {
+              damageEnemy(other, finalDmg * 0.35, true);
+            }
+          }
+        }
         if (e.hp <= 0) killEnemy(e);
         else AudioFX.hit();
       }
@@ -1929,7 +2494,21 @@
         } else if (e.bossStageLvl) {
           if (e.isSurface) state.surfaceBossDefeatedStages[e.bossStageLvl] = true;
           else state.bossDefeatedStages[e.bossStageLvl] = true;
+          // Check if ALL 8 theater bosses (Zones 1-4 Surface + Air) are now cleared!
+          const clearedCount = [1,2,3,4].reduce((acc, z) => acc + (state.surfaceBossDefeatedStages[z] ? 1 : 0) + (state.bossDefeatedStages[z] ? 1 : 0), 0);
+          if (clearedCount >= 8 && !state.allBossesCleared) {
+            state.allBossesCleared = true;
+            state.buzzPhase = 'buggedOut';
+            state.buzzPhaseTimer = 2.8;
+            // All remaining bogeys bug out and flee off-screen!
+            state.enemies.forEach(en => { if (en.hp > 0) en.fleeing = true; });
+            state.enemyBullets.length = 0;
+            AudioFX.levelUp();
+            showBanner('★ BOGEYS BUGGED OUT! ALL BOSSES CLEARED! ★', 'border-emerald-400 text-emerald-200');
+          }
         }
+        // Grant permanent Career Pilot XP saved across rounds!
+        addCareerXP(e.type === 'boss' ? 45 : (isBig ? 8 : 3));
         spawnExplosion(e.x, e.y, e.plane, '#f97316', isBig ? 30 : 15, isBig);
         AudioFX.explode(isBig);
         if (e.type === 'boss' && e.bossCfg) {
@@ -2104,6 +2683,26 @@
       // MAIN UPDATE LOOP (OPEN-PACIFIC WORLD + CATAPULT LAUNCH)
       // ============================================================
       function update(dt) {
+        if (state.mode === 'towerBuzz' && state.towerBuzz) {
+          state.time += dt;
+          state.towerBuzz.timer += dt;
+          const tb = state.towerBuzz;
+          if (!tb.boomPlayed && tb.timer >= 0.85) {
+            tb.boomPlayed = true;
+            state.screenShake = 18;
+            AudioFX.superIgnite();
+            AudioFX.goingBallistic();
+          }
+          if (!tb.spillPlayed && tb.timer >= 1.55) {
+            tb.spillPlayed = true;
+            AudioFX.explode(false);
+          }
+          state.screenShake = Math.max(0, state.screenShake - dt * 16);
+          if (tb.timer >= 4.1) {
+            finishTowerBuzz();
+          }
+          return;
+        }
         if (state.mode === 'csar' && state.csar) {
           state.time += dt;
           state.screenShake = Math.max(0, state.screenShake - dt * 24);
@@ -2201,7 +2800,9 @@
         }
 
         // 360° Flight Controls (or initial Catapult 1 Steam Launch Boost!)
-        const speed = (305 + p.weapons.sweep * 38) * (1 + profile.upgrades.engines * 0.1) * (p.superActive ? 1.32 : 1.0);
+        const _ac = getSelectedAircraftCfg();
+        const _pcSpd = getSelectedPilotCfg().speedMult || 1.0;
+        const speed = (305 + p.weapons.sweep * 38) * (1 + profile.upgrades.engines * 0.1) * _pcSpd * (_ac.speedMult || 1.0) * (p.superActive ? 1.32 : 1.0);
         if (state.launchTimer > 0) {
           state.launchTimer -= dt;
           p.y -= speed * 1.45 * dt;
@@ -2256,32 +2857,41 @@
             p.abFuel = Math.min(100, p.abFuel + rechargeRate * dt);
           }
 
+          if (p.superActive && _ac.reversesControls) {
+            // F-14A Inverted Mode reverses flight controls!
+            ix = -ix;
+            iy = -iy;
+          }
+
           if (ix !== 0 || iy !== 0) {
             // Active steering: bank smoothly toward input & fly at full combat airspeed!
             const targetAngle = Math.atan2(iy, ix);
             let diff = targetAngle - p.heading;
             while (diff > Math.PI) diff -= Math.PI * 2;
             while (diff < -Math.PI) diff += Math.PI * 2;
-            p.heading += diff * Math.min(1, dt * 10);
+            const turnRate = 10 * (_ac.turnMult || 1.0);
+            p.heading += diff * Math.min(1, dt * turnRate);
             p.bank += (Math.max(-1, Math.min(1, diff * 1.8)) - p.bank) * Math.min(1, dt * 10);
 
-            const curSpeed = speed * (p.abActive ? 1.85 : 1.0);
+            const abSpd = _ac.abMult || 1.85;
+            const curSpeed = speed * (p.abActive ? abSpd : 1.0);
             p.x += Math.cos(p.heading) * curSpeed * dt;
             p.y += Math.sin(p.heading) * curSpeed * dt;
-            p._moveMult = p.abActive ? 2.15 : 0.78;
+            p._moveMult = p.abActive ? (2.15 * (_ac.abFuelMult || 1.0)) : (0.78 * (_ac.abFuelMult || 1.0));
           } else {
             // Fighter Jet Physics: Always cruising forward smoothly along current heading!
-            // (Holding Afterburner while hands-off still rockets you straight ahead!)
-            const cruiseSpeed = speed * (p.abActive ? 1.85 : 0.42);
+            const abSpd = _ac.abMult || 1.85;
+            const cruiseSpeed = speed * (p.abActive ? abSpd : 0.42);
             p.x += Math.cos(p.heading) * cruiseSpeed * dt;
             p.y += Math.sin(p.heading) * cruiseSpeed * dt;
             p.bank *= Math.pow(0.01, dt);
-            p._moveMult = p.abActive ? 2.15 : 0.42;
+            p._moveMult = p.abActive ? (2.15 * (_ac.abFuelMult || 1.0)) : (0.42 * (_ac.abFuelMult || 1.0));
           }
 
           // ⛽ SPEED-BASED FUEL CONSUMPTION (Paused during ★ Inverted Mode!)
           if (!p.superActive) {
-            p.fuel = Math.max(0, p.fuel - (p._moveMult || 0.42) * dt);
+            const _fMult = (getSelectedPilotCfg().fuelMult || 1.0) * Math.max(0.65, 1 - Math.max(0, (getSelectedPilotData().level || 1) - 1) * 0.02);
+            p.fuel = Math.max(0, p.fuel - (p._moveMult || 0.42) * _fMult * dt);
             if (p.fuel <= 10 && p.fuel > 0) {
               p.bingoBeepTimer -= dt;
               const beepInterval = Math.max(0.22, 0.22 + (p.fuel / 10) * 0.68);
@@ -2330,12 +2940,16 @@
         state.camY += (p.y - state.camY) * Math.min(1, dt * 8);
 
         p.visualPlane += (p.plane - p.visualPlane) * Math.min(1, dt * 11);
-        const targetSweep = (p.superActive || p.abActive) ? 1.0 : (p.plane === 1 ? 0.65 : 0.22);
-        p.wingSweep += (targetSweep - p.wingSweep) * Math.min(1, dt * 8);
+        const targetSweep = p.abActive ? 1.0 : 0.0;
+        p.wingSweep += (targetSweep - p.wingSweep) * Math.min(1, dt * 11);
 
         p.invuln = Math.max(0, p.invuln - dt);
         p.rollTimer = Math.max(0, p.rollTimer - dt);
         p.swapCooldown = Math.max(0, p.swapCooldown - dt);
+        if (p.superCooldown > 0) {
+          p.superCooldown = Math.max(0, p.superCooldown - dt);
+          if (p.superCooldown === 0) checkSuperArmed();
+        }
         state.trapGrace = Math.max(0, state.trapGrace - dt);
 
         if (state.xpComboTimer > 0) {
@@ -2390,6 +3004,23 @@
           }
         }
 
+        // BOGEYS BUGGED OUT -> PERMISSION TO BUZZ THE TOWER -> AFTERBURNER FLYBY CHECK!
+        if (state.allBossesCleared) {
+          if (state.buzzPhase === 'buggedOut') {
+            state.buzzPhaseTimer -= dt;
+            if (state.buzzPhaseTimer <= 0) {
+              state.buzzPhase = 'permission';
+              AudioFX.armed();
+              showBanner('☕ "PERMISSION TO BUZZ THE TOWER" — HIT AFTERBURNER PAST HOME! ☕', 'border-amber-400 text-amber-200');
+            }
+          }
+          // Pass by the home point while on Afterburner to trigger the coffee-spill cutscene!
+          if (p.abActive && Math.hypot(p.x, p.y) < 195 && state.trapGrace <= 0) {
+            startTowerBuzzCutscene();
+            return;
+          }
+        }
+
         // USS ENTERPRISE / AIRBASE (0, 0) EXTRACTION TRAP CHECK!
         const onDeck = Math.abs(p.x) < 64 && Math.abs(p.y) < 118;
         if (state.trapGrace <= 0 && onDeck && p.plane === 0 && !p.superActive) {
@@ -2416,15 +3047,16 @@
           }
           if (p.superTimer <= 0) {
             p.superActive = false; p.plane = p.savedPlane; p.invuln = 2.0; p.rollTimer = 0.4;
+            p.superCooldown = p.superCooldownMax || 24; p.superArmed = false; p.burnCharge = 0;
             AudioFX.planeSwap(false);
-            showBanner('DESCENDING TO COMBAT ALTITUDE', 'border-sky-400 text-sky-200');
+            showBanner('DESCENDING TO COMBAT ALTITUDE • INVERTED COOLDOWN 24s', 'border-sky-400 text-sky-200');
           }
         }
 
         updateWeapons(dt);
 
-        // Radial Distance-Scaled Enemy Spawning (Safe Zone < 3.5 NM stays peaceful!)
-        if (threat.spawnMult > 0) {
+        // Radial Distance-Scaled Enemy Spawning (Stops once all bosses cleared & bogeys bug out!)
+        if (threat.spawnMult > 0 && !state.allBossesCleared) {
           state.spawnTimer -= dt;
           const maxCap = Math.min(48, 30 + Math.floor((threat.deepFactor || 0) * 6));
           if (state.spawnTimer <= 0 && state.enemies.length < maxCap) {
@@ -2449,6 +3081,14 @@
             state.enemies.splice(i, 1); continue;
           }
 
+          if (e.fleeing) {
+            const away = Math.atan2(e.y - p.y, e.x - p.x);
+            e.angle = away;
+            e.x += Math.cos(away) * (e.speed * 2.2) * dt;
+            e.y += Math.sin(away) * (e.speed * 2.2) * dt;
+            if (dist > Math.max(W, H) * 0.95) state.enemies.splice(i, 1);
+            continue;
+          }
           if (e.type === 'boss') {
             const bk = e.bossKey || 'bear';
             if (e.isSurface) {
@@ -2460,8 +3100,18 @@
               while (aDiff < -Math.PI) aDiff += Math.PI * 2;
               const maxTurn = (e.isNaval ? 0.55 : 0.85) * dt;
               e.angle += Math.max(-maxTurn, Math.min(maxTurn, aDiff));
-              e.x += Math.cos(e.angle) * e.speed * dt;
-              e.y += Math.sin(e.angle) * e.speed * dt;
+              const lookD = e.r + 22;
+              const okAt = (tx, ty) => isOceanAt(tx, ty) === !!e.isNaval;
+              if (!okAt(e.x + Math.cos(e.angle) * lookD, e.y + Math.sin(e.angle) * lookD)) {
+                const tries = [0.65, -0.65, 1.35, -1.35, 2.2, -2.2, Math.PI];
+                for (const off of tries) {
+                  const ca = e.angle + off;
+                  if (okAt(e.x + Math.cos(ca) * lookD, e.y + Math.sin(ca) * lookD)) { e.angle = ca; break; }
+                }
+              }
+              const nx = e.x + Math.cos(e.angle) * e.speed * dt;
+              const ny = e.y + Math.sin(e.angle) * e.speed * dt;
+              if (okAt(nx, ny)) { e.x = nx; e.y = ny; }
               if (e.isNaval && Math.random() < 0.45) {
                 const bx = e.x - Math.cos(e.angle) * (e.r * 1.15);
                 const by = e.y - Math.sin(e.angle) * (e.r * 1.15);
@@ -2510,8 +3160,18 @@
             while (aDiff < -Math.PI) aDiff += Math.PI * 2;
             const maxTurn = (e.isNaval ? 0.75 : (e.type === 'tank' ? 1.1 : 1.55)) * dt;
             e.angle += Math.max(-maxTurn, Math.min(maxTurn, aDiff));
-            e.x += Math.cos(e.angle) * e.speed * dt;
-            e.y += Math.sin(e.angle) * e.speed * dt;
+            const lookD = e.r + 18;
+            const okAt = (tx, ty) => isOceanAt(tx, ty) === !!e.isNaval;
+            if (!okAt(e.x + Math.cos(e.angle) * lookD, e.y + Math.sin(e.angle) * lookD)) {
+              const tries = [0.75, -0.75, 1.5, -1.5, 2.35, -2.35, Math.PI];
+              for (const off of tries) {
+                const ca = e.angle + off;
+                if (okAt(e.x + Math.cos(ca) * lookD, e.y + Math.sin(ca) * lookD)) { e.angle = ca; break; }
+              }
+            }
+            const nx = e.x + Math.cos(e.angle) * e.speed * dt;
+            const ny = e.y + Math.sin(e.angle) * e.speed * dt;
+            if (okAt(nx, ny)) { e.x = nx; e.y = ny; }
             if (e.isNaval && Math.random() < 0.32) {
               const bx = e.x - Math.cos(e.angle) * (e.r * 0.95);
               const by = e.y - Math.sin(e.angle) * (e.r * 0.95);
@@ -2723,7 +3383,11 @@
           if (ft.life <= 0) state.floatingTexts.splice(i, 1);
         }
 
-        updateHud(distNM, threat);
+        state.hudTimer -= dt;
+        if (state.hudTimer <= 0) {
+          state.hudTimer = ENGINE_CFG.hudRefreshInterval;
+          updateHud(distNM, threat);
+        }
       }
 
       // ============================================================
@@ -2773,7 +3437,7 @@
         xpBar.style.width = Math.min(100, (p.xp / p.xpNext) * 100).toFixed(1) + '%';
         const navyRanks = ['ENSIGN', 'LTJG', 'LIEUTENANT', 'LT CMDR', 'COMMANDER', 'CAPTAIN', 'REAR ADM', 'VICE ADM', 'ADMIRAL'];
         levelBadge.textContent = navyRanks[Math.min(p.level - 1, navyRanks.length - 1)] + ' • L' + p.level;
-        xpText.textContent = `${Math.floor(p.xp)} / ${p.xpNext} XP`;
+        xpText.textContent = `${Math.floor(p.xp)} / ${p.xpNext} EGO`;
 
         const c = state.cargo;
         cargoSummary.textContent = `🪙${c.credits} 📦${c.intel} ⚙️${c.parts}`;
@@ -2783,8 +3447,56 @@
         threatZoneText.textContent = threat.name;
         threatZoneText.style.color = threat.color;
         lootMultText.textContent = `LOOT ${threat.lootMult.toFixed(1)}×`;
+        // Show active Pilot Callsign & permanent Career Level in top-left HUD
+        const _pcHud = getSelectedPilotCfg();
+        const _pdHud = getSelectedPilotData();
+        if (levelBadge) {
+          levelBadge.textContent = `${_pcHud.callsign} • CAREER LV.${_pdHud.level} (SORTIE L${p.level})`;
+        }
+
         const zbp = document.getElementById('zoneBossProgress');
         if (zbp) {
+          const clearedTot = [1,2,3,4].reduce((a,z)=>a+(state.surfaceBossDefeatedStages[z]?1:0)+(state.bossDefeatedStages[z]?1:0),0);
+          if (state.allBossesCleared) {
+            zbp.textContent = state.buzzPhase === 'buggedOut' ? '★ BOGEYS BUGGED OUT!' : '☕ BUZZ TOWER ON BURNER!';
+            zbp.className = 'text-amber-300 font-arcade animate-pulse';
+          } else if (threat.lvl === 0) {
+            const nextZ = [1,2,3,4].find(z => !state.surfaceBossDefeatedStages[z] || !state.bossDefeatedStages[z]) || 1;
+            const zReqNM = [0, 3.5, 12, 30, 68][nextZ];
+            zbp.textContent = `OBJ [${clearedTot}/8]: FLY >${zReqNM} NM (Z${nextZ})`;
+            zbp.className = 'text-emerald-300 font-arcade';
+          } else {
+            const bCfg = STAGE_BOSSES[threat.lvl];
+            const sCfg = getSurfaceBossCfg(threat.lvl, p.x, p.y);
+            const airDone = !!state.bossDefeatedStages[threat.lvl];
+            const surfDone = !!state.surfaceBossDefeatedStages[threat.lvl];
+            const airAct = !!state.bossSpawnedStages[threat.lvl] && !airDone;
+            const surfAct = !!state.surfaceBossSpawnedStages[threat.lvl] && !surfDone;
+            const k = state.zoneKills[threat.lvl] || 0;
+            if (airDone && surfDone) {
+              const nextZ = [1,2,3,4].find(z => !state.surfaceBossDefeatedStages[z] || !state.bossDefeatedStages[z]);
+              const nextNM = nextZ ? [0, 3.5, 12, 30, 68][nextZ] : 0;
+              zbp.textContent = nextZ ? `✓ Z${threat.lvl} CLEAR • PUSH TO Z${nextZ} (${nextNM}+ NM)` : `✓ ALL BOSSES CLEARED!`;
+              zbp.className = 'text-emerald-300 font-arcade';
+            } else if (surfAct && airAct) {
+              zbp.textContent = `⚠ DUAL BOSSES ACTIVE (${clearedTot}/8)`;
+              zbp.className = 'text-rose-400 font-arcade';
+            } else if (surfAct) {
+              zbp.textContent = `⚠ DECK: ${sCfg.shortName} (${clearedTot}/8)`;
+              zbp.className = 'text-amber-300 font-arcade';
+            } else if (airAct) {
+              zbp.textContent = `⚠ AIR: ${bCfg.shortName} (${clearedTot}/8)`;
+              zbp.className = 'text-rose-400 font-arcade';
+            } else if (!state.surfaceBossSpawnedStages[threat.lvl]) {
+              zbp.textContent = `Z${threat.lvl} DECK BOSS: ${k}/${sCfg.killsNeeded} (${clearedTot}/8)`;
+              zbp.className = 'text-amber-300 font-arcade';
+            } else {
+              zbp.textContent = `Z${threat.lvl} AIR BOSS: ${k}/${bCfg.killsNeeded} (${clearedTot}/8)`;
+              zbp.className = 'text-sky-300 font-arcade';
+            }
+          }
+        }
+        if (false) {
           if (threat.lvl === 0) {
             zbp.textContent = 'CIWS SAFE • FLY >3.5 NM';
             zbp.className = 'text-emerald-300 font-arcade';
@@ -2840,22 +3552,33 @@
           ? 'px-2 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-400/70 font-arcade text-[10px] font-black text-emerald-300'
           : 'px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 font-arcade text-[10px] font-black text-slate-300';
 
+        const _acHud = getSelectedAircraftCfg();
+        const _sName = _acHud.superName || '★ INVERTED';
         if (p.superActive) {
           superFill.style.width = Math.max(0, (p.superTimer / p.superMaxDuration) * 100).toFixed(1) + '%';
-          superLabel.textContent = '★ INVERTED! STUNTING!';
-          condCharge.textContent = `4G NEGATIVE • ${p.superTimer.toFixed(1)}s`;
+          superLabel.textContent = `${_sName} ACTIVE!`;
+          condCharge.textContent = _acHud.reversesControls ? `FLIPPED • ${p.superTimer.toFixed(1)}s` : `${p.superTimer.toFixed(1)}s`;
           condCharge.className = 'text-amber-200';
-          condStreak.textContent = 'SHIFT/SPACE TO EXIT'; condStreak.className = 'text-sky-300';
+          condStreak.textContent = 'SPACE: EXIT'; condStreak.className = 'text-sky-300';
           superKeyHint.textContent = 'EXIT'; superBtn.classList.add('super-pulse');
+        } else if (p.superCooldown > 0) {
+          const cdPct = Math.max(0, (p.superCooldown / (p.superCooldownMax || 24)) * 100);
+          superFill.style.width = cdPct.toFixed(1) + '%';
+          superLabel.textContent = `${_sName} CD`;
+          condCharge.textContent = `⏱ ${Math.ceil(p.superCooldown)}s`;
+          condCharge.className = 'text-amber-300';
+          condStreak.textContent = streakReady ? '✓ STREAK' : `${p.aceStreak}/10`;
+          condStreak.className = streakReady ? 'text-emerald-300' : 'text-slate-400';
+          superKeyHint.textContent = `${Math.ceil(p.superCooldown)}s`; superBtn.classList.remove('super-pulse');
         } else if (p.superArmed) {
           superFill.style.width = '100%';
-          superLabel.textContent = '★ PRESS SPACE — GO INVERTED!';
-          condCharge.textContent = '✓ BURN 100%'; condCharge.className = 'text-emerald-300';
-          condStreak.textContent = '✓ ACE ARMED'; condStreak.className = 'text-emerald-300';
+          superLabel.textContent = `${_sName} READY!`;
+          condCharge.textContent = '✓ 100%'; condCharge.className = 'text-emerald-300';
+          condStreak.textContent = '✓ ARMED'; condStreak.className = 'text-emerald-300';
           superKeyHint.textContent = 'SPACE'; superBtn.classList.add('super-pulse');
         } else {
           superFill.style.width = p.burnCharge.toFixed(1) + '%';
-          superLabel.textContent = '★ INVERTED MODE';
+          superLabel.textContent = _sName;
           const burnOk = p.burnCharge >= 100;
           condCharge.textContent = burnOk ? '✓ BURN 100%' : `⚡ BURN ${Math.floor(p.burnCharge)}%`;
           condCharge.className = burnOk ? 'text-emerald-300' : 'text-amber-200';
@@ -2885,7 +3608,8 @@
       // ============================================================
       // OPEN-PACIFIC WORLD-SPACE RENDERER
       // ============================================================
-      function drawF14Tomcat(x, y, heading, scale, bank, rollTimer, wingSweep, isSuper, damageRatio = 0) {
+      function drawF14Tomcat(x, y, heading, scale, bank, rollTimer, wingSweep, isSuper, damageRatio = 0, acCfg = null) {
+        const ac = acCfg || AIRCRAFT[0];
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(heading + Math.PI / 2);
@@ -2897,32 +3621,42 @@
         ctx.scale(scale * rollScaleX, scale);
 
         const abOn = isSuper || (state && state.player && state.player.abActive && scale >= 0.8);
-        const flameLen = (abOn ? 30 : 14) + Math.random() * 8;
-        for (const sx of [-6.5, 6.5]) {
+        const flameLen = (abOn ? (ac.hasAfterburner ? 30 : 22) : 13) + Math.random() * 7;
+        const exY = ac.exhaustY || 22;
+        for (const sx of (ac.exhausts || [-6.5, 6.5])) {
           // Sputtering starboard engine when heavily damaged
           if (!isSuper && damageRatio > 0.68 && sx > 0 && Math.random() < 0.45) continue;
           const fl = (!isSuper && damageRatio > 0.65 && sx > 0) ? flameLen * 0.55 : flameLen;
-          ctx.fillStyle = abOn ? '#38bdf8' : '#f97316';
-          ctx.beginPath(); ctx.moveTo(sx - 3.4, 22); ctx.lineTo(sx, 22 + fl); ctx.lineTo(sx + 3.4, 22); ctx.closePath(); ctx.fill();
+          // A-6E uses warm Mil-Power orange-gold exhaust; F-14A & F/A-18C use roaring blue afterburners!
+          ctx.fillStyle = (abOn && ac.hasAfterburner) ? '#38bdf8' : (abOn ? '#fbbf24' : '#f97316');
+          ctx.beginPath(); ctx.moveTo(sx - 3.2, exY); ctx.lineTo(sx, exY + fl); ctx.lineTo(sx + 3.2, exY); ctx.closePath(); ctx.fill();
           ctx.fillStyle = '#fef9c3';
-          ctx.beginPath(); ctx.moveTo(sx - 1.8, 22); ctx.lineTo(sx, 22 + fl * 0.6); ctx.lineTo(sx + 1.8, 22); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(sx - 1.6, exY); ctx.lineTo(sx, exY + fl * 0.6); ctx.lineTo(sx + 1.6, exY); ctx.closePath(); ctx.fill();
         }
-        const useBelly = isSuper && spriteReady('f14Belly');
-        if (useBelly || spriteReady('f14')) {
-          const im = useBelly ? SPRITES.f14Belly : SPRITES.f14;
-          const sw = 64 - wingSweep * 6;
-          const sh = 68 + wingSweep * 4;
+        const useBelly = isSuper && ac.bellySprite && spriteReady(ac.bellySprite);
+        const useSwept = !isSuper && ac.hasSwingWings && wingSweep > 0.42 && ac.sweptSprite && spriteReady(ac.sweptSprite);
+        const baseKey = spriteReady(ac.sprite) ? ac.sprite : 'f14';
+        if (useBelly || useSwept || spriteReady(baseKey)) {
+          const im = useBelly ? SPRITES[ac.bellySprite] : (useSwept ? SPRITES[ac.sweptSprite] : SPRITES[baseKey]);
+          const sh = useSwept ? 72 : (ac.id === 'a6' ? 70 : (68 + (ac.hasSwingWings ? wingSweep * 4 : 0)));
+          const sw = (useSwept || !ac.hasSwingWings) ? (sh * (im.naturalWidth / Math.max(1, im.naturalHeight))) : (64 - wingSweep * 10);
+          if ((useSwept || ac.hasLexVapor) && abOn) {
+            // Supersonic wingtip / F/A-18 LEX vapor streaks!
+            ctx.save();
+            ctx.strokeStyle = 'rgba(224, 242, 254, 0.48)';
+            ctx.lineWidth = 1.6;
+            for (const wx of [-sw * 0.44, sw * 0.44]) {
+              ctx.beginPath(); ctx.moveTo(wx, 18); ctx.lineTo(wx * 1.05, 42 + Math.random() * 10); ctx.stroke();
+            }
+            ctx.restore();
+          }
           if (isSuper) {
-            // Actual F-14A Belly/Underside (4x AIM-54 Phoenix tunnel!) with subtle 4G stunt wing-rock
+            // Actual F-14A Belly/Underside (4x AIM-54 Phoenix tunnel!) with subtle 4G stunt wing-rock + fast golden halo
             ctx.rotate(Math.sin(state.time * 7.0) * 0.12);
-            ctx.filter = 'brightness(1.08) contrast(1.08) drop-shadow(0 0 12px #fde047)';
-          } else if (damageRatio > 0.65) {
-            ctx.filter = 'brightness(0.84) contrast(1.15) saturate(0.85)';
-          } else if (damageRatio > 0.32) {
-            ctx.filter = 'brightness(0.93) contrast(1.06)';
+            ctx.fillStyle = 'rgba(253, 224, 71, 0.22)';
+            ctx.beginPath(); ctx.arc(0, 0, sh * 0.56, 0, Math.PI * 2); ctx.fill();
           }
           ctx.drawImage(im, -sw / 2, -sh / 2, sw, sh);
-          ctx.filter = 'none';
 
           // Progressive Battle Damage Decals (Player F-14 only; wingmen pass damageRatio = 0)
           if (!isSuper && damageRatio > 0.28) {
@@ -2955,7 +3689,7 @@
           ctx.textAlign = 'center';
           ctx.fillStyle = '#fde047';
           ctx.shadowBlur = 8; ctx.shadowColor = '#000';
-          ctx.fillText('★ INVERTED ★', x, y + 48);
+          ctx.fillText(ac.superTag || '★ INVERTED ★', x, y + 48);
           ctx.restore();
         }
       }
@@ -2998,38 +3732,39 @@
           ctx.fill();
         }
 
+        let drawIm = null, drawW = 0, drawH = 0;
         if (e.type === 'boss' && e.bossCfg && spriteReady(e.bossCfg.sprite)) {
-          const im = SPRITES[e.bossCfg.sprite];
-          const sz = e.bossCfg.drawSize || 130;
-          const w = sz * (im.naturalWidth / Math.max(1, im.naturalHeight));
-          if (e.hitFlash > 0) ctx.filter = 'brightness(2.6) contrast(1.3)';
-          else if (e.bossKey === 'kirov') ctx.filter = 'hue-rotate(15deg) contrast(1.12)';
-          else if (e.bossKey === 'redOctober') ctx.filter = 'hue-rotate(-25deg) brightness(0.9) drop-shadow(0 0 8px #f43f5e)';
-          else if (e.bossKey === 'kremlin86') ctx.filter = 'hue-rotate(-22deg) contrast(1.18) drop-shadow(0 0 8px #f43f5e)';
-          ctx.drawImage(im, -w / 2, -sz / 2, w, sz);
-          ctx.filter = 'none';
+          drawIm = SPRITES[e.bossCfg.sprite];
+          drawH = e.bossCfg.drawSize || 130;
+          drawW = drawH * (drawIm.naturalWidth / Math.max(1, drawIm.naturalHeight));
+          if (e.bossKey === 'redOctober' || e.bossKey === 'kremlin86') {
+            ctx.fillStyle = 'rgba(244, 63, 94, 0.20)';
+            ctx.beginPath(); ctx.arc(0, 0, drawH * 0.48, 0, Math.PI * 2); ctx.fill();
+          }
         } else if ((e.type === 'bmp' || e.type === 'tank' || e.type === 'frigate') && spriteReady(e.type)) {
-          const im = SPRITES[e.type];
-          const h = e.type === 'frigate' ? 96 : (e.type === 'tank' ? 68 : 60);
-          const w = h * (im.naturalWidth / Math.max(1, im.naturalHeight));
-          if (e.hitFlash > 0) ctx.filter = 'brightness(2.8)';
-          ctx.drawImage(im, -w / 2, -h / 2, w, h);
-          ctx.filter = 'none';
+          drawIm = SPRITES[e.type];
+          drawH = e.type === 'frigate' ? 96 : (e.type === 'tank' ? 68 : 60);
+          drawW = drawH * (drawIm.naturalWidth / Math.max(1, drawIm.naturalHeight));
         } else if ((e.type === 'boss' || e.type === 'bomber') && spriteReady('boss')) {
-          const im = SPRITES.boss;
-          const sz = e.type === 'boss' ? 106 : 64;
-          if (e.hitFlash > 0) ctx.filter = 'brightness(2.8) contrast(1.4)';
-          else if (e.type === 'bomber') ctx.filter = 'hue-rotate(-18deg) brightness(0.92)';
-          ctx.drawImage(im, -sz / 2, -sz / 2, sz, sz);
-          ctx.filter = 'none';
+          drawIm = SPRITES.boss;
+          drawH = e.type === 'boss' ? 106 : 64;
+          drawW = drawH;
         } else if (spriteReady('mig28')) {
-          const im = SPRITES.mig28;
-          const h = e.type === 'scout' ? 44 : (e.type === 'ace' ? 58 : 52);
-          const w = h * (im.naturalWidth / im.naturalHeight);
-          if (e.hitFlash > 0) ctx.filter = 'brightness(3.0)';
-          else if (e.type === 'ace') ctx.filter = 'drop-shadow(0 0 6px #facc15) brightness(1.15)';
-          ctx.drawImage(im, -w / 2, -h / 2, w, h);
-          ctx.filter = 'none';
+          drawIm = SPRITES.mig28;
+          drawH = e.type === 'scout' ? 44 : (e.type === 'ace' ? 58 : 52);
+          drawW = drawH * (drawIm.naturalWidth / Math.max(1, drawIm.naturalHeight));
+          if (e.type === 'ace') {
+            ctx.fillStyle = 'rgba(250, 204, 21, 0.24)';
+            ctx.beginPath(); ctx.arc(0, 0, drawH * 0.45, 0, Math.PI * 2); ctx.fill();
+          }
+        }
+        if (drawIm) {
+          ctx.drawImage(drawIm, -drawW / 2, -drawH / 2, drawW, drawH);
+          if (e.hitFlash > 0) {
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.globalAlpha = alpha * 0.65;
+            ctx.drawImage(drawIm, -drawW / 2, -drawH / 2, drawW, drawH);
+          }
         }
         ctx.restore();
 
@@ -3138,7 +3873,7 @@
         }
 
         // Subtle Nautical Threat Ring Markers centered on USS Enterprise (0, 0)
-        [5 * 140, 14 * 140, 26 * 140, 42 * 140].forEach((rad, idx) => {
+        [3.5 * 140, 12 * 140, 30 * 140, 68 * 140].forEach((rad, idx) => {
           const cols = ['rgba(74,222,128,0.16)', 'rgba(56,189,248,0.15)', 'rgba(250,204,21,0.16)', 'rgba(244,63,94,0.2)'];
           ctx.strokeStyle = cols[idx];
           ctx.setLineDash([14, 14]); ctx.lineWidth = 2;
@@ -3340,13 +4075,15 @@
         else if (planeIdx < p.plane) alpha = 0.30;
         else if (planeIdx > p.plane) alpha = 0.22;
 
+        const cullX = W * 0.62 + 90;
+        const cullY = H * 0.62 + 90;
+        const camX = state.camX, camY = state.camY;
+
         for (const g of state.pickups) {
-          if (g.plane !== planeIdx) continue;
-          ctx.save(); ctx.globalAlpha = Math.min(1, alpha + 0.38); ctx.translate(g.x, g.y);
-          const bob = Math.sin(state.time * 5 + g.x) * 2;
-          ctx.translate(0, bob);
+          if (g.plane !== planeIdx || Math.abs(g.x - camX) > cullX || Math.abs(g.y - camY) > cullY) continue;
+          ctx.save(); ctx.globalAlpha = Math.min(1, alpha + 0.38); ctx.translate(g.x, g.y + Math.sin(state.time * 5 + g.x) * 2);
           if (g.kind === 'emblem') {
-            ctx.shadowBlur = 14; ctx.shadowColor = '#f59e0b';
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.25)'; ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#fde047'; ctx.strokeStyle = '#92400e'; ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(-16, -2); ctx.lineTo(-4, -6); ctx.lineTo(0, -10); ctx.lineTo(4, -6); ctx.lineTo(16, -2);
@@ -3354,12 +4091,12 @@
             ctx.closePath(); ctx.fill(); ctx.stroke();
             ctx.fillStyle = '#1e3a8a'; ctx.beginPath(); ctx.arc(0, -1, 3.2, 0, Math.PI * 2); ctx.fill();
           } else if (g.kind === 'credit') {
-            ctx.shadowBlur = 8; ctx.shadowColor = '#facc15';
+            ctx.fillStyle = 'rgba(250, 204, 21, 0.24)'; ctx.beginPath(); ctx.arc(0, 0, g.r + 5, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#1e3a8a'; ctx.strokeStyle = '#fde047'; ctx.lineWidth = 2.2;
             ctx.beginPath(); ctx.arc(0, 0, g.r + 1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
             ctx.fillStyle = '#fde047'; ctx.font = '900 8px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('★', 0, 3);
           } else if (g.kind === 'intel') {
-            ctx.shadowBlur = 10; ctx.shadowColor = '#f97316';
+            ctx.fillStyle = 'rgba(249, 115, 22, 0.24)'; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#ea580c'; ctx.strokeStyle = '#fed7aa'; ctx.lineWidth = 1.4;
             ctx.fillRect(-9, -6, 18, 12); ctx.strokeRect(-9, -6, 18, 12);
             ctx.fillStyle = '#0f172a'; ctx.fillRect(-6, -3, 12, 6);
@@ -3367,66 +4104,74 @@
             ctx.beginPath(); ctx.arc(5, -3, 2, 0, Math.PI * 2); ctx.fill();
           } else if (g.kind === 'part') {
             ctx.rotate(state.time * 2.2);
-            ctx.shadowBlur = 10; ctx.shadowColor = '#c084fc';
+            ctx.fillStyle = 'rgba(192, 132, 252, 0.24)'; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#a855f7'; ctx.strokeStyle = '#f3e8ff'; ctx.lineWidth = 1.2;
             for (let t = 0; t < 6; t++) { ctx.rotate(Math.PI / 3); ctx.fillRect(-2.5, -10, 5, 20); }
             ctx.beginPath(); ctx.arc(0, 0, 6.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
             ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI * 2); ctx.fill();
           } else {
             ctx.fillStyle = '#94a3b8'; ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.roundRect(-6, -7, 7, 11, 3); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#cbd5e1';
-            ctx.beginPath(); ctx.roundRect(-1, -4, 7, 11, 3); ctx.fill(); ctx.stroke();
+            ctx.fillRect(-6, -7, 7, 11); ctx.strokeRect(-6, -7, 7, 11);
+            ctx.fillStyle = '#cbd5e1'; ctx.fillRect(-1, -4, 7, 11); ctx.strokeRect(-1, -4, 7, 11);
             ctx.fillStyle = '#38bdf8'; ctx.fillRect(1, -1, 3, 2);
           }
           ctx.restore();
         }
 
+        ctx.save();
+        ctx.lineWidth = 3;
         for (const sw of state.shockwaves) {
-          if (sw.plane !== planeIdx) continue;
-          ctx.save(); ctx.globalAlpha = (sw.life / sw.maxLife) * alpha;
-          ctx.strokeStyle = sw.color; ctx.lineWidth = 3;
-          ctx.beginPath(); ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+          if (sw.plane !== planeIdx || Math.abs(sw.x - camX) > cullX + sw.r || Math.abs(sw.y - camY) > cullY + sw.r) continue;
+          ctx.globalAlpha = Math.max(0, (sw.life / sw.maxLife) * alpha);
+          ctx.strokeStyle = sw.color;
+          ctx.beginPath(); ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2); ctx.stroke();
         }
+        ctx.restore();
 
         for (const e of state.enemies) {
-          if (e.plane !== planeIdx) continue;
-          ctx.save(); ctx.globalAlpha = 0.24 * alpha; ctx.fillStyle = '#020617';
-          ctx.beginPath(); ctx.ellipse(e.x + 14, e.y + 16, e.r * scale * 0.8, e.r * scale * 0.6, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          if (e.plane !== planeIdx || Math.abs(e.x - camX) > cullX + 120 || Math.abs(e.y - camY) > cullY + 120) continue;
+          if (!e.isSurface) {
+            ctx.save(); ctx.globalAlpha = 0.24 * alpha; ctx.fillStyle = '#020617';
+            ctx.beginPath(); ctx.ellipse(e.x + 14, e.y + 16, e.r * scale * 0.8, e.r * scale * 0.6, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          }
           drawMiG28(e, alpha, scale);
         }
 
+        ctx.save();
+        const ebAlpha = (!p.superActive && planeIdx === p.plane) ? 1.0 : 0.25;
+        ctx.globalAlpha = ebAlpha;
         for (const b of state.enemyBullets) {
-          if (b.plane !== planeIdx) continue;
-          ctx.save(); ctx.globalAlpha = (!p.superActive && planeIdx === p.plane) ? 1.0 : 0.25;
-          ctx.fillStyle = b.color; ctx.beginPath(); ctx.arc(b.x, b.y, b.r * scale, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(b.x, b.y, b.r * scale * 0.45, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          if (b.plane !== planeIdx || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
+          const rr = b.r * scale;
+          ctx.fillStyle = b.color; ctx.beginPath(); ctx.arc(b.x, b.y, rr, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(b.x, b.y, rr * 0.45, 0, Math.PI * 2); ctx.fill();
         }
+        ctx.restore();
 
-        // Hitscan 20mm Vulcan Tracer Streaks (crisp muzzle flash + glowing beam!)
+        // Hitscan 20mm Vulcan Tracer Streaks (fast dual-stroke glow, zero shadowBlur!)
+        ctx.save();
+        ctx.lineCap = 'round';
         for (const tr of state.tracers) {
           if (tr.plane !== planeIdx) continue;
           const a = Math.max(0, tr.life / tr.maxLife);
-          ctx.save();
-          ctx.globalAlpha = a * alpha;
+          ctx.globalAlpha = a * alpha * 0.38;
           ctx.strokeStyle = tr.color;
-          ctx.lineWidth = tr.width * 2.2;
-          ctx.lineCap = 'round';
-          ctx.shadowBlur = 8; ctx.shadowColor = tr.color;
+          ctx.lineWidth = tr.width * 3.4;
           ctx.beginPath(); ctx.moveTo(tr.x1, tr.y1); ctx.lineTo(tr.x2, tr.y2); ctx.stroke();
-          // White-hot inner core
+          ctx.globalAlpha = a * alpha;
+          ctx.lineWidth = tr.width * 1.5;
+          ctx.beginPath(); ctx.moveTo(tr.x1, tr.y1); ctx.lineTo(tr.x2, tr.y2); ctx.stroke();
           ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = tr.width * 0.85;
+          ctx.lineWidth = tr.width * 0.75;
           ctx.beginPath(); ctx.moveTo(tr.x1, tr.y1); ctx.lineTo(tr.x2, tr.y2); ctx.stroke();
-          // Muzzle flash star
           ctx.fillStyle = '#fef9c3';
-          ctx.beginPath(); ctx.arc(tr.x1, tr.y1, 4.5 * a, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
+          ctx.beginPath(); ctx.arc(tr.x1, tr.y1, 4.2 * a, 0, Math.PI * 2); ctx.fill();
         }
+        ctx.restore();
 
-        // Actual 90s Pixel-Art Missiles (AIM-9 Sidewinder, AIM-7 Sparrow, AIM-54 Phoenix)!
+        // Actual 90s Pixel-Art Missiles (AIM-9 Sidewinder, AIM-7 Sparrow, AIM-54 Phoenix) — zero ctx.filter!
         for (const b of state.bullets) {
-          if (b.plane !== planeIdx) continue;
+          if (b.plane !== planeIdx || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
           ctx.save();
           ctx.globalAlpha = Math.min(1, alpha + 0.35);
           ctx.translate(b.x, b.y);
@@ -3439,9 +4184,11 @@
             const im = SPRITES[spKey];
             const mh = spKey === 'phoenix' ? 38 : (spKey === 'sparrow' ? 32 : 28);
             const mw = mh * (im.naturalWidth / Math.max(1, im.naturalHeight));
-            if (b.kind === 'superPhoenix') ctx.filter = 'brightness(1.25) drop-shadow(0 0 8px #fde047)';
+            if (b.kind === 'superPhoenix') {
+              ctx.fillStyle = 'rgba(253, 224, 71, 0.32)';
+              ctx.beginPath(); ctx.arc(0, 0, mh * 0.45, 0, Math.PI * 2); ctx.fill();
+            }
             ctx.drawImage(im, -mw / 2, -mh / 2, mw, mh);
-            ctx.filter = 'none';
           } else {
             ctx.fillStyle = b.color || '#fde047';
             ctx.beginPath(); ctx.arc(0, 0, b.r * 1.15, 0, Math.PI * 2); ctx.fill();
@@ -3449,11 +4196,20 @@
           ctx.restore();
         }
 
+        // Batched, frustum-culled particles (zero per-particle save/restore!)
+        ctx.save();
         for (const pt of state.particles) {
-          if (pt.plane !== planeIdx) continue;
-          ctx.save(); ctx.globalAlpha = Math.max(0, (pt.life / pt.maxLife) * alpha);
-          ctx.fillStyle = pt.color; ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          if (pt.plane !== planeIdx || Math.abs(pt.x - camX) > cullX || Math.abs(pt.y - camY) > cullY) continue;
+          ctx.globalAlpha = Math.max(0, (pt.life / pt.maxLife) * alpha);
+          ctx.fillStyle = pt.color;
+          if (pt.size <= 3.5) {
+            const d = pt.size * 2;
+            ctx.fillRect(pt.x - pt.size, pt.y - pt.size, d, d);
+          } else {
+            ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2); ctx.fill();
+          }
         }
+        ctx.restore();
 
         if (state.mode !== 'csar' && !p.superActive && Math.round(p.visualPlane) === planeIdx) drawPlayerFormationWorld();
       }
@@ -3476,7 +4232,7 @@
           }
         }
         const pDmgRatio = Math.max(0, Math.min(1, 1 - p.hp / Math.max(1, p.maxHp)));
-        drawF14Tomcat(p.x, p.y, p.heading, sc, p.bank, p.rollTimer, p.wingSweep, p.superActive, pDmgRatio);
+        drawF14Tomcat(p.x, p.y, p.heading, sc, p.bank, p.rollTimer, p.wingSweep, p.superActive, pDmgRatio, getSelectedAircraftCfg());
         ctx.strokeStyle = accent; ctx.globalAlpha = p.superActive ? 0.68 : 0.28; ctx.lineWidth = p.superActive ? 2.6 : 1.5;
         ctx.beginPath(); ctx.arc(p.x, p.y, 32 * sc, 0, Math.PI * 2); ctx.stroke();
         ctx.restore();
@@ -3491,7 +4247,12 @@
         let border = '#4ade80';
         let fg = '#bbf7d0';
 
-        if (state.trapProgress > 0) {
+        if (state.allBossesCleared) {
+          text = '☕ PERMISSION TO BUZZ THE TOWER — HIT AFTERBURNER (C) PAST BASE! ☕';
+          bg = 'rgba(120, 53, 15, 0.94)';
+          border = '#fde047';
+          fg = '#fef08a';
+        } else if (state.trapProgress > 0) {
           text = `⚓ TRAP NOW! CATCHING 3-WIRE... ${Math.round(state.trapProgress * 100)}%`;
           bg = 'rgba(5, 150, 105, 0.94)';
           border = '#fde047';
@@ -3564,10 +4325,232 @@
         ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(4, -7); ctx.lineTo(4, 7); ctx.closePath(); ctx.fill();
         ctx.restore();
 
-        ctx.font = '800 9px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#fde047';
-        ctx.fillText(`${distNM.toFixed(1)} NM`, 0, 33);
-        ctx.fillStyle = '#4ade80';
-        const cm = getCurrentMap(); ctx.fillText((cm.baseType === 'airbase' ? '★' : '⚓') + cm.baseShort, 0, -25);
+        if (state.allBossesCleared) {
+          // ☕ COFFEE CUP HOME INDICATOR FOR TOWER BUZZ!
+          ctx.font = '20px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('☕', 0, 1);
+          ctx.font = '900 9px Orbitron, sans-serif'; ctx.textBaseline = 'alphabetic';
+          ctx.fillStyle = '#fde047'; ctx.fillText(`${distNM.toFixed(1)} NM`, 0, 34);
+          ctx.fillStyle = '#fbbf24'; ctx.fillText('BUZZ TOWER!', 0, -26);
+        } else {
+          ctx.font = '800 9px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#fde047';
+          ctx.fillText(`${distNM.toFixed(1)} NM`, 0, 33);
+          ctx.fillStyle = '#4ade80';
+          const cm = getCurrentMap(); ctx.fillText((cm.baseType === 'airbase' ? '★' : '⚓') + cm.baseShort, 0, -25);
+        }
+        ctx.restore();
+      }
+
+      function drawBossGuidanceArrow() {
+        if (state.mode !== 'playing' || state.allBossesCleared) return;
+        const p = state.player;
+        const activeBoss = state.enemies.find(e => e.type === 'boss' && e.hp > 0);
+        if (!activeBoss) return;
+        const sx = W * 0.5 + (activeBoss.x - state.camX);
+        const sy = H * 0.5 + (activeBoss.y - state.camY);
+        if (sx > 60 && sx < W - 60 && sy > 60 && sy < H - 60) return;
+
+        const ang = Math.atan2(activeBoss.y - p.y, activeBoss.x - p.x);
+        const cosA = Math.cos(ang), sinA = Math.sin(ang);
+        const halfW = Math.max(80, W * 0.5 - 56);
+        const halfH = Math.max(80, H * 0.5 - 92);
+        const sc = Math.min(Math.abs(cosA) > 0.001 ? halfW / Math.abs(cosA) : 1e9, Math.abs(sinA) > 0.001 ? halfH / Math.abs(sinA) : 1e9);
+        const bx = W * 0.5 + cosA * sc, by = H * 0.5 + sinA * sc;
+        const bNM = (Math.hypot(activeBoss.x - p.x, activeBoss.y - p.y) / 140).toFixed(1);
+
+        ctx.save();
+        ctx.translate(bx, by);
+        ctx.fillStyle = 'rgba(136, 19, 55, 0.90)';
+        ctx.strokeStyle = '#fde047'; ctx.lineWidth = 2.2;
+        ctx.beginPath(); ctx.arc(0, 0, 20, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.save(); ctx.rotate(ang);
+        ctx.fillStyle = '#fde047';
+        ctx.beginPath(); ctx.moveTo(13, 0); ctx.lineTo(3, -6); ctx.lineTo(3, 6); ctx.closePath(); ctx.fill();
+        ctx.restore();
+        ctx.font = '800 8px Orbitron, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillStyle = '#fde047'; ctx.fillText(`★ BOSS ${bNM}NM`, 0, 32);
+        ctx.fillStyle = PLANE_CFG[activeBoss.plane].color;
+        ctx.fillText(activeBoss.plane === 0 ? 'HARD DECK' : 'ANGELS 20', 0, -24);
+        ctx.restore();
+      }
+
+      function drawTowerBuzzCutscene() {
+        const tb = state.towerBuzz;
+        if (!tb) return;
+        const t = tb.timer;
+        ctx.save();
+
+        // Dark vignette backdrop
+        ctx.fillStyle = 'rgba(2, 6, 23, 0.78)';
+        ctx.fillRect(0, 0, W, H);
+
+        // Center 16-bit Arcade Cutscene Frame (Control Tower Window)
+        const fw = Math.min(540, W - 32);
+        const fh = Math.min(320, H - 64);
+        const fx = (W - fw) * 0.5;
+        const fy = (H - fh) * 0.5;
+
+        ctx.save();
+        if (t >= 0.85 && t <= 1.85) {
+          const sh = (1.85 - t) * 14;
+          ctx.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
+        }
+
+        // Sunset sky outside tower glass
+        const sky = ctx.createLinearGradient(fx, fy, fx, fy + fh);
+        sky.addColorStop(0, '#0f172a');
+        sky.addColorStop(0.55, '#c2410c');
+        sky.addColorStop(1, '#fbbf24');
+        ctx.fillStyle = sky;
+        ctx.beginPath(); ctx.roundRect(fx, fy, fw, fh, 18); ctx.fill();
+        ctx.save();
+        ctx.beginPath(); ctx.roundRect(fx, fy, fw, fh, 18); ctx.clip();
+
+        // Swept-wing F-14A screaming past outside the tower window (0.75s -> 1.55s)!
+        if (t >= 0.72 && t <= 1.65) {
+          const prog = (t - 0.72) / 0.85;
+          const jx = fx - 120 + prog * (fw + 280);
+          const jy = fy + fh * 0.36;
+          // Roaring sonic afterburner trail
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.55)';
+          ctx.fillRect(fx, jy - 12, Math.max(0, jx - fx), 24);
+          ctx.fillStyle = 'rgba(254, 240, 138, 0.75)';
+          ctx.fillRect(fx, jy - 5, Math.max(0, jx - fx), 10);
+          ctx.save();
+          ctx.translate(jx, jy);
+          ctx.rotate(Math.PI / 2);
+          if (spriteReady('f14Swept')) {
+            ctx.drawImage(SPRITES.f14Swept, -46, -68, 92, 136);
+          } else if (spriteReady('f14')) {
+            ctx.drawImage(SPRITES.f14, -52, -56, 104, 112);
+          }
+          ctx.restore();
+        }
+
+        // Control tower window mullions & radar console desk
+        ctx.strokeStyle = '#334155'; ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(fx + fw * 0.33, fy); ctx.lineTo(fx + fw * 0.33, fy + fh); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx + fw * 0.67, fy); ctx.lineTo(fx + fw * 0.67, fy + fh); ctx.stroke();
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(fx, fy + fh * 0.74, fw, fh * 0.26);
+
+        // NAVY AIR BOSS IN KHAKIS!
+        const cx = fx + fw * 0.5;
+        const cy = fy + fh * 0.64;
+        const spilled = t >= 1.35;
+        const mad = t >= 2.2;
+
+        // Khaki Uniform Torso (#c8ad7f)
+        ctx.fillStyle = '#c8ad7f';
+        ctx.beginPath(); ctx.roundRect(cx - 46, cy - 10, 92, 76, 12); ctx.fill();
+        ctx.strokeStyle = '#785a32'; ctx.lineWidth = 2.5; ctx.stroke();
+        // Khaki shirt pockets & black Navy tie
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath(); ctx.moveTo(cx - 7, cy - 10); ctx.lineTo(cx + 7, cy - 10); ctx.lineTo(cx + 4, cy + 44); ctx.lineTo(cx, cy + 52); ctx.lineTo(cx - 4, cy + 44); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = '#927245'; ctx.lineWidth = 2;
+        ctx.strokeRect(cx - 36, cy + 12, 22, 18);
+        ctx.strokeRect(cx + 14, cy + 12, 22, 18);
+        // Gold collar rank bars
+        ctx.fillStyle = '#facc15'; ctx.fillRect(cx - 18, cy - 6, 8, 4); ctx.fillRect(cx + 10, cy - 6, 8, 4);
+
+        // HOT COFFEE STAIN SPREADING ON KHAKIS!
+        if (spilled) {
+          const stain = Math.min(1, (t - 1.35) / 0.5);
+          ctx.fillStyle = 'rgba(78, 42, 16, 0.88)';
+          ctx.beginPath(); ctx.ellipse(cx + 6, cy + 20, 26 * stain, 32 * stain, 0.2, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.ellipse(cx - 18, cy + 32, 14 * stain, 18 * stain, -0.3, 0, Math.PI * 2); ctx.fill();
+          if (t < 2.35) {
+            const sp = (t - 1.35);
+            ctx.fillStyle = '#451a03';
+            for (let d = 0; d < 9; d++) {
+              const da = -Math.PI * 0.85 + d * 0.24;
+              const dx = cx + Math.cos(da) * (25 + sp * 95);
+              const dy = cy - 15 + Math.sin(da) * (25 + sp * 75) + sp * sp * 80;
+              ctx.beginPath(); ctx.arc(dx, dy, 4.5, 0, Math.PI * 2); ctx.fill();
+            }
+          }
+        }
+
+        // Head (turns bright angry red when mad!)
+        ctx.fillStyle = mad ? '#ef4444' : '#f1c29b';
+        ctx.beginPath(); ctx.arc(cx, cy - 38, 28, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#7c2d12'; ctx.lineWidth = 2; ctx.stroke();
+
+        // Steam shooting out of ears when furious!
+        if (mad) {
+          const puff = ((t * 5) % 1);
+          ctx.fillStyle = `rgba(248, 250, 252, ${(1 - puff) * 0.9})`;
+          ctx.beginPath(); ctx.arc(cx - 34 - puff * 26, cy - 42 - puff * 10, 7 + puff * 8, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx + 34 + puff * 26, cy - 42 - puff * 10, 7 + puff * 8, 0, Math.PI * 2); ctx.fill();
+        }
+
+        // Khaki Navy Officer Garrison Cap
+        ctx.fillStyle = '#b89a67';
+        ctx.beginPath(); ctx.roundRect(cx - 30, cy - 72, 60, 18, 6); ctx.fill();
+        ctx.fillStyle = '#0f172a'; ctx.fillRect(cx - 28, cy - 56, 56, 5);
+        ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.arc(cx, cy - 63, 4, 0, Math.PI * 2); ctx.fill();
+
+        // Eyes & Eyebrows & Mouth (calm -> shocked -> furious!)
+        ctx.fillStyle = '#0f172a';
+        if (!spilled) {
+          ctx.beginPath(); ctx.arc(cx - 10, cy - 40, 3, 0, Math.PI * 2); ctx.arc(cx + 10, cy - 40, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx, cy - 28, 7, 0.1, Math.PI - 0.1); ctx.stroke();
+        } else if (!mad) {
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.arc(cx - 10, cy - 40, 6, 0, Math.PI * 2); ctx.arc(cx + 10, cy - 40, 6, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath(); ctx.arc(cx - 10, cy - 40, 2.5, 0, Math.PI * 2); ctx.arc(cx + 10, cy - 40, 2.5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx, cy - 24, 7, 0, Math.PI * 2); ctx.fill();
+        } else {
+          ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 3.5;
+          ctx.beginPath(); ctx.moveTo(cx - 18, cy - 48); ctx.lineTo(cx - 5, cy - 42); ctx.moveTo(cx + 18, cy - 48); ctx.lineTo(cx + 5, cy - 42); ctx.stroke();
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath(); ctx.arc(cx - 10, cy - 39, 3, 0, Math.PI * 2); ctx.arc(cx + 10, cy - 39, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#7f1d1d';
+          ctx.beginPath(); ctx.roundRect(cx - 12, cy - 28, 24, 12, 4); ctx.fill();
+        }
+
+        // White USN Coffee Mug (held calmly -> tumbling in the air!)
+        const mugX = !spilled ? cx + 36 : cx + 52 + (t - 1.35) * 45;
+        const mugY = !spilled ? cy - 16 : cy - 26 - Math.sin(Math.min(1, (t - 1.35) * 1.4) * Math.PI) * 55 + (t - 1.35) * 28;
+        ctx.save();
+        ctx.translate(mugX, mugY);
+        if (spilled) ctx.rotate((t - 1.35) * 6.5);
+        ctx.fillStyle = '#f8fafc'; ctx.strokeStyle = '#475569'; ctx.lineWidth = 2;
+        ctx.fillRect(-10, -12, 20, 24); ctx.strokeRect(-10, -12, 20, 24);
+        ctx.beginPath(); ctx.arc(10, 0, 6, -Math.PI * 0.5, Math.PI * 0.5); ctx.stroke();
+        ctx.fillStyle = '#0ea5e9'; ctx.font = '800 6px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('USN', 0, 2);
+        ctx.restore();
+
+        // Angry Shaking Fists!
+        if (mad) {
+          const shake = Math.sin(t * 36) * 5;
+          ctx.fillStyle = '#ef4444'; ctx.strokeStyle = '#7c2d12'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(cx - 56, cy - 18 + shake, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          ctx.beginPath(); ctx.arc(cx + 56, cy - 18 - shake, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        }
+
+        // Arcade Speech Bubble!
+        if (t >= 1.75) {
+          const line1 = mad ? `"I WANT SOME BUTTS!!"` : `"WHOA!! MY COFFEE!!"`;
+          const line2 = mad ? `DAMMIT ${tb.callsign} — MY KHAKIS!!` : `NEGATIVE, GHOST RIDER!`;
+          ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.roundRect(fx + 28, fy + 16, fw - 56, 54, 12); ctx.fill(); ctx.stroke();
+          ctx.font = '900 15px Orbitron, sans-serif'; ctx.fillStyle = mad ? '#dc2626' : '#0f172a'; ctx.textAlign = 'center';
+          ctx.fillText(line1, cx, fy + 39);
+          ctx.font = '800 10px Orbitron, sans-serif'; ctx.fillStyle = '#334155';
+          ctx.fillText(line2, cx, fy + 58);
+        }
+
+        ctx.restore(); // end clip
+
+        // Gold Arcade Cutscene Frame Border
+        ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.roundRect(fx, fy, fw, fh, 18); ctx.stroke();
+
+        ctx.font = '900 12px Orbitron, sans-serif'; ctx.fillStyle = '#fde047'; ctx.textAlign = 'center';
+        ctx.fillText('★ TOWER BUZZED — THEATER CLEARED! ★', W * 0.5, fy + fh + 24);
+        ctx.restore();
         ctx.restore();
       }
 
@@ -3617,10 +4600,8 @@
             const ox = cx + (hash % 140);
             const oy = cy + ((hash * 1.7) % 140);
             const cr = 75 + Math.abs(hash % 55);
-            const grad = ctx.createRadialGradient(ox, oy, cr * 0.1, ox, oy, cr);
-            grad.addColorStop(0, p.superActive ? 'rgba(251, 146, 60, 0.24)' : 'rgba(224, 242, 254, 0.22)');
-            grad.addColorStop(1, 'rgba(224, 242, 254, 0)');
-            ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(ox, oy, cr, 0, Math.PI * 2); ctx.fill();
+            const cloudImg = p.superActive ? FXCache.cloudSuper : FXCache.cloudNormal;
+            ctx.drawImage(cloudImg, ox - cr, oy - cr, cr * 2, cr * 2);
           }
         }
 
@@ -3686,6 +4667,7 @@
 
         // Always-on Home Bearing Beacon back to home base
         drawCarrierHomeBeacon(distNM);
+        drawBossGuidanceArrow();
         drawGlideslopeHudCue(distNM);
         // Escalating BINGO FUEL Warning (starts at <= 10%, flashes faster as it nears 0%)
         if (state.mode === 'playing' && !p.superActive && p.fuel <= 10 && p.fuel > 0) {
@@ -3739,6 +4721,9 @@
           ctx.restore();
         }
 
+        if (state.mode === 'towerBuzz') {
+          drawTowerBuzzCutscene();
+        }
         ctx.restore();
       }
 
@@ -3747,7 +4732,7 @@
       // ============================================================
       function startGame() {
         AudioFX.unlock();
-        AudioFX.resetMusic();
+        AudioFX.playTrack(getCurrentMap().theme, true);
         AudioFX.catapult();
         state = createInitialState('playing');
         titleOverlay.classList.add('hidden');
@@ -3829,11 +4814,17 @@
       document.getElementById('restartBtn').addEventListener('click', startGame);
       document.getElementById('restartFromPauseBtn').addEventListener('click', startGame);
       document.getElementById('launchFromHangarBtn').addEventListener('click', startGame);
-      document.getElementById('openHangarTitleBtn').addEventListener('click', () => { AudioFX.unlock(); openHangar(null); });
-      document.getElementById('openHangarGoBtn').addEventListener('click', () => { AudioFX.unlock(); openHangar(null); });
+      document.getElementById('openHangarTitleBtn').addEventListener('click', () => { AudioFX.unlock(); AudioFX.playTrack('menu', false); openHangar(null); });
+      document.getElementById('openHangarGoBtn').addEventListener('click', () => { AudioFX.unlock(); AudioFX.playTrack('menu', false); openHangar(null); });
       document.getElementById('closeHangarBtn').addEventListener('click', () => {
         hangarOverlay.classList.add('hidden'); hangarOverlay.classList.remove('flex');
-        state = createInitialState('title'); titleOverlay.classList.remove('hidden');
+        state = createInitialState('title'); titleOverlay.classList.remove('hidden'); titleOverlay.classList.add('flex');
+        AudioFX.playTrack('menu', false);
+      });
+      // Start Main Menu theme gently on first user click/tap on Title Screen
+      titleOverlay.addEventListener('pointerdown', () => {
+        AudioFX.unlock();
+        if (state && state.mode === 'title') AudioFX.playTrack('menu', false);
       });
       document.getElementById('sellIntelBtn').addEventListener('click', () => {
         if (profile.intel <= 0) return;
@@ -3851,6 +4842,336 @@
 
       window.addEventListener('resize', resizeCanvas);
 
+      let selectedCustomHelmet = 'maverick';
+
+      function renderHelmetPicker() {
+        const picker = document.getElementById('customHelmetPicker');
+        if (!picker) return;
+        picker.innerHTML = '';
+        ['maverick', 'iceman', 'viper', 'hollywood'].forEach(hk => {
+          const active = hk === selectedCustomHelmet;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `rounded-xl p-1.5 border flex flex-col items-center gap-1 transition cursor-pointer ${
+            active ? 'bg-amber-500/25 border-amber-300 shadow-md' : 'bg-slate-900/90 border-slate-700 hover:border-sky-400'
+          }`;
+          btn.innerHTML = `<img src="${PORTRAIT_URLS[hk]}" alt="${hk}" class="w-12 h-12 object-contain" />`;
+          btn.addEventListener('click', () => { selectedCustomHelmet = hk; renderHelmetPicker(); });
+          picker.appendChild(btn);
+        });
+      }
+
+      function renderPilotSelector() {
+        const roster = document.getElementById('pilotRosterCards');
+        const summary = document.getElementById('selectedPilotSummary');
+        const cur = getSelectedPilotCfg();
+        const curData = getSelectedPilotData();
+
+        // Update Title Screen Active Pilot Badge
+        const activeIcon = document.getElementById('activePilotIcon');
+        const activeName = document.getElementById('activePilotName');
+        const activeLvl  = document.getElementById('activePilotLvl');
+        const perkLine   = document.getElementById('pilotPerkLine');
+        if (activeIcon) activeIcon.src = PORTRAIT_URLS[cur.helmet] || PORTRAIT_URLS.maverick;
+        if (activeName) activeName.textContent = cur.callsign;
+        if (activeLvl)  activeLvl.textContent = `LV.${curData.level}`;
+        if (perkLine)   perkLine.textContent = `${cur.perk} • +${Math.max(0, curData.level - 1) * 3}% Career Dmg`;
+
+        if (!roster) return;
+        roster.innerHTML = '';
+        getAllPilots().forEach((pl) => {
+          const active = pl.id === profileStore.selectedPilot;
+          const pd = profileStore.profiles[pl.id] || defaultPilotRecord();
+          const xpPct = Math.min(100, Math.round((pd.xp / Math.max(1, pd.xpNext)) * 100));
+          const clears = Object.keys(pd.clearedMaps || {}).length;
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = `rounded-xl p-2.5 text-center border font-arcade transition cursor-pointer flex flex-col items-center ${
+            active
+              ? 'bg-sky-500/25 text-white border-amber-300 shadow-lg shadow-sky-500/20'
+              : 'bg-slate-950/85 text-slate-300 border-slate-700 hover:border-sky-400'
+          }`;
+          card.innerHTML = `
+            <div class="w-16 h-16 rounded-xl bg-slate-900/90 border border-slate-700/80 flex items-center justify-center mb-1.5 overflow-hidden">
+              <img src="${PORTRAIT_URLS[pl.helmet] || PORTRAIT_URLS.maverick}" alt="${pl.callsign}" class="w-14 h-14 object-contain" />
+            </div>
+            <div class="text-[11px] font-black text-white truncate w-full">${pl.callsign}</div>
+            <div class="text-[9px] text-amber-300 font-bold">LV.${pd.level} • ${pl.title}</div>
+            <div class="text-[8px] text-slate-400 mt-0.5">🪙${pd.credits} • ${clears}/6 CLEARS</div>
+            <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden mt-1.5">
+              <div class="h-full bg-amber-400" style="width:${xpPct}%"></div>
+            </div>
+          `;
+          card.addEventListener('click', () => {
+            AudioFX.unlock();
+            switchActivePilot(pl.id);
+          });
+          roster.appendChild(card);
+        });
+        if (summary) summary.textContent = `ACTIVE: ${cur.callsign} (LV.${curData.level}) • ${cur.perk}`;
+      }
+
+      // Wire Splash 1 -> Splash 2 -> Title Screen flow!
+      const splashOverlay = document.getElementById('splashOverlay');
+      const pilotSelectOverlay = document.getElementById('pilotSelectOverlay');
+      const createPilotBox = document.getElementById('createPilotBox');
+
+      function dismissSplashToPilotSelect() {
+        if (!splashOverlay || splashOverlay.classList.contains('hidden')) return;
+        AudioFX.unlock();
+        AudioFX.playTrack('menu', false);
+        splashOverlay.classList.add('hidden');
+        pilotSelectOverlay.classList.remove('hidden');
+        pilotSelectOverlay.classList.add('flex');
+        renderPilotSelector();
+        renderHelmetPicker();
+      }
+      if (splashOverlay) {
+        splashOverlay.addEventListener('click', dismissSplashToPilotSelect);
+      }
+      window.addEventListener('keydown', () => {
+        if (splashOverlay && !splashOverlay.classList.contains('hidden')) dismissSplashToPilotSelect();
+      });
+
+      const aircraftSelectOverlay = document.getElementById('aircraftSelectOverlay');
+      const confirmPilotBtn = document.getElementById('confirmPilotBtn');
+      if (confirmPilotBtn) {
+        confirmPilotBtn.addEventListener('click', () => {
+          AudioFX.unlock();
+          AudioFX.playTrack('menu', false);
+          pilotSelectOverlay.classList.add('hidden');
+          pilotSelectOverlay.classList.remove('flex');
+          aircraftSelectOverlay.classList.remove('hidden');
+          aircraftSelectOverlay.classList.add('flex');
+          renderAircraftBayUI();
+        });
+      }
+      const backToPilotSelectBtn = document.getElementById('backToPilotSelectBtn');
+      if (backToPilotSelectBtn) {
+        backToPilotSelectBtn.addEventListener('click', () => {
+          aircraftSelectOverlay.classList.add('hidden');
+          aircraftSelectOverlay.classList.remove('flex');
+          pilotSelectOverlay.classList.remove('hidden');
+          pilotSelectOverlay.classList.add('flex');
+          renderPilotSelector();
+        });
+      }
+      const confirmAircraftBtn = document.getElementById('confirmAircraftBtn');
+      if (confirmAircraftBtn) {
+        confirmAircraftBtn.addEventListener('click', () => {
+          AudioFX.unlock();
+          aircraftSelectOverlay.classList.add('hidden');
+          aircraftSelectOverlay.classList.remove('flex');
+          titleOverlay.classList.remove('hidden');
+          titleOverlay.classList.add('flex');
+          renderAircraftBayUI();
+          renderMapSelector();
+          refreshRecordLine();
+        });
+      }
+
+      const switchPilotBtn = document.getElementById('switchPilotBtn');
+      if (switchPilotBtn) {
+        switchPilotBtn.addEventListener('click', () => {
+          titleOverlay.classList.add('hidden');
+          titleOverlay.classList.remove('flex');
+          pilotSelectOverlay.classList.remove('hidden');
+          pilotSelectOverlay.classList.add('flex');
+          renderPilotSelector();
+        });
+      }
+
+      const toggleCreatePilotBtn = document.getElementById('toggleCreatePilotBtn');
+      const cancelCreatePilotBtn = document.getElementById('cancelCreatePilotBtn');
+      const confirmCreatePilotBtn = document.getElementById('confirmCreatePilotBtn');
+      if (toggleCreatePilotBtn && createPilotBox) {
+        toggleCreatePilotBtn.addEventListener('click', () => {
+          createPilotBox.classList.toggle('hidden');
+          renderHelmetPicker();
+        });
+      }
+      if (cancelCreatePilotBtn && createPilotBox) {
+        cancelCreatePilotBtn.addEventListener('click', () => createPilotBox.classList.add('hidden'));
+      }
+      if (confirmCreatePilotBtn) {
+        confirmCreatePilotBtn.addEventListener('click', () => {
+          const inp = document.getElementById('customCallsignInput');
+          const sel = document.getElementById('customSpecialtySelect');
+          const rawName = (inp ? inp.value : '').trim().toUpperCase().replace(/[^A-Z0-9 _\-]/g, '').slice(0, 12);
+          if (!rawName) { if (inp) inp.focus(); return; }
+          const id = 'custom_' + rawName.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now().toString(36).slice(-4);
+          profileStore.customPilots.push({
+            id, callsign: rawName, helmet: selectedCustomHelmet,
+            specialty: sel ? sel.value : 'hotshot'
+          });
+          profileStore.profiles[id] = defaultPilotRecord();
+          if (inp) inp.value = '';
+          createPilotBox.classList.add('hidden');
+          switchActivePilot(id);
+          AudioFX.levelUp();
+        });
+      }
+
+      function renderAircraftBayUI() {
+        const owned = getOwnedAircraft();
+        const curAc = getSelectedAircraftCfg();
+        const curPl = getSelectedPilotCfg();
+        const activeSyn = getPilotAircraftSynergy(curPl, curAc);
+        const roleLine = document.getElementById('aircraftRoleLine');
+        if (roleLine) roleLine.textContent = activeSyn ? `${activeSyn.name} (${curAc.short})` : `${curAc.name} • ${curAc.role}`;
+
+        // 0. Splash Screen 3 Aircraft Select Cards!
+        const splashCards = document.getElementById('splashAircraftCards');
+        const acPilotIcon = document.getElementById('acPilotIcon');
+        const acPilotLabel = document.getElementById('acPilotLabel');
+        const synStatus = document.getElementById('splashSynergyStatus');
+        if (acPilotIcon) acPilotIcon.src = PORTRAIT_URLS[curPl.helmet] || PORTRAIT_URLS.maverick;
+        if (acPilotLabel) acPilotLabel.textContent = `${curPl.callsign} • 🪙${profile.credits} CR`;
+        if (synStatus) synStatus.textContent = activeSyn ? `${activeSyn.name}: ${activeSyn.desc}` : `${curAc.name} READY FOR LAUNCH`;
+
+        if (splashCards) {
+          splashCards.innerHTML = '';
+          AIRCRAFT.forEach(ac => {
+            const isOwned = owned.includes(ac.id);
+            const active = ac.id === curAc.id;
+            const canBuy = !isOwned && profile.credits >= ac.cost;
+            const syn = getPilotAircraftSynergy(curPl, ac);
+            const card = document.createElement('div');
+            card.className = `rounded-xl p-3 border flex flex-col justify-between gap-2 transition ${
+              active
+                ? 'bg-sky-500/20 border-amber-300 shadow-lg shadow-amber-400/15'
+                : (isOwned ? 'bg-slate-950/90 border-slate-700 hover:border-sky-400' : 'bg-slate-950/70 border-slate-800')
+            }`;
+            card.innerHTML = `
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="font-arcade text-[9px] font-black ${ac.roleColor}">${ac.role}</span>
+                  ${syn ? `<span class="font-arcade text-[8px] px-1.5 py-0.5 rounded bg-amber-400/25 text-amber-300 border border-amber-400/50 font-black">★ SYNERGY</span>` : ''}
+                </div>
+                <div class="w-full h-20 rounded-lg bg-slate-900/90 border border-slate-800 flex items-center justify-center mb-2">
+                  <img src="${SPRITE_URLS[ac.sprite]}" alt="${ac.name}" class="w-16 h-16 object-contain ${isOwned ? '' : 'opacity-45 grayscale'}" />
+                </div>
+                <div class="font-arcade text-xs font-black text-white">${ac.name}</div>
+                <p class="text-[10px] text-slate-300 leading-snug mt-1">${ac.desc}</p>
+                ${syn ? `<div class="mt-1.5 text-[9px] font-arcade text-amber-300 font-bold">${syn.name}: ${syn.desc}</div>` : ''}
+              </div>
+              <button type="button" class="w-full py-1.5 rounded-lg font-arcade text-[10px] font-black transition cursor-pointer ${
+                active
+                  ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/50'
+                  : (isOwned
+                      ? 'bg-sky-500 hover:bg-sky-400 text-slate-950'
+                      : (canBuy ? 'bg-amber-400 hover:bg-amber-300 text-slate-950' : 'bg-slate-800 text-slate-500 cursor-not-allowed'))
+              }">${active ? '✓ SELECTED' : (isOwned ? 'FLY THIS JET' : `UNLOCK UNIVERSAL • 🪙${ac.cost} CR`)}</button>
+            `;
+            const b = card.querySelector('button');
+            b.addEventListener('click', () => {
+              if (active) return;
+              if (isOwned) {
+                profile.selectedAircraft = ac.id;
+                saveProfile();
+                AudioFX.planeSwap(true);
+                renderAircraftBayUI();
+              } else if (canBuy) {
+                profile.credits -= ac.cost;
+                profileStore.ownedAircraft = [...owned, ac.id];
+                profile.selectedAircraft = ac.id;
+                saveProfile();
+                AudioFX.levelUp();
+                renderAircraftBayUI();
+              }
+            });
+            splashCards.appendChild(card);
+          });
+        }
+
+        // 1. Compact Title Screen Aircraft Bar
+        const titleGrid = document.getElementById('titleAircraftGrid');
+        if (titleGrid) {
+          titleGrid.innerHTML = '';
+          AIRCRAFT.forEach(ac => {
+            const isOwned = owned.includes(ac.id);
+            const active = ac.id === curAc.id;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `rounded-lg p-1.5 border font-arcade text-left transition cursor-pointer flex items-center gap-1.5 ${
+              active
+                ? 'bg-amber-400/25 border-amber-300 text-white shadow-md'
+                : (isOwned ? 'bg-slate-950/85 border-slate-700 text-slate-200 hover:border-sky-400' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-amber-500/50')
+            }`;
+            btn.innerHTML = `
+              <img src="${SPRITE_URLS[ac.sprite]}" alt="${ac.short}" class="w-7 h-7 object-contain shrink-0 ${isOwned ? '' : 'opacity-45 grayscale'}" />
+              <div class="min-w-0">
+                <div class="text-[9px] font-black truncate">${ac.short}</div>
+                <div class="text-[7px] ${isOwned ? ac.roleColor : 'text-amber-400'} truncate">${isOwned ? ac.role : `🔒 🪙${ac.cost}`}</div>
+              </div>
+            `;
+            btn.addEventListener('click', () => {
+              if (isOwned) {
+                profile.selectedAircraft = ac.id;
+                saveProfile();
+                renderAircraftBayUI();
+              } else {
+                AudioFX.unlock();
+                openHangar(null);
+              }
+            });
+            titleGrid.appendChild(btn);
+          });
+        }
+
+        // 2. Full Hangar Aircraft Bay Cards (Buy / Equip!)
+        const hangarGrid = document.getElementById('hangarAircraftGrid');
+        if (hangarGrid) {
+          hangarGrid.innerHTML = '';
+          AIRCRAFT.forEach(ac => {
+            const isOwned = owned.includes(ac.id);
+            const active = ac.id === curAc.id;
+            const canBuy = !isOwned && profile.credits >= ac.cost;
+            const card = document.createElement('div');
+            card.className = `rounded-xl p-2.5 border flex flex-col justify-between gap-2 ${
+              active ? 'bg-sky-950/60 border-amber-300 shadow-md' : 'bg-slate-950/85 border-slate-700/80'
+            }`;
+            card.innerHTML = `
+              <div class="flex items-center gap-2.5">
+                <div class="w-12 h-12 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center shrink-0">
+                  <img src="${SPRITE_URLS[ac.sprite]}" alt="${ac.name}" class="w-10 h-10 object-contain" />
+                </div>
+                <div class="min-w-0">
+                  <div class="font-arcade text-[11px] font-black text-white truncate">${ac.name}</div>
+                  <div class="font-arcade text-[8px] font-bold ${ac.roleColor}">${ac.role}</div>
+                  <div class="text-[10px] text-slate-300 leading-snug mt-0.5">${ac.desc}</div>
+                </div>
+              </div>
+              <button class="w-full py-1.5 rounded-lg font-arcade text-[10px] font-black transition cursor-pointer ${
+                active
+                  ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/50'
+                  : (isOwned
+                      ? 'bg-sky-500 hover:bg-sky-400 text-slate-950'
+                      : (canBuy ? 'bg-amber-400 hover:bg-amber-300 text-slate-950' : 'bg-slate-800 text-slate-500 cursor-not-allowed'))
+              }">${active ? '✓ EQUIPPED' : (isOwned ? 'SELECT AIRFRAME' : `BUY AIRFRAME • 🪙${ac.cost} CR`)}</button>
+            `;
+            const btn = card.querySelector('button');
+            btn.addEventListener('click', () => {
+              if (active) return;
+              if (isOwned) {
+                profile.selectedAircraft = ac.id;
+                saveProfile();
+                AudioFX.planeSwap(true);
+                renderAircraftBayUI();
+              } else if (canBuy) {
+                profile.credits -= ac.cost;
+                profileStore.ownedAircraft = [...owned, ac.id];
+                profile.selectedAircraft = ac.id;
+                saveProfile();
+                AudioFX.levelUp();
+                renderHangarUI();
+              }
+            });
+            hangarGrid.appendChild(card);
+          });
+        }
+      }
+
       function renderMapSelector() {
         const grid = document.getElementById('mapSelectorGrid');
         const desc = document.getElementById('mapDescLine');
@@ -3858,15 +5179,18 @@
         grid.innerHTML = '';
         MAPS.forEach((m, idx) => {
           const active = idx === selectedMapIdx;
+          const cleared = !!profile.clearedMaps[m.id];
           const btn = document.createElement('button');
           btn.className = `rounded-lg py-1.5 px-1 text-center border font-arcade text-[9px] font-black transition cursor-pointer ${
             active
               ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md'
-              : 'bg-slate-950/80 text-slate-300 border-slate-700 hover:border-sky-400'
+              : (cleared ? 'bg-emerald-950/80 text-emerald-200 border-emerald-500/60 hover:border-amber-300' : 'bg-slate-950/80 text-slate-300 border-slate-700 hover:border-sky-400')
           }`;
-          btn.innerHTML = `<div>M${m.num}</div><div class="text-[8px] opacity-85 truncate">${m.short}</div>`;
+          btn.innerHTML = `<div>${cleared ? '✓ ' : ''}M${m.num}</div><div class="text-[8px] opacity-85 truncate">${m.short}</div>`;
           btn.addEventListener('click', () => {
             selectedMapIdx = idx;
+            profile.currentCampaignIdx = idx;
+            saveProfile();
             renderMapSelector();
             if (state && state.mode === 'title') render();
           });
@@ -3877,6 +5201,8 @@
 
       window.onload = () => {
         resizeCanvas();
+        renderPilotSelector();
+        renderAircraftBayUI();
         renderMapSelector();
         state = createInitialState('title');
         refreshRecordLine();
