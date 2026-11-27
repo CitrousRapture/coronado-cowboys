@@ -369,6 +369,10 @@
       <button id="confirmPreflightBtn" type="button" class="btn-catapult w-full py-3 px-4 rounded-xl font-arcade text-xs font-black tracking-widest cursor-pointer transition">
         ✓ CONFIRM PREFLIGHT &amp; FUEL LOAD — TO CATAPULT 1 ▶
       </button>
+      <label class="mt-2.5 inline-flex items-center gap-2 text-[11px] text-slate-400 hover:text-slate-200 cursor-pointer select-none">
+        <input id="skipPreflightChk" type="checkbox" class="rounded border-slate-600 bg-slate-900 text-amber-400 cursor-pointer" />
+        <span>Skip Grape preflight check on future launches</span>
+      </label>
     </div>
   </div>
 
@@ -1292,22 +1296,46 @@
         }
 
         function playNoise(dur, vol = 0.16, freq = 260, bus = 'sfx') {
+          playSweepNoise(dur, vol, freq, Math.max(120, freq * 0.55), 'bandpass', 1.1, bus);
+        }
+        function playSweepNoise(dur, vol = 0.18, startFreq = 1600, endFreq = 320, filterType = 'lowpass', q = 1.0, bus = 'sfx', delay = 0) {
           if (muted || !ensureContext()) return;
-          const now = actx.currentTime;
-          const bufLen = Math.max(64, Math.floor(actx.sampleRate * dur));
+          const now = actx.currentTime + delay;
+          const bufLen = Math.max(128, Math.floor(actx.sampleRate * dur));
           const buffer = actx.createBuffer(1, bufLen, actx.sampleRate);
           const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufLen);
-          const src = actx.createBufferSource();
-          src.buffer = buffer;
+          for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1);
+          const srcNode = actx.createBufferSource();
+          srcNode.buffer = buffer;
           const filter = actx.createBiquadFilter();
-          filter.type = 'bandpass'; filter.frequency.setValueAtTime(freq, now);
+          filter.type = filterType;
+          filter.Q.value = q;
+          filter.frequency.setValueAtTime(Math.max(40, startFreq), now);
+          filter.frequency.exponentialRampToValueAtTime(Math.max(40, endFreq), now + dur);
           const gain = actx.createGain();
-          gain.gain.setValueAtTime(vol, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
-          src.connect(filter); filter.connect(gain);
+          const atk = Math.min(0.012, dur * 0.18);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.linearRampToValueAtTime(vol, now + atk);
+          gain.gain.exponentialRampToValueAtTime(0.0008, now + dur);
+          srcNode.connect(filter); filter.connect(gain);
           gain.connect(bus === 'music' ? musicBus : sfxBus);
-          src.start(now);
+          srcNode.start(now);
+          srcNode.stop(now + dur + 0.02);
+        }
+        function playChime(freq, dur = 0.14, vol = 0.09, type = 'triangle', delay = 0) {
+          if (muted || !ensureContext() || !freq) return;
+          const now = actx.currentTime + delay;
+          const osc = actx.createOscillator();
+          const gain = actx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.linearRampToValueAtTime(vol, now + 0.012);
+          gain.gain.exponentialRampToValueAtTime(0.0008, now + dur);
+          osc.connect(gain);
+          gain.connect(sfxBus);
+          osc.start(now);
+          osc.stop(now + dur + 0.02);
         }
 
         return {
@@ -1370,27 +1398,45 @@
             playTone(82, 118, 0.14, 'sawtooth', 0.075);
           },
           heliRotor() { playNoise(0.085, 0.12, 175); playTone(68, 44, 0.08, 'triangle', 0.1); },
+          _sfxCd: {},
+          _allowSfx(key, ms) {
+            const now = performance.now();
+            if (this._sfxCd[key] && (now - this._sfxCd[key]) < ms) return false;
+            this._sfxCd[key] = now;
+            return true;
+          },
           vulcan() {
-            // M61A1 20mm Vulcan rotary cannon punch: low mechanical thump + crisp muzzle crack!
-            playNoise(0.042, 0.095, 2350);
-            playTone(165, 68, 0.04, 'sawtooth', 0.075);
+            // M61A1 20mm Vulcan rotary cannon FIRE: 3-round staggered mechanical BRRRT burst!
+            if (!this._allowSfx('vulcan', 85)) return;
+            const jit = 0.94 + Math.random() * 0.12;
+            for (let b = 0; b < 3; b++) {
+              const d = b * 0.026;
+              playSweepNoise(0.055, 0.11, 2100 * jit, 420, 'lowpass', 0.9, 'sfx', d);
+              setTimeout(() => playTone(185 * jit, 68, 0.048, 'sawtooth', 0.095, 'sfx', 950), b * 26);
+            }
           },
           sparrow() {
-            // Crisp active-radar AMRAAM / Sparrow lock chirp + booster whoosh
-            playTone(1320, 1760, 0.055, 'sine', 0.09);
-            playNoise(0.22, 0.12, 1650);
+            // AIM-7 Sparrow / AMRAAM FIRE: AWG-9 radar double-chirp + supersonic booster shriek!
+            if (!this._allowSfx('sparrow', 110)) return;
+            playChime(1480, 0.065, 0.085, 'sine', 0);
+            playChime(1960, 0.075, 0.085, 'sine', 0.055);
+            playSweepNoise(0.34, 0.19, 2800, 620, 'bandpass', 0.85, 'sfx', 0.05);
+            playTone(320, 110, 0.24, 'sawtooth', 0.095, 'sfx', 1100);
           },
           foxTwo() {
-            // Sidewinder IR Growl lock chirp + solid-rocket motor FWOOSH!
-            playTone(1046, 1280, 0.045, 'square', 0.045);
-            playNoise(0.24, 0.14, 1350);
-            playTone(220, 95, 0.18, 'sawtooth', 0.065);
+            // AIM-9 Sidewinder FIRE: iconic dual-tone IR-seeker growl + roaring solid-rocket FWOOSH!
+            if (!this._allowSfx('foxTwo', 110)) return;
+            playChime(880, 0.10, 0.06, 'sawtooth', 0);
+            playChime(918, 0.10, 0.06, 'sawtooth', 0);
+            playSweepNoise(0.38, 0.21, 2400, 380, 'lowpass', 0.9, 'sfx', 0.04);
+            playTone(230, 78, 0.26, 'sawtooth', 0.11, 'sfx', 880);
           },
           phoenix() {
-            // Heavy AIM-54C Phoenix solid-booster ignition roar!
-            playNoise(0.34, 0.2, 780);
-            playNoise(0.24, 0.13, 1850);
-            playTone(135, 52, 0.26, 'sawtooth', 0.11);
+            // AIM-54C Phoenix / HARM FIRE: deep heavy solid-booster ignition BOOM-ROAR!
+            if (!this._allowSfx('phoenix', 140)) return;
+            playSweepNoise(0.48, 0.26, 1500, 220, 'lowpass', 0.8, 'sfx', 0);
+            playSweepNoise(0.32, 0.16, 2600, 900, 'bandpass', 1.0, 'sfx', 0.04);
+            playTone(155, 38, 0.36, 'sawtooth', 0.16, 'sfx', 680);
           },
           chaff() {
             [0, 55, 110].forEach((ms) => setTimeout(() => {
@@ -1408,9 +1454,28 @@
             playTone(140, 680, 0.24, 'sawtooth', 0.16);
             [523.25, 659.25, 783.99, 1046.5].forEach((n, i) => setTimeout(() => playTone(n, n, 0.16, 'triangle', 0.12), i * 42));
           },
-          hit() {
-            playNoise(0.04, 0.07, 3200);
-            playTone(260, 110, 0.045, 'square', 0.05);
+          hit(kind = 'gun') {
+            if (kind === 'heavyMissile') {
+              // Heavy Phoenix / Super-Phoenix warhead impact: deep concussive fireball boom!
+              if (!this._allowSfx('hitHeavy', 90)) return;
+              playSweepNoise(0.44, 0.28, 1200, 140, 'lowpass', 0.85, 'sfx', 0);
+              playSweepNoise(0.16, 0.16, 2600, 900, 'bandpass', 1.0, 'sfx', 0);
+              playTone(125, 26, 0.38, 'sine', 0.24);
+              playTone(160, 38, 0.28, 'sawtooth', 0.14, 'sfx', 600);
+            } else if (kind === 'missile') {
+              // Sidewinder / Sparrow warhead impact: punchy warhead detonation boom!
+              if (!this._allowSfx('hitMsl', 75)) return;
+              playSweepNoise(0.32, 0.22, 1400, 190, 'lowpass', 0.9, 'sfx', 0);
+              playTone(145, 34, 0.24, 'sine', 0.20);
+              playTone(190, 52, 0.18, 'sawtooth', 0.11, 'sfx', 720);
+            } else {
+              // 20mm Vulcan shell armor impact: crisp metallic hull-punch clang!
+              if (!this._allowSfx('hitGun', 65)) return;
+              const jit = 0.92 + Math.random() * 0.18;
+              playChime(1180 * jit, 0.085, 0.055, 'triangle', 0);
+              playChime(1790 * jit, 0.070, 0.042, 'sine', 0);
+              playSweepNoise(0.06, 0.08, 3200 * jit, 950, 'bandpass', 1.4, 'sfx', 0);
+            }
           },
           playerHit() {
             playNoise(0.3, 0.22, 240);
@@ -1421,38 +1486,25 @@
             playNoise(big ? 0.35 : 0.14, big ? 0.16 : 0.08, 1200);
             playTone(big ? 105 : 175, 28, big ? 0.45 : 0.2, 'sawtooth', big ? 0.18 : 0.1);
           },
-          _playPickupClip: (() => {
-            const urls = {
-              std:  "assets/sfx_pickup_std.mp3",
-              rare: "assets/sfx_pickup_rare.mp3"
-            };
-            const pools = { std: [], rare: [] };
-            const idx = { std: 0, rare: 0 };
-            const lastMs = { std: 0, rare: 0 };
-            return (kind = 'std', vol = 0.42) => {
-              if (muted) return;
-              const now = performance.now();
-              if (now - lastMs[kind] < 55) return;
-              lastMs[kind] = now;
-              try {
-                if (!pools[kind].length) {
-                  for (let i = 0; i < 4; i++) {
-                    const a = new Audio(urls[kind]);
-                    a.preload = 'auto';
-                    pools[kind].push(a);
-                  }
-                }
-                const a = pools[kind][idx[kind] % pools[kind].length];
-                idx[kind]++;
-                a.volume = vol;
-                a.currentTime = 0;
-                const p = a.play();
-                if (p && p.catch) p.catch(() => {});
-              } catch (_) {}
-            };
-          })(),
-          coinLoot(rare = false) { this._playPickupClip(rare ? 'rare' : 'std', rare ? 0.52 : 0.42); },
-          pickup(combo = 0) { this._playPickupClip('std', 0.34); },
+          coinLoot(rare = false) {
+            if (rare) {
+              // Rare Intel / Ordnance Part / Emblem: warm 4-note retro naval synth chime!
+              if (!this._allowSfx('rareLoot', 110)) return;
+              [659.25, 830.61, 987.77, 1318.5].forEach((n, i) => playChime(n, 0.18, 0.09, 'triangle', i * 0.055));
+            } else {
+              // Credits: warm, crisp 2-tone arcade bell clink!
+              if (!this._allowSfx('coin', 75)) return;
+              playChime(987.77, 0.11, 0.075, 'sine', 0);
+              playChime(1318.5, 0.15, 0.08, 'triangle', 0.05);
+            }
+          },
+          pickup(combo = 0) {
+            // XP / EGO orb: clean click-free glassy pentatonic bell climbing gently with combo!
+            if (!this._allowSfx('xp', 65)) return;
+            const scale = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5];
+            const note = scale[Math.min(scale.length - 1, combo % scale.length)];
+            playChime(note, 0.12, 0.065, 'sine', 0);
+          },
           armed() { [523.25, 659.25, 783.99, 1046.5].forEach((n, i) => setTimeout(() => playTone(n, n * 1.02, 0.15, 'sawtooth', 0.13), i * 58)); },
           carrierTrap() {
             playNoise(0.32, 0.18, 2100);
@@ -1922,8 +1974,9 @@
       // ============================================================
       // RADIAL DISTANCE THREAT RINGS (THE FURTHER OUT, THE GNARLIER!)
       // ============================================================
-      const SAFE_ZONE_NM = 5.5;
-      const SAFE_ZONE_PX = SAFE_ZONE_NM * 140; // 770px fortified Carrier Battle Group / Airbase CIWS perimeter
+      const SAFE_ZONE_NM = 1.9;
+      const SAFE_ZONE_PX = Math.round(SAFE_ZONE_NM * 140); // 266px tight carrier CIWS bubble
+      const ESCORT_CIWS_PX = 132; // Individual Aegis Escort Cruiser CIWS defensive bubbles
 
       function getThreatInfo(distNM) {
         if (distNM < SAFE_ZONE_NM) return { lvl: 0, name: 'FORTIFIED BASE • CIWS', color: '#4ade80', lootMult: 1.0, spawnMult: 0.0, hpMult: 1.0, seaTop: '#0a3366', seaBot: '#041d3d', deepFactor: 0 };
@@ -4399,7 +4452,7 @@
       // ============================================================
       // DAMAGE, SPLASHES & DISTANCE-SCALED SALVAGE LOOT
       // ============================================================
-      function damageEnemy(e, amount, isSplash = false) {
+      function damageEnemy(e, amount, isSplash = false, hitKind = 'gun') {
         if (e.hp <= 0) return;
         const ac = getSelectedAircraftCfg();
         const syn = getPilotAircraftSynergy();
@@ -4446,7 +4499,7 @@
           }
         }
         if (e.hp <= 0) killEnemy(e);
-        else AudioFX.hit();
+        else AudioFX.hit(hitKind);
       }
 
       function killEnemy(e) {
@@ -5334,51 +5387,81 @@
           }
         }
 
-        // FORTIFIED HOME BASE QUAD-PHALANX CIWS & BATTLE GROUP SUPPORT (5.5 NM Perimeter!)
+        // TIGHT CARRIER CIWS (266px) + 4 AEGIS ESCORT CRUISER CIWS BUBBLES (132px each)!
+        const _isCarrierTheater = getCurrentMap().baseType !== 'airbase';
         if (distNM < SAFE_ZONE_NM && state.trapGrace <= 0) {
-          // Gentle base logistics support inside the fortified perimeter
           if (p.hp < p.maxHp) p.hp = Math.min(p.maxHp, p.hp + 8 * dt);
           if (p.fuel < p.maxFuel) p.fuel = Math.min(p.maxFuel, p.fuel + 18 * dt);
         }
         state.ciwsTimer -= dt;
         if (state.ciwsTimer <= 0) {
           state.ciwsTimer = 0.065;
-          // Intercept all hostile projectiles crossing into the 5.5 NM fortified perimeter
+          const _cRadSq = (SAFE_ZONE_PX - 12) * (SAFE_ZONE_PX - 12);
+          const _eRadSq = (ESCORT_CIWS_PX - 8) * (ESCORT_CIWS_PX - 8);
+          // Intercept hostile projectiles entering Carrier OR any Aegis Escort CIWS bubble
           for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
             const b = state.enemyBullets[i];
-            if (Math.hypot(b.x, b.y) < SAFE_ZONE_PX - 20) {
+            let shotDown = (b.x * b.x + b.y * b.y) < _cRadSq;
+            if (!shotDown && _isCarrierTheater) {
+              for (let k = 0; k < escortOffsets.length; k++) {
+                const es = escortOffsets[k];
+                const dx = b.x - es.x, dy = b.y - es.y;
+                if (dx * dx + dy * dy < _eRadSq) { shotDown = true; break; }
+              }
+            }
+            if (shotDown) {
               pushParticle({ x: b.x, y: b.y, plane: b.plane, vx: 0, vy: 0, life: 0.16, maxLife: 0.16, size: 3.8, color: '#fef08a' });
               swapRemove(state.enemyBullets, i);
             }
           }
-          // Quad-mount Phalanx + Escort SAMs engage up to 2 intruders simultaneously!
+          // Carrier Quad-Phalanx engages intruders inside tight 266px Carrier bubble
           const intruders = [];
-          for (const e of state.enemies) {
+          const _cZoneSq = SAFE_ZONE_PX * SAFE_ZONE_PX;
+          for (let i = 0, n = state.enemies.length; i < n; i++) {
+            const e = state.enemies[i];
             if (e.hp <= 0) continue;
-            const d0 = Math.hypot(e.x, e.y);
-            if (d0 < SAFE_ZONE_PX) intruders.push({ e, d0 });
+            const dSq = e.x * e.x + e.y * e.y;
+            if (dSq < _cZoneSq) intruders.push({ e, dSq });
           }
           if (intruders.length) {
-            intruders.sort((a, b) => a.d0 - b.d0);
-            const mounts = [[-52, -88], [52, -88], [-52, 88], [52, 88]];
+            intruders.sort((a, b) => a.dSq - b.dSq);
+            const mounts = [[-42, -76], [42, -76], [-42, 76], [42, 76]];
             const targets = intruders.slice(0, 2);
             targets.forEach((entry, idx) => {
               const t = entry.e;
               const pair = idx === 0 ? [mounts[0], mounts[1]] : [mounts[2], mounts[3]];
               for (const [mx, my] of pair) {
-                const jx = (Math.random() - 0.5) * 12;
-                const jy = (Math.random() - 0.5) * 12;
                 pushTracer({
-                  x1: mx, y1: my, x2: t.x + jx, y2: t.y + jy,
-                  plane: t.plane, color: '#fef08a', width: 3.0, life: 0.08, maxLife: 0.08
+                  x1: mx, y1: my, x2: t.x + (Math.random() - 0.5) * 12, y2: t.y + (Math.random() - 0.5) * 12,
+                  plane: t.plane, color: '#fef08a', width: 2.8, life: 0.08, maxLife: 0.08
                 });
               }
-              damageEnemy(t, t.type === 'boss' ? 115 : 165);
+              damageEnemy(t, t.type === 'boss' ? 115 : 165, false, 'gun');
             });
-            if (Math.random() < 0.22 && distNM < 8.5) {
-              addFloatingText(0, -165, 'QUAD CIWS PHALANX ENGAGED!', '#4ade80', 11);
+            if (Math.random() < 0.22 && distNM < 6.5) addFloatingText(0, -165, 'CARRIER CIWS ENGAGED!', '#4ade80', 11);
+            if (distNM < 5.5) AudioFX.vulcan();
+          }
+          // Each Aegis Escort Cruiser fires its own tight 132px CIWS defense bubble!
+          if (_isCarrierTheater) {
+            const _esZoneSq = ESCORT_CIWS_PX * ESCORT_CIWS_PX;
+            for (let k = 0; k < escortOffsets.length; k++) {
+              const es = escortOffsets[k];
+              let bestTgt = null, bestSq = _esZoneSq;
+              for (let i = 0, n = state.enemies.length; i < n; i++) {
+                const e = state.enemies[i];
+                if (e.hp <= 0) continue;
+                const dx = e.x - es.x, dy = e.y - es.y;
+                const dSq = dx * dx + dy * dy;
+                if (dSq < bestSq) { bestSq = dSq; bestTgt = e; }
+              }
+              if (bestTgt) {
+                pushTracer({
+                  x1: es.x, y1: es.y - 16, x2: bestTgt.x + (Math.random() - 0.5) * 10, y2: bestTgt.y + (Math.random() - 0.5) * 10,
+                  plane: bestTgt.plane, color: '#4ade80', width: 2.4, life: 0.08, maxLife: 0.08
+                });
+                damageEnemy(bestTgt, bestTgt.type === 'boss' ? 75 : 120, false, 'gun');
+              }
             }
-            if (distNM < 7.5) AudioFX.vulcan();
           }
         }
 
@@ -5821,7 +5904,8 @@
               const preHp = e.hp;
               const _tbMsl = getAircraftTreeBonuses(getSelectedAircraftCfg().id);
               const mslGndMult = (b.isMissile && (e.plane === 0 || e.isSurface)) ? (_tbMsl.missileGroundBonusMult || 1) : 1;
-              damageEnemy(e, b.dmg * mslGndMult);
+              const _hitKind = (b.kind === 'phoenix' || b.kind === 'superPhoenix') ? 'heavyMissile' : (b.isMissile || b.kind === 'sidewinder' || b.kind === 'sparrow' ? 'missile' : 'gun');
+              damageEnemy(e, b.dmg * mslGndMult, false, _hitKind);
               if (b.kind === 'phoenix' || b.kind === 'superPhoenix') {
                 const splash = b.blastR || 72;
                 spawnRing(b.x, b.y, '#fde047', 10, splash, e.plane);
@@ -6662,7 +6746,7 @@
         const _roeVis = getClearedAirspaceInfo();
         const _camDist = Math.hypot(state.camX, state.camY);
         const _viewDiag = Math.hypot(W, H) * 0.6 + 60;
-        const _ringRads = [770, 2240, 5040, 10640];
+        const _ringRads = [SAFE_ZONE_PX, 2240, 5040, 10640];
         const _ringCols = ['rgba(74,222,128,0.16)', 'rgba(56,189,248,0.15)', 'rgba(250,204,21,0.16)', 'rgba(244,63,94,0.2)'];
         ctx.setLineDash([14, 14]); ctx.lineWidth = 2;
         for (let idx = 0; idx < 4; idx++) {
@@ -7485,19 +7569,29 @@
         ctx.fillStyle = 'rgba(2, 6, 23, 0.3)';
         ctx.beginPath(); ctx.ellipse(p.x + shadowOff, p.y + shadowOff * 1.05, 22, 14, 0, 0, Math.PI * 2); ctx.fill();
 
-        // Tight CIWS Safe-Zone Perimeter Ring around (0, 0)
+        // Tight Carrier CIWS Perimeter Ring (266px) + 4 Aegis Escort Cruiser CIWS Bubbles (132px)
         ctx.save();
-        ctx.strokeStyle = 'rgba(74, 222, 128, 0.28)';
+        ctx.strokeStyle = 'rgba(74, 222, 128, 0.34)';
         ctx.lineWidth = 2;
-        ctx.setLineDash([14, 12]);
+        ctx.setLineDash([10, 8]);
         ctx.beginPath();
         ctx.arc(0, 0, SAFE_ZONE_PX, 0, Math.PI * 2);
         ctx.stroke();
+        if (getCurrentMap().baseType !== 'airbase') {
+          ctx.strokeStyle = 'rgba(74, 222, 128, 0.26)';
+          ctx.lineWidth = 1.6;
+          ctx.setLineDash([7, 7]);
+          for (const es of escortOffsets) {
+            ctx.beginPath();
+            ctx.arc(es.x, es.y, ESCORT_CIWS_PX, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
         ctx.setLineDash([]);
-        ctx.font = '800 10px Orbitron, sans-serif';
-        ctx.fillStyle = 'rgba(74, 222, 128, 0.58)';
+        ctx.font = '800 9px Orbitron, sans-serif';
+        ctx.fillStyle = 'rgba(74, 222, 128, 0.65)';
         ctx.textAlign = 'center';
-        ctx.fillText('⚓ FORTIFIED CIWS PERIMETER (5.5 NM)', 0, -SAFE_ZONE_PX - 12);
+        ctx.fillText('⚓ CARRIER CIWS PERIMETER', 0, -SAFE_ZONE_PX - 10);
         ctx.restore();
 
         // Catapult Deck Crew & Jet Blast Deflector
@@ -7680,6 +7774,11 @@
       let _preflightAnimTimer = null;
       function launchIntoCatapult1() {
         const pfOv = document.getElementById('preflightOverlay');
+        const skipChk = document.getElementById('skipPreflightChk');
+        if (skipChk && skipChk.checked && !profile.skipPreflightCheck) {
+          profile.skipPreflightCheck = true;
+          saveProfile();
+        }
         if (pfOv) { pfOv.classList.add('hidden'); pfOv.classList.remove('flex'); }
         if (_preflightAnimTimer) { clearInterval(_preflightAnimTimer); _preflightAnimTimer = null; }
         if (state && state.mode === 'preflight') {
@@ -7695,11 +7794,9 @@
 
       function startGame() {
         AudioFX.unlock();
-        const showPreflight = !profile.preflightBriefed;
+        const showPreflight = !profile.skipPreflightCheck;
         state = createInitialState(showPreflight ? 'preflight' : 'catshot');
         if (showPreflight) {
-          profile.preflightBriefed = true;
-          saveProfile();
           const pfOv = document.getElementById('preflightOverlay');
           const pfBar = document.getElementById('preflightFuelBar');
           const pfPct = document.getElementById('preflightFuelPct');
