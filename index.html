@@ -132,7 +132,7 @@
 </head>
 <body class="relative w-screen h-screen overflow-hidden bg-slate-950">
   <canvas id="gameCanvas"></canvas>
-  <audio id="bgmAudio" src="./assets/level1_bgm.mp3" loop preload="auto"></audio>
+  <audio id="bgmAudio" src="assets/level1_bgm.mp3" loop preload="auto"></audio>
   <div class="scanline-overlay fixed inset-0 z-10"></div>
   <div id="launchFlashOverlay" class="fixed inset-0 z-50 pointer-events-none opacity-0" style="background: radial-gradient(circle at 50% 55%, #ffffff 0%, #fde047 38%, rgba(249,115,22,0.75) 78%, rgba(15,23,42,0.2) 100%);"></div>
 
@@ -242,28 +242,35 @@
       </div>
     </div>
 
-    <!-- TOP GUN INSTRUCTOR UHF RADIO COMM POPUP (Brief, non-blocking mechanic unlock comms!) -->
-    <div id="radioCommPopup" class="fixed top-14 sm:top-16 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-md pointer-events-none transition-all duration-300 opacity-0 -translate-y-3">
-      <div class="cockpit-panel deck-modal rounded-xl p-2.5 sm:p-3 border-emerald-400/65 shadow-2xl flex items-center gap-2.5 sm:gap-3">
-        <div class="relative shrink-0">
-          <img id="radioCommPortrait" src="" alt="Instructor" class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg bg-slate-950 border border-emerald-400/60 object-contain p-0.5" />
-          <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
-          </span>
-        </div>
-        <div class="min-w-0 flex-1 text-left">
-          <div class="flex items-center justify-between gap-2 mb-0.5">
-            <span id="radioCommSender" class="font-arcade text-[9px] sm:text-[10px] font-black text-emerald-300 tracking-wider truncate">UHF 243.0 • CDR "VIPER"</span>
-            <span class="inline-flex items-end gap-0.5 h-2.5 shrink-0" aria-hidden="true">
-              <span class="radio-eq-bar h-full" style="animation-delay:0ms"></span>
-              <span class="radio-eq-bar h-full" style="animation-delay:110ms"></span>
-              <span class="radio-eq-bar h-full" style="animation-delay:220ms"></span>
-              <span class="radio-eq-bar h-full" style="animation-delay:60ms"></span>
+    <!-- TOP GUN INSTRUCTOR UHF RADIO COMM POPUP (Pauses gameplay on Mechanic Unlocks; auto-fades for brief tactical notes) -->
+    <div id="radioCommBackdrop" class="fixed inset-0 z-30 hidden bg-slate-950/65 backdrop-blur-[2px] pointer-events-auto"></div>
+    <div id="radioCommPopup" class="fixed top-14 sm:top-16 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md pointer-events-none transition-all duration-300 opacity-0 -translate-y-3">
+      <div class="cockpit-panel deck-modal rounded-xl p-3 sm:p-4 border-emerald-400/70 shadow-2xl">
+        <div class="flex items-start gap-2.5 sm:gap-3">
+          <div class="relative shrink-0">
+            <img id="radioCommPortrait" src="" alt="Instructor" class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-slate-950 border border-emerald-400/60 object-contain p-0.5" />
+            <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
             </span>
           </div>
-          <p id="radioCommLine" class="text-[11px] sm:text-xs text-slate-100 leading-snug italic"></p>
-          <div id="radioCommUnlock" class="mt-1 inline-block px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/55 font-arcade text-[8px] sm:text-[9px] font-black text-amber-300 tracking-wider"></div>
+          <div class="min-w-0 flex-1 text-left">
+            <div class="flex items-center justify-between gap-2 mb-0.5">
+              <span id="radioCommSender" class="font-arcade text-[9px] sm:text-[10px] font-black text-emerald-300 tracking-wider truncate">UHF 243.0 • CDR "VIPER"</span>
+              <span class="inline-flex items-end gap-0.5 h-2.5 shrink-0" aria-hidden="true">
+                <span class="radio-eq-bar h-full" style="animation-delay:0ms"></span>
+                <span class="radio-eq-bar h-full" style="animation-delay:110ms"></span>
+                <span class="radio-eq-bar h-full" style="animation-delay:220ms"></span>
+                <span class="radio-eq-bar h-full" style="animation-delay:60ms"></span>
+              </span>
+            </div>
+            <p id="radioCommLine" class="text-xs sm:text-[13px] text-slate-100 leading-snug italic"></p>
+            <div id="radioCommUnlock" class="mt-1.5 inline-block px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/60 font-arcade text-[8px] sm:text-[9px] font-black text-amber-300 tracking-wider"></div>
+          </div>
+        </div>
+        <div id="radioCommFooter" class="hidden mt-3 pt-2.5 border-t border-slate-700/70 flex items-center justify-between gap-2">
+          <span class="font-arcade text-[8px] text-slate-400 tracking-wider">COMMS PAUSED • PRESS SPACE / ENTER</span>
+          <button id="radioCommDismissBtn" type="button" class="btn-catapult px-3.5 py-1.5 rounded-lg font-arcade text-[10px] font-black tracking-wider cursor-pointer shrink-0">ROGER THAT ▶</button>
         </div>
       </div>
     </div>
@@ -349,7 +356,7 @@
           + CREATE PILOT
         </button>
       </div>
-      <p class="text-xs text-slate-300 mb-3">Each pilot saves their own Career Level, Credits, Hangar upgrades, and Theater progress independently.</p>
+      <p id="pilotSelectDesc" class="text-xs text-slate-300 mb-3">Each pilot saves their own Career Level, Credits, Hangar upgrades, and Theater progress independently.</p>
 
       <!-- Pilot Cards Grid (4 Built-in + Any Custom User Profiles) -->
       <div id="pilotRosterCards" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4"></div>
@@ -450,7 +457,7 @@
         </div>
         <div id="ctrlSwapCard" class="hidden mfd-card rounded-xl border-sky-500/40 p-2.5">
           <div class="font-arcade text-[10px] text-sky-300 font-bold mb-0.5">ALTITUDE SWAP</div>
-          <div class="text-[11px] text-slate-100 font-semibold">SHIFT / Q / E</div>
+          <div class="text-[11px] text-slate-100 font-semibold">E / TAP JET</div>
           <div class="text-[10px] text-slate-400">Tap jet on mobile</div>
         </div>
         <div id="ctrlSuperCard" class="hidden mfd-card rounded-xl border-rose-500/45 p-2.5">
@@ -508,6 +515,11 @@
       <div id="highScoreLine" class="mt-3 text-[11px] font-arcade text-amber-200/75 tracking-wider">
         U.S. NAVY RECORD: 0 PTS • 0 CARRIER TRAPS
       </div>
+      <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex justify-center">
+        <button id="openResetConfirmBtn" class="px-3 py-1 rounded-lg font-arcade text-[9px] font-bold tracking-widest text-rose-300/85 hover:text-rose-200 bg-rose-950/40 hover:bg-rose-950/75 border border-rose-500/35 hover:border-rose-400/70 transition cursor-pointer">
+          RESET ALL PROGRESS
+        </button>
+      </div>
     </div>
   </div>
 
@@ -545,10 +557,22 @@
       </div>
 
       <div class="mb-4">
-        <div class="font-arcade text-[10px] font-black text-sky-300 tracking-widest mb-1.5 inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.2L9.4 5.5L14.5 9L14.5 10.6L9.4 9.2L9.2 12.6L11.5 14V15L8 14L4.5 15V14L6.8 12.6L6.6 9.2L1.5 10.6V9L6.6 5.5L8 1.2Z"/></svg>CARRIER AIR WING — AIRCRAFT INVENTORY</div>
+        <div class="font-arcade text-[10px] font-black text-sky-300 tracking-widest mb-1.5 inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.2L9.4 5.5L14.5 9L14.5 10.6L9.4 9.2L9.2 12.6L11.5 14V15L8 14L4.5 15V14L6.8 12.6L6.6 9.2L1.5 10.6V9L6.6 5.5L8 1.2Z"/></svg>ACTIVE AIRFRAME</div>
         <div id="hangarAircraftGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
       </div>
-      <div class="font-arcade text-[10px] font-black text-amber-300 tracking-widest mb-1.5 inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.8 2.2a3.5 3.5 0 0 0-4.4 4.4L2.5 10.5a1.5 1.5 0 0 0 2.1 2.1l3.9-3.9a3.5 3.5 0 0 0 4.4-4.4l-2 2-1.8-1.8 1.7-2.3z"/></svg>PERMANENT AIRFRAME &amp; ORDNANCE UPGRADES</div>
+
+      <!-- PER-AIRCRAFT DUAL WEAPON UPGRADE TREES (GUNS TREE + MISSILES TREE) -->
+      <div class="mb-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div id="hangarTreeHeader" class="font-arcade text-[10px] font-black text-amber-300 tracking-widest">F-14A TOMCAT — WEAPON UPGRADE TREES</div>
+          <div id="freeMissileBanner" class="hidden px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-arcade text-[9px] font-black tracking-wider animate-pulse">
+            ★ FREE FIRST MISSILE FIT READY — PICK ONE AT 0 CR! ★
+          </div>
+        </div>
+        <div id="hangarWeaponTrees" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+
+      <div class="font-arcade text-[10px] font-black text-sky-300 tracking-widest mb-1.5 inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.8 2.2a3.5 3.5 0 0 0-4.4 4.4L2.5 10.5a1.5 1.5 0 0 0 2.1 2.1l3.9-3.9a3.5 3.5 0 0 0 4.4-4.4l-2 2-1.8-1.8 1.7-2.3z"/></svg>SUPPORT AIRFRAME SYSTEMS</div>
       <div id="hangarUpgradesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mb-5"></div>
 
       <div class="flex flex-col sm:flex-row gap-2.5 pt-2 border-t border-slate-800">
@@ -655,6 +679,27 @@
         <span id="lbFooterNote" class="font-arcade text-[9px] text-slate-400 tracking-wider">ALL-TIME SQUADRON PLAQUE • SAVED LOCALLY</span>
         <button id="closeLeaderboardBtn" class="btn-catapult px-5 py-2 rounded-xl font-arcade text-xs font-black tracking-widest transition cursor-pointer">
           CLOSE ▶
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MASTER CAUTION: FULL PROGRESS RESET CONFIRMATION DIALOG -->
+  <div id="resetConfirmOverlay" class="menu-scroll-overlay fixed inset-0 z-50 hidden items-start justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-md w-full p-6 text-center shadow-2xl border-rose-500/80 my-auto">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-600/25 border border-rose-400/80 text-rose-300 font-arcade text-[10px] font-black tracking-widest animate-pulse mb-3">
+        ⚠ MASTER CAUTION • FULL DATA WIPE ⚠
+      </div>
+      <h2 class="font-stencil text-2xl sm:text-3xl text-white tracking-wider mb-2">ARE YOU SURE?</h2>
+      <p class="text-xs sm:text-sm text-slate-200 leading-relaxed mb-5">
+        This will permanently erase <strong class="text-rose-300">all pilot profiles, custom callsigns, banked credits &amp; parts, Hangar upgrades, saved mission checkpoints, unlocked systems, and your Top Aces records</strong>—resetting the game completely back to zero.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-2.5">
+        <button id="cancelResetBtn" class="btn-navy flex-1 py-2.5 rounded-xl font-arcade text-xs font-black text-sky-200 tracking-wider transition cursor-pointer">
+          CANCEL
+        </button>
+        <button id="confirmResetBtn" class="flex-1 py-2.5 rounded-xl font-arcade text-xs font-black tracking-wider text-white bg-gradient-to-r from-rose-600 to-red-600 hover:brightness-110 border border-rose-300/70 shadow-lg shadow-rose-900/50 transition cursor-pointer">
+          YES, WIPE EVERYTHING
         </button>
       </div>
     </div>
@@ -927,33 +972,33 @@
       // 90s ARCADE PIXEL-ART SPRITE ATLAS
       // ============================================================
       const SPRITE_URLS = {
-        f14: "./assets/sprite_f14.png",
-        f14Swept: "./assets/sprite_f14_swept.png",
-        f14Belly: "./assets/sprite_f14_belly.png",
-        f18: "./assets/sprite_f18.png",
-        a6: "./assets/sprite_a6.png",
-        mig28: "./assets/sprite_mig28.png",
-        boss: "./assets/sprite_boss.png",
-        carrier: "./assets/sprite_carrier.png",
-        bear: "./assets/sprite_bear.png",
-        foxbat: "./assets/sprite_foxbat.png",
-        buran: "./assets/sprite_buran.png",
-        kosmos: "./assets/sprite_kosmos.png",
-        sidewinder: "./assets/sprite_sidewinder.png",
-        sparrow: "./assets/sprite_sparrow.png",
-        phoenix: "./assets/sprite_phoenix.png",
-        seaking: "./assets/sprite_seaking.png",
-        bmp: "./assets/sprite_bmp.png",
-        tank: "./assets/sprite_tank.png",
-        groundBoss: "./assets/sprite_ground_boss.png",
-        frigate: "./assets/sprite_frigate.png",
-        moskva: "./assets/sprite_moskva.png"
+        f14: "assets/sprite_f14.png",
+        f14Swept: "assets/sprite_f14_swept.png",
+        f14Belly: "assets/sprite_f14_belly.png",
+        f18: "assets/sprite_f18.png",
+        a6: "assets/sprite_a6.png",
+        mig28: "assets/sprite_mig28.png",
+        boss: "assets/sprite_boss.png",
+        carrier: "assets/sprite_carrier.png",
+        bear: "assets/sprite_bear.png",
+        foxbat: "assets/sprite_foxbat.png",
+        buran: "assets/sprite_buran.png",
+        kosmos: "assets/sprite_kosmos.png",
+        sidewinder: "assets/sprite_sidewinder.png",
+        sparrow: "assets/sprite_sparrow.png",
+        phoenix: "assets/sprite_phoenix.png",
+        seaking: "assets/sprite_seaking.png",
+        bmp: "assets/sprite_bmp.png",
+        tank: "assets/sprite_tank.png",
+        groundBoss: "assets/sprite_ground_boss.png",
+        frigate: "assets/sprite_frigate.png",
+        moskva: "assets/sprite_moskva.png"
       };
       const PORTRAIT_URLS = {
-        maverick:  "./assets/portrait_maverick.png",
-        iceman:    "./assets/portrait_iceman.png",
-        viper:     "./assets/portrait_viper.png",
-        hollywood: "./assets/portrait_hollywood.png"
+        maverick:  "assets/portrait_maverick.png",
+        iceman:    "assets/portrait_iceman.png",
+        viper:     "assets/portrait_viper.png",
+        hollywood: "assets/portrait_hollywood.png"
       };
       const SPRITES = {};
       Object.keys(SPRITE_URLS).forEach((k) => {
@@ -982,13 +1027,13 @@
         // Ch 1: Heroic 80s/90s Top Gun Anthem Lead (soaring synth-guitar / FM brass)
         // MULTI-THEATER CUSTOM MP3 SOUNDTRACK CONTROLLER (Menu + 6 Levels!)
         const BGM_TRACKS = {
-          menu:      "./assets/level1_bgm.mp3",
-          ocean:     "./assets/bgm_m1_indian_ocean.mp3",
-          miramar:   "./assets/bgm_m2_miramar.mp3",
-          pax:       "./assets/bgm_m3_pax_river.mp3",
-          chinalake: "./assets/bgm_m4_china_lake.mp3",
-          coronado:  "./assets/bgm_m5_coronado.mp3",
-          area51:    "./assets/bgm_m6_area51.mp3"
+          menu:      "assets/level1_bgm.mp3",
+          ocean:     "assets/bgm_m1_indian_ocean.mp3",
+          miramar:   "assets/bgm_m2_miramar.mp3",
+          pax:       "assets/bgm_m3_pax_river.mp3",
+          chinalake: "assets/bgm_m4_china_lake.mp3",
+          coronado:  "assets/bgm_m5_coronado.mp3",
+          area51:    "assets/bgm_m6_area51.mp3"
         };
         const bgmEl = document.getElementById('bgmAudio');
         let currentTrackKey = 'menu';
@@ -1639,7 +1684,7 @@
           shortName: 'Tu-95 "BEAR"',
           sprite: 'bear',
           hp: 420, speed: 64, r: 52, drawSize: 142, fireRate: 1.35,
-          killsNeeded: 84, score: 1600, xp: 85, crDrop: 90, intelDrop: 1, partDrop: 1
+          killsNeeded: 38, score: 1600, xp: 85, crDrop: 90, intelDrop: 1, partDrop: 1
         },
         2: {
           key: 'foxbat',
@@ -1647,7 +1692,7 @@
           shortName: 'MiG-25 "FOXBAT"',
           sprite: 'foxbat',
           hp: 680, speed: 155, r: 44, drawSize: 122, fireRate: 0.95,
-          killsNeeded: 58, score: 2600, xp: 120, crDrop: 140, intelDrop: 2, partDrop: 2
+          killsNeeded: 52, score: 2600, xp: 120, crDrop: 140, intelDrop: 2, partDrop: 2
         },
         3: {
           key: 'buran',
@@ -1655,7 +1700,7 @@
           shortName: 'BURAN-X SPACE PLANE',
           sprite: 'buran',
           hp: 1050, speed: 125, r: 50, drawSize: 136, fireRate: 0.85,
-          killsNeeded: 72, score: 4200, xp: 170, crDrop: 210, intelDrop: 2, partDrop: 3
+          killsNeeded: 64, score: 4200, xp: 170, crDrop: 210, intelDrop: 2, partDrop: 3
         },
         4: {
           key: 'kosmos',
@@ -1663,7 +1708,7 @@
           shortName: 'KOSMOS-86 STATION',
           sprite: 'kosmos',
           hp: 1750, speed: 46, r: 66, drawSize: 180, fireRate: 0.72,
-          killsNeeded: 90, score: 7500, xp: 260, crDrop: 320, intelDrop: 3, partDrop: 4
+          killsNeeded: 80, score: 7500, xp: 260, crDrop: 320, intelDrop: 3, partDrop: 4
         }
       };
 
@@ -1675,7 +1720,7 @@
           sprite: 'frigate',
           isSurface: true, isNaval: true,
           hp: 460, speed: 44, r: 44, drawSize: 168, fireRate: 1.45,
-          killsNeeded: 46, score: 1750, xp: 90, crDrop: 100, intelDrop: 1, partDrop: 1
+          killsNeeded: 48, score: 1750, xp: 90, crDrop: 100, intelDrop: 1, partDrop: 1
         },
         2: {
           key: 'moskva',
@@ -1684,7 +1729,7 @@
           sprite: 'moskva',
           isSurface: true, isNaval: true,
           hp: 760, speed: 38, r: 54, drawSize: 215, fireRate: 1.15,
-          killsNeeded: 54, score: 2900, xp: 135, crDrop: 160, intelDrop: 2, partDrop: 2
+          killsNeeded: 62, score: 2900, xp: 135, crDrop: 160, intelDrop: 2, partDrop: 2
         },
         3: {
           key: 'kirov',
@@ -1693,7 +1738,7 @@
           sprite: 'moskva',
           isSurface: true, isNaval: true,
           hp: 1180, speed: 35, r: 58, drawSize: 235, fireRate: 0.98,
-          killsNeeded: 68, score: 4600, xp: 185, crDrop: 230, intelDrop: 2, partDrop: 3
+          killsNeeded: 74, score: 4600, xp: 185, crDrop: 230, intelDrop: 2, partDrop: 3
         },
         4: {
           key: 'redOctober',
@@ -1702,7 +1747,7 @@
           sprite: 'moskva',
           isSurface: true, isNaval: true,
           hp: 1850, speed: 32, r: 64, drawSize: 256, fireRate: 0.85,
-          killsNeeded: 84, score: 8200, xp: 280, crDrop: 350, intelDrop: 3, partDrop: 4
+          killsNeeded: 90, score: 8200, xp: 280, crDrop: 350, intelDrop: 3, partDrop: 4
         }
       };
 
@@ -1882,10 +1927,64 @@
         return profileStore.ownedAircraft;
       }
 
-      // Level 1 Tutorial Focus: F-14A Tomcat only visible for now (F/A-18C & A-6E stay intact for later levels!)
+      // Level 1 Tutorial Focus: F-14A Tomcat & LTJG Maverick only visible for now (other jets & pilots stay intact for later levels!)
       const LEVEL1_F14_ONLY = true;
+      const LEVEL1_PILOT_ONLY = true;
       function getVisibleAircraft() {
         return LEVEL1_F14_ONLY ? [AIRCRAFT[0]] : AIRCRAFT;
+      }
+      function getVisiblePilots() {
+        return LEVEL1_PILOT_ONLY ? [BUILTIN_PILOTS[0]] : getAllPilots();
+      }
+
+      // ============================================================
+      // PER-AIRCRAFT DUAL WEAPON UPGRADE TREES (GUNS & MISSILES)
+      // Extensible registry: F-14A active now, F/A-18C & A-6E plug in later!
+      // ============================================================
+      const AIRCRAFT_TREES = {
+        f14: {
+          guns: [
+            { id: 'g1_rotary', tier: 1, name: 'M61A1 6-Barrel Rotary', icon: 'vulcan', cr: 0, prt: 0, req: [], freeDefault: true, desc: 'Standard 20mm nose rotary cannon for close-in dogfighting.' },
+            { id: 'g2_cyclic', tier: 2, name: 'High-Cyclic Hydraulic Drive', icon: 'vulcan', cr: 75, prt: 1, req: ['g1_rotary'], desc: '+16% Vulcan cannon power & faster cyclic burst rhythm.' },
+            { id: 'g3_du',     tier: 3, name: 'PGU-28/B Armor-Piercing', icon: 'vulcan', cr: 130, prt: 2, req: ['g2_cyclic'], desc: '+22% cannon damage & heavy armor penetration vs bosses.' },
+            { id: 'g4_twin',   tier: 4, name: 'Twin-Stream Lead HUD', icon: 'vulcan', cr: 210, prt: 3, req: ['g3_du'], desc: 'Launch every sortie with +1 permanent extra Vulcan 20mm rank.' }
+          ],
+          missiles: [
+            { id: 'm1_sidewinder', tier: 1, branch: true, name: 'AIM-9L Sidewinder (Fox 2)', icon: 'sidewinder', cr: 110, prt: 1, req: [], desc: 'Heat-seeking dogfight missiles locking targets outside your Guns Ring.' },
+            { id: 'm1_sparrow',    tier: 1, branch: true, name: 'AIM-7M Sparrow (Fox 1)', icon: 'sparrow', cr: 110, prt: 1, req: [], desc: 'Cross-plane radar missiles that climb or dive to splash the other altitude.' },
+            { id: 'm2_salvo',      tier: 2, name: 'Dual-Rail Pylon Salvo', icon: 'sidewinder', cr: 145, prt: 2, reqAny: ['m1_sidewinder', 'm1_sparrow'], desc: '+1 extra missile rank on your fitted pylon & +15% warhead punch.' },
+            { id: 'm3_phoenix',    tier: 3, name: 'AIM-54C Phoenix BVR', icon: 'phoenix', cr: 240, prt: 3, req: ['m2_salvo'], desc: 'Launch armed with Tomcat signature long-range multi-target Phoenix missiles.' }
+          ]
+        }
+      };
+
+      function getAircraftTreeOwned(acId = 'f14') {
+        if (!profile.aircraftTrees) profile.aircraftTrees = {};
+        if (!profile.aircraftTrees[acId]) profile.aircraftTrees[acId] = { g1_rotary: true };
+        profile.aircraftTrees[acId].g1_rotary = true;
+        return profile.aircraftTrees[acId];
+      }
+
+      function hasFittedMissileTree(acId = 'f14') {
+        const owned = getAircraftTreeOwned(acId);
+        return !!(owned.m1_sidewinder || owned.m1_sparrow);
+      }
+
+      function getAircraftTreeBonuses(acId = 'f14') {
+        const owned = getAircraftTreeOwned(acId);
+        let dmgMult = 1.0;
+        if (owned.g2_cyclic) dmgMult += 0.16;
+        if (owned.g3_du) dmgMult += 0.22;
+        if (owned.m2_salvo) dmgMult += 0.15;
+        const hasSw = !!owned.m1_sidewinder;
+        const hasSp = !!owned.m1_sparrow;
+        return {
+          dmgMult,
+          vulcanBonus: owned.g4_twin ? 1 : 0,
+          sidewinderBonus: hasSw ? (1 + (owned.m2_salvo ? 1 : 0)) : 0,
+          sparrowBonus: hasSp ? (1 + (owned.m2_salvo ? 1 : 0)) : 0,
+          phoenixBonus: owned.m3_phoenix ? 1 : 0
+        };
       }
 
       let _acCacheKey = '';
@@ -1930,6 +2029,9 @@
           carriedWeapons: null,
           carriedLevel: 1,
           missionSave: null,
+          missilesTreeUnlocked: false,
+          freeMissilePick: false,
+          aircraftTrees: { f14: { g1_rotary: true } },
           upgrades: { engines: 0, vulcanCore: 0, titanium: 0, startSidewinder: 0, startFlares: 0, salvageRig: 0 }
         };
       }
@@ -1979,6 +2081,7 @@
       let selectedPilotCfgCache = null;
 
       function switchActivePilot(pilotId) {
+        if (LEVEL1_PILOT_ONLY) pilotId = BUILTIN_PILOTS[0].id;
         profileStore.selectedPilot = pilotId;
         selectedPilotCfgCache = null;
         if (!profileStore.profiles[pilotId]) profileStore.profiles[pilotId] = defaultPilotRecord();
@@ -2129,7 +2232,9 @@
         if (selectedPilotCfgCache && selectedPilotCfgCache.id === profileStore.selectedPilot) {
           return selectedPilotCfgCache;
         }
-        selectedPilotCfgCache = getAllPilots().find(pl => pl.id === profileStore.selectedPilot) || BUILTIN_PILOTS[0];
+        selectedPilotCfgCache = LEVEL1_PILOT_ONLY
+          ? BUILTIN_PILOTS[0]
+          : (getAllPilots().find(pl => pl.id === profileStore.selectedPilot) || BUILTIN_PILOTS[0]);
         return selectedPilotCfgCache;
       }
       function getSelectedPilotData() {
@@ -2201,35 +2306,31 @@
       let sessionSplashes = 0;
       let sessionCombatSec = 0;
       let radioCommTimer = 0;
+      let radioCommBlocking = false;
       const radioCommQueue = [];
 
       // Level 1 Tutorial Progression Order:
-      // Z1: HARD DECK -> Z2: STAND-OFF MISSILES -> Z3: AFTERBURNER -> Z4: SUPER MODE!
+      // Z1: HARD DECK -> Z1 BOSS: STAND-OFF MISSILES (FREE RTB FIT) -> Z3: AFTERBURNER -> Z4: SUPER MODE!
       const SESSION_MILESTONES = [
         {
-          key: 'altitude', zoneReq: 1, zoneKillsReq: 42, shortLabel: 'HARD DECK',
+          key: 'altitude', zoneReq: 1, zoneKillsReq: 28, shortLabel: 'HARD DECK', blocking: true,
           portrait: 'iceman', sender: 'UHF 305.2 • LT "ICEMAN" — FLIGHT LEAD',
-          line: () => `"Soviet destroyer and Tu-95 Bear inbound! Vertical vectoring authorized—hit Shift or tap your jet to dive down to Hard Deck and engage surface targets!"`,
-          badge: () => '★ UNLOCKED: HARD DECK / ALTITUDE SWAP (SHIFT / TAP JET)'
+          line: () => `"Tu-95 Bear heavy bomber closing on the fleet! Vertical vectoring authorized—press E or tap your jet to dive down to Hard Deck to dodge flak, trap on USS Enterprise, or strafe surface escorts!"`,
+          badge: () => '★ UNLOCKED: HARD DECK / ALTITUDE SWAP (E / TAP JET)'
         },
+
         {
-          key: 'missiles', zoneReq: 2, zoneKillsReq: 45, requiresBoss1: true, shortLabel: 'MISSILES',
-          portrait: 'hollywood', sender: 'UHF 255.4 • LCDR "JESTER" — WEAPONS',
-          line: () => `"Mach-3 Foxbat and cruiser Moskva inbound—guns alone won't cut it! Master Arm ON—Stand-Off Missiles are live on your wing pylons. Lock 'em up!"`,
-          badge: () => '★ UNLOCKED: STAND-OFF MISSILES (OUTER RING LIVE)'
-        },
-        {
-          key: 'afterburner', zoneReq: 3, zoneKillsReq: 60, shortLabel: 'BURNER',
+          key: 'afterburner', zoneReq: 3, zoneKillsReq: 54, shortLabel: 'BURNER', blocking: true,
           portrait: 'viper', sender: 'UHF 243.0 • CDR "VIPER" — TOPGUN CO',
           line: () => getSelectedAircraftCfg().hasAfterburner
-            ? `"Buran-X space plane incoming—fast and lethal! You're cleared to light the cans. Hold C or the Burner button to punch through Mach and outflank it!"`
-            : `"Buran-X space plane incoming! Mil-Power Overdrive is cleared—hold C or the Overdrive button to surge past its barrage!"`,
+            ? `"Buran-X space plane incoming—fast and lethal! You're cleared to light the cans. Hold SHIFT or the Burner button to punch through Mach and outflank it!"`
+            : `"Buran-X space plane incoming! Mil-Power Overdrive is cleared—hold SHIFT or the Overdrive button to surge past its barrage!"`,
           badge: () => getSelectedAircraftCfg().hasAfterburner
-            ? '★ UNLOCKED: AFTERBURNER (HOLD C / BURNER BTN)'
-            : '★ UNLOCKED: MIL-POWER OVERDRIVE (HOLD C / BTN)'
+            ? '★ UNLOCKED: AFTERBURNER (HOLD SHIFT / BURNER BTN)'
+            : '★ UNLOCKED: MIL-POWER OVERDRIVE (HOLD SHIFT / BTN)'
         },
         {
-          key: 'superState', zoneReq: 4, zoneKillsReq: 76, shortLabel: 'SUPER MODE',
+          key: 'superState', zoneReq: 4, zoneKillsReq: 68, shortLabel: 'SUPER MODE', blocking: true,
           portrait: 'viper', sender: 'UHF 243.0 • CDR "VIPER" — TOPGUN CO',
           line: () => {
             const sName = (getSelectedAircraftCfg().superName || '★ INVERTED').replace(/^★\s*/, '');
@@ -2240,9 +2341,9 @@
       ];
 
       let tutorialWelcomeSent = false;
-      function queueInstructorNote(portrait, sender, lineText, badgeText) {
-        const msg = { portrait, sender, line: () => lineText, badge: () => badgeText };
-        if (radioCommTimer > 0) radioCommQueue.push(msg);
+      function queueInstructorNote(portrait, sender, lineText, badgeText, blocking = false) {
+        const msg = { portrait, sender, line: () => lineText, badge: () => badgeText, blocking };
+        if (radioCommBlocking || radioCommTimer > 0) radioCommQueue.push(msg);
         else showRadioComm(msg);
       }
 
@@ -2268,6 +2369,11 @@
       function updateNextUnlockPill() {
         const nxtEl = HUD_DOM.nextUnlockHud;
         if (!nxtEl || !state) return;
+        if (profile.freeMissilePick && !hasFittedMissileTree('f14')) {
+          nxtEl.classList.remove('hidden');
+          setHudText(nxtEl, '• ★ RTB: FREE MISSILE FIT AT BASE!');
+          return;
+        }
         const nextM = SESSION_MILESTONES.find(m => !sessionUnlocks[m.key]);
         if (nextM) {
           const zk = (state.zoneKills && state.zoneKills[nextM.zoneReq]) || 0;
@@ -2293,8 +2399,8 @@
         }
         if (HUD_DOM.ctrlFlightTitle && sessionUnlocks.afterburner) {
           HUD_DOM.ctrlFlightTitle.textContent = 'JET FLIGHT + BURNER';
-          if (HUD_DOM.ctrlFlightKeys) HUD_DOM.ctrlFlightKeys.textContent = 'WASD + C (Burner)';
-          if (HUD_DOM.ctrlFlightSub) HUD_DOM.ctrlFlightSub.textContent = 'Auto-cruise • Hold C turbo';
+          if (HUD_DOM.ctrlFlightKeys) HUD_DOM.ctrlFlightKeys.textContent = 'WASD + SHIFT (Burner)';
+          if (HUD_DOM.ctrlFlightSub) HUD_DOM.ctrlFlightSub.textContent = 'Auto-cruise • Hold SHIFT turbo';
         }
         updateNextUnlockPill();
       }
@@ -2306,17 +2412,73 @@
         const snd = document.getElementById('radioCommSender');
         const ln  = document.getElementById('radioCommLine');
         const bdg = document.getElementById('radioCommUnlock');
+        const ftr = document.getElementById('radioCommFooter');
+        const bkd = document.getElementById('radioCommBackdrop');
         if (img) img.src = PORTRAIT_URLS[m.portrait] || PORTRAIT_URLS.viper;
         if (snd) snd.textContent = m.sender;
         if (ln)  ln.textContent = m.line();
         if (bdg) bdg.textContent = m.badge();
+
+        const shouldBlock = !!(m.blocking && state && (state.mode === 'playing' || state.mode === 'radiocomm'));
+        radioCommBlocking = shouldBlock;
+        if (shouldBlock) {
+          state.mode = 'radiocomm';
+          for (const k in keys) keys[k] = false;
+          holdAfterburnerBtn = false;
+          pointer.active = false;
+          pop.classList.remove('pointer-events-none', 'top-14', 'sm:top-16');
+          pop.classList.add('pointer-events-auto', 'top-1/2', '-translate-y-1/2');
+          if (ftr) ftr.classList.remove('hidden');
+          if (bkd) bkd.classList.remove('hidden');
+          radioCommTimer = 0;
+        } else {
+          pop.classList.remove('pointer-events-auto', 'top-1/2', '-translate-y-1/2');
+          pop.classList.add('pointer-events-none', 'top-14', 'sm:top-16');
+          if (ftr) ftr.classList.add('hidden');
+          if (bkd) bkd.classList.add('hidden');
+          radioCommTimer = 5.6;
+        }
         pop.classList.remove('opacity-0', '-translate-y-3');
-        pop.classList.add('opacity-100', 'translate-y-0');
-        radioCommTimer = 5.6;
+        pop.classList.add('opacity-100');
+        if (!shouldBlock) pop.classList.add('translate-y-0');
+        else pop.classList.remove('translate-y-0');
         AudioFX.armed();
       }
 
+      function dismissRadioComm() {
+        const pop = document.getElementById('radioCommPopup');
+        const ftr = document.getElementById('radioCommFooter');
+        const bkd = document.getElementById('radioCommBackdrop');
+        radioCommBlocking = false;
+        radioCommTimer = 0;
+        if (pop) {
+          pop.classList.add('opacity-0', '-translate-y-3', 'pointer-events-none', 'top-14', 'sm:top-16');
+          pop.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto', 'top-1/2', '-translate-y-1/2');
+        }
+        if (ftr) ftr.classList.add('hidden');
+        if (bkd) bkd.classList.add('hidden');
+        if (radioCommQueue.length) {
+          const nextMsg = radioCommQueue.shift();
+          if (state && state.mode === 'radiocomm' && !nextMsg.blocking) state.mode = 'playing';
+          showRadioComm(nextMsg);
+          return;
+        }
+        if (state && state.mode === 'radiocomm') {
+          state.mode = 'playing';
+        }
+      }
+
+      const radioCommDismissBtnEl = document.getElementById('radioCommDismissBtn');
+      if (radioCommDismissBtnEl) {
+        radioCommDismissBtnEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          AudioFX.unlock();
+          dismissRadioComm();
+        });
+      }
+
       function tickRadioComm(dt) {
+        if (radioCommBlocking) return;
         if (radioCommTimer > 0) {
           radioCommTimer -= dt;
           if (radioCommTimer <= 0) {
@@ -2356,7 +2518,7 @@
             }
             spawnRing(p.x, p.y, '#4ade80', 20, 210, p.plane);
             addFloatingText(p.x, p.y - 44, `★ ${m.shortLabel} AUTHORIZED!`, '#fde047', 13);
-            if (radioCommTimer > 0) radioCommQueue.push(m);
+            if (radioCommBlocking || radioCommTimer > 0) radioCommQueue.push(m);
             else showRadioComm(m);
             break;
           }
@@ -2450,20 +2612,30 @@
             superArmed: false, superActive: false, superCooldown: 0, superCooldownMax: 24,
             superTimer: 0, superMaxDuration: 9.5,
 
-            weapons: profile.carriedWeapons ? {
-              vulcan: Math.max(1, profile.carriedWeapons.vulcan || 1),
-              sidewinder: Math.max(sessionUnlocks.missiles ? (1 + (up.startSidewinder || 0)) : 0, profile.carriedWeapons.sidewinder || 0),
-              sparrow: profile.carriedWeapons.sparrow || 0,
-              phoenix: profile.carriedWeapons.phoenix || 0,
-              wingman: profile.carriedWeapons.wingman || 0,
-              flares: Math.max(up.startFlares || 0, profile.carriedWeapons.flares || 0),
-              afterburner: profile.carriedWeapons.afterburner || 0,
-              sweep: profile.carriedWeapons.sweep || 0
-            } : {
-              vulcan: 1, sidewinder: sessionUnlocks.missiles ? (1 + (up.startSidewinder || 0)) : 0, sparrow: 0,
-              phoenix: 0, wingman: 0, flares: up.startFlares || 0,
-              afterburner: 0, sweep: 0
-            },
+            weapons: (() => {
+              const tb = getAircraftTreeBonuses(acCfg.id);
+              const baseW = {
+                vulcan: 1 + tb.vulcanBonus,
+                sidewinder: tb.sidewinderBonus + (hasFittedMissileTree(acCfg.id) ? (up.startSidewinder || 0) : 0),
+                sparrow: tb.sparrowBonus,
+                phoenix: tb.phoenixBonus,
+                wingman: 0,
+                flares: up.startFlares || 0,
+                afterburner: 0,
+                sweep: 0
+              };
+              if (!profile.carriedWeapons) return baseW;
+              return {
+                vulcan: Math.max(baseW.vulcan, profile.carriedWeapons.vulcan || 1),
+                sidewinder: Math.max(baseW.sidewinder, profile.carriedWeapons.sidewinder || 0),
+                sparrow: Math.max(baseW.sparrow, profile.carriedWeapons.sparrow || 0),
+                phoenix: Math.max(baseW.phoenix, profile.carriedWeapons.phoenix || 0),
+                wingman: profile.carriedWeapons.wingman || 0,
+                flares: Math.max(baseW.flares, profile.carriedWeapons.flares || 0),
+                afterburner: profile.carriedWeapons.afterburner || 0,
+                sweep: profile.carriedWeapons.sweep || 0
+              };
+            })(),
             timers: { vulcan: 0, sidewinder: 0, sparrow: 0, phoenix: 0, wingman: 0, flares: 0, superPhoenix: 0, superBoom: 0 },
             wingAngle: 0
           },
@@ -2487,7 +2659,7 @@
           _initState.surfaceBossSpawnedStages = { ...(_ms.surfaceBossDefeatedStages || {}) };
           _initState.player.level = Math.max(1, _ms.level || _initState.player.level);
           _initState.player.xp = _ms.xp || 0;
-          _initState.player.xpNext = _ms.xpNext || Math.round(38 * Math.pow(1.42, _initState.player.level - 1));
+          _initState.player.xpNext = _ms.xpNext || Math.round(58 * Math.pow(1.45, _initState.player.level - 1));
           if (_ms.weapons) {
             _initState.player.weapons = {
               vulcan: Math.max(1, _ms.weapons.vulcan || 1),
@@ -2670,7 +2842,7 @@
             weapons: { ...state.player.weapons },
             level: state.player.level || 1,
             xp: state.player.xp || 0,
-            xpNext: state.player.xpNext || 38,
+            xpNext: state.player.xpNext || 58,
             sessionUnlocks: { ...sessionUnlocks },
             sessionSplashes,
             sessionCombatSec,
@@ -2702,6 +2874,109 @@
         hangarOverlay.classList.remove('hidden'); hangarOverlay.classList.add('flex');
       }
 
+      function renderWeaponTreesUI() {
+        const wrap = document.getElementById('hangarWeaponTrees');
+        const freeBanner = document.getElementById('freeMissileBanner');
+        const hdr = document.getElementById('hangarTreeHeader');
+        if (!wrap) return;
+        const ac = getSelectedAircraftCfg();
+        const tree = AIRCRAFT_TREES[ac.id] || AIRCRAFT_TREES.f14;
+        const owned = getAircraftTreeOwned(ac.id);
+        const missilesOpen = !!(profile.missilesTreeUnlocked || sessionUnlocks.missiles);
+        const hasFreePick = missilesOpen && !!profile.freeMissilePick && !hasFittedMissileTree(ac.id);
+
+        if (hdr) hdr.textContent = `${ac.name} — WEAPON UPGRADE TREES`;
+        if (freeBanner) freeBanner.classList.toggle('hidden', !hasFreePick);
+
+        const renderBranch = (title, accentCls, borderCls, nodes, isMissileTree) => {
+          const lockedTree = isMissileTree && !missilesOpen;
+          const col = document.createElement('div');
+          col.className = `rounded-xl p-3 bg-slate-950/85 border ${borderCls} flex flex-col gap-2`;
+          col.innerHTML = `
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-800">
+              <span class="font-arcade text-[10px] font-black tracking-widest ${accentCls}">${title}</span>
+              <span class="font-arcade text-[8px] px-1.5 py-0.5 rounded ${lockedTree ? 'bg-slate-900 text-slate-400 border border-slate-700' : (isMissileTree && hasFreePick ? 'bg-amber-400 text-slate-950 font-black' : 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40')}">
+                ${lockedTree ? 'LOCKED • BEAT Z1 BOSS' : (isMissileTree && hasFreePick ? 'FREE FIRST PICK!' : 'ACTIVE TREE')}
+              </span>
+            </div>
+          `;
+          if (lockedTree) {
+            const lockBox = document.createElement('div');
+            lockBox.className = 'rounded-lg p-4 bg-slate-900/65 border border-slate-800 text-center space-y-1.5 my-auto';
+            lockBox.innerHTML = `
+              <div class="font-arcade text-xs font-black text-slate-300 tracking-wider">WING PYLONS LOCKED</div>
+              <p class="text-[11px] text-slate-400 leading-snug">Splash the <strong class="text-amber-300">Zone 1 Boss (Tu-95 Bear)</strong> on Guns Only to unlock the Missiles Tree and earn your first missile system <strong class="text-emerald-300">FREE</strong> at base.</p>
+            `;
+            col.appendChild(lockBox);
+            return col;
+          }
+
+          nodes.forEach(n => {
+            const isOwned = !!owned[n.id];
+            const reqMet = (n.req ? n.req.every(r => owned[r]) : true) && (n.reqAny ? n.reqAny.some(r => owned[r]) : true);
+            const isFreeNow = isMissileTree && hasFreePick && n.tier === 1 && !isOwned;
+            const crCost = isFreeNow ? 0 : n.cr;
+            const prtCost = isFreeNow ? 0 : n.prt;
+            const canBuy = !isOwned && reqMet && profile.credits >= crCost && profile.parts >= prtCost;
+
+            const row = document.createElement('div');
+            row.className = `mfd-card rounded-lg p-2.5 flex flex-col gap-1.5 ${isFreeNow ? 'border-amber-400/80 ring-1 ring-amber-400/40' : ''}`;
+            row.innerHTML = `
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="mfd-icon-badge shrink-0">${getUiIcon(n.icon)}</span>
+                  <div class="min-w-0">
+                    <div class="font-arcade text-[10px] font-black text-white leading-tight">${n.name}</div>
+                    <div class="font-arcade text-[8px] text-slate-400">TIER ${n.tier}${n.branch ? ' • CHOICE' : ''}</div>
+                  </div>
+                </div>
+                <span class="font-arcade text-[8px] px-1.5 py-0.5 rounded shrink-0 ${
+                  isOwned ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40' : (isFreeNow ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-900 text-slate-400 border border-slate-700')
+                }">${isOwned ? 'FITTED ✓' : (isFreeNow ? 'FREE' : (reqMet ? 'READY' : 'LOCKED'))}</span>
+              </div>
+              <p class="text-[10px] text-slate-300 leading-snug">${n.desc}</p>
+              ${isOwned ? '' : `
+                <button type="button" class="w-full py-1.5 rounded-lg font-arcade text-[9px] font-black tracking-wider transition ${
+                  canBuy ? 'btn-catapult cursor-pointer' : 'bg-slate-900/90 text-slate-500 border border-slate-800 cursor-not-allowed'
+                }">
+                  ${!reqMet ? 'UNLOCK PREVIOUS TIER FIRST' : (isFreeNow ? '★ FIT FREE MISSILE SYSTEM ★' : `FIT SYSTEM (${crCost} CR + ${prtCost} PRT)`)}
+                </button>
+              `}
+            `;
+            const btn = row.querySelector('button');
+            if (btn && canBuy) {
+              btn.addEventListener('click', () => {
+                if (!isFreeNow) {
+                  profile.credits -= crCost;
+                  profile.parts -= prtCost;
+                } else {
+                  profile.freeMissilePick = false;
+                }
+                owned[n.id] = true;
+                sessionUnlocks.missiles = true;
+                // Also carry newly fitted pylon directly into any saved mid-mission checkpoint!
+                if (profile.missionSave && profile.missionSave.weapons) {
+                  const tb = getAircraftTreeBonuses(ac.id);
+                  profile.missionSave.weapons.vulcan = Math.max(profile.missionSave.weapons.vulcan || 1, 1 + tb.vulcanBonus);
+                  profile.missionSave.weapons.sidewinder = Math.max(profile.missionSave.weapons.sidewinder || 0, tb.sidewinderBonus);
+                  profile.missionSave.weapons.sparrow = Math.max(profile.missionSave.weapons.sparrow || 0, tb.sparrowBonus);
+                  profile.missionSave.weapons.phoenix = Math.max(profile.missionSave.weapons.phoenix || 0, tb.phoenixBonus);
+                }
+                saveProfile();
+                AudioFX.levelUp();
+                renderHangarUI();
+              });
+            }
+            col.appendChild(row);
+          });
+          return col;
+        };
+
+        wrap.innerHTML = '';
+        wrap.appendChild(renderBranch('GUNS TREE (CLOSE-IN)', 'text-amber-300', 'border-amber-500/40', tree.guns, false));
+        wrap.appendChild(renderBranch('MISSILES TREE (STAND-OFF)', 'text-sky-300', 'border-sky-500/40', tree.missiles, true));
+      }
+
       function renderHangarUI() {
         document.getElementById('vaultCredits').innerHTML = `<span class="inline-flex items-center gap-1">${UI_ICONS.credits}<span>${profile.credits} CR</span></span>`;
         document.getElementById('vaultIntel').innerHTML = `<span class="inline-flex items-center gap-1">${UI_ICONS.intel}<span>${profile.intel} INTEL</span></span>`;
@@ -2712,6 +2987,7 @@
         sellBtn.textContent = profile.intel > 0 ? `DEBRIEF ${profile.intel} INTEL (+${profile.intel * 60} CR)` : 'NO INTEL TO DEBRIEF';
 
         renderAircraftBayUI();
+        renderWeaponTreesUI();
         const grid = document.getElementById('hangarUpgradesGrid');
         grid.innerHTML = '';
         HANGAR_UPGRADES.filter(u => u.id !== 'startSidewinder' || sessionUnlocks.missiles).forEach((u) => {
@@ -2943,7 +3219,8 @@
         const p = state.player;
         const distNM = Math.hypot(p.x, p.y) / 140;
         const threat = getThreatInfo(distNM);
-        const plane = planeOverride !== null ? planeOverride : (sessionUnlocks.altitude ? (Math.random() < 0.5 ? 0 : 1) : 1);
+        const surfaceProb = (selectedMapIdx === 0) ? 0.18 : 0.50;
+        const plane = planeOverride !== null ? planeOverride : (sessionUnlocks.altitude ? (Math.random() < surfaceProb ? 0 : 1) : 1);
 
         // Spawn ahead/around the player's perimeter off-screen
         const ang = p.heading + (Math.random() - 0.5) * Math.PI * 1.4;
@@ -2966,12 +3243,20 @@
               type = Math.random() < tankChance ? 'tank' : 'bmp';
             }
           } else {
-            // Angels 20 = Aerial Dogfight Units
+            // Angels 20 = Aerial Dogfight Units (Escalating Air-to-Air Waves)
             const r = Math.random();
-            if (threat.lvl >= 3 && r < 0.24) type = 'ace';
-            else if (threat.lvl >= 2 && r < 0.44) type = 'bomber';
-            else if (threat.lvl >= 1 && r < 0.72) type = 'mig28';
-            else type = 'scout';
+            const z1Kills = (state.zoneKills && state.zoneKills[1]) || 0;
+            if (threat.lvl >= 4) {
+              type = r < 0.48 ? 'ace' : (r < 0.80 ? 'bomber' : 'mig28');
+            } else if (threat.lvl === 3) {
+              type = r < 0.38 ? 'ace' : (r < 0.66 ? 'bomber' : 'mig28');
+            } else if (threat.lvl === 2) {
+              type = r < 0.20 ? 'ace' : (r < 0.50 ? 'bomber' : 'mig28');
+            } else {
+              // Zone 1 smooth dogfight warm-up: Scouts lead early, then MiG-28s ramp up
+              const scoutCut = z1Kills < 12 ? 0.60 : 0.35;
+              type = r < scoutCut ? 'scout' : 'mig28';
+            }
           }
         }
 
@@ -3099,7 +3384,8 @@
         const t = p.timers;
         const _pc = getSelectedPilotCfg();
         const _pd = getSelectedPilotData();
-        const dmgMult = (1 + profile.upgrades.vulcanCore * 0.18 + Math.max(0, (_pd.level || 1) - 1) * 0.03) * (_pc.dmgMult || 1);
+        const _tb = getAircraftTreeBonuses(getSelectedAircraftCfg().id);
+        const dmgMult = (1 + profile.upgrades.vulcanCore * 0.18 + Math.max(0, (_pd.level || 1) - 1) * 0.03) * (_pc.dmgMult || 1) * _tb.dmgMult;
 
         if (abFill && abPct) {
           abFill.style.width = p.abFuel.toFixed(1) + '%';
@@ -3443,7 +3729,23 @@
           if (e.isSurface) state.surfaceBossDefeatedStages[e.bossStageLvl] = true;
           else state.bossDefeatedStages[e.bossStageLvl] = true;
           if (!e.isSurface && e.bossStageLvl === 1) {
-            queueInstructorNote('viper', 'UHF 243.0 • CDR "VIPER" — TOPGUN CO', `"Splash one Bear! Nice flying, pilot. Push outward past 16 NM into Contested Waters—faster bogeys waiting out there."`, 'NEXT SECTOR: ZONE 2 CONTESTED WATERS (16+ NM)');
+            const firstMissileUnlock = !profile.missilesTreeUnlocked;
+            profile.missilesTreeUnlocked = true;
+            sessionUnlocks.missiles = true;
+            if (firstMissileUnlock && !hasFittedMissileTree('f14')) {
+              profile.freeMissilePick = true;
+              saveProfile();
+              showBanner('★ MISSILES TREE UNLOCKED! RTB TO USS ENTERPRISE FOR YOUR FREE MISSILE FIT! ★', 'border-amber-300 text-amber-200');
+              queueInstructorNote(
+                'hollywood',
+                'UHF 255.4 • LCDR "JESTER" — WEAPONS',
+                `"Splash one Bear! Command just authorized your F-14 wing pylons—the Missiles Tree is open! Return to USS Enterprise now to fit your first missile system FREE OF CHARGE!"`,
+                '★ RTB TO BASE: CLAIM FREE MISSILE TREE UPGRADE ★',
+                true
+              );
+            } else {
+              queueInstructorNote('viper', 'UHF 243.0 • CDR "VIPER" — TOPGUN CO', `"Splash one Bear! Nice flying, pilot. Push outward past 16 NM into Contested Waters—faster bogeys waiting out there."`, 'NEXT SECTOR: ZONE 2 CONTESTED WATERS (16+ NM)');
+            }
           } else if (!e.isSurface && e.bossStageLvl === 2) {
             queueInstructorNote('hollywood', 'UHF 255.4 • LCDR "JESTER" — WEAPONS', `"Foxbat's down! Good tone with those missiles. Push past 36 NM into the Danger Zone—stay sharp."`, 'NEXT SECTOR: ZONE 3 DANGER ZONE (36+ NM)');
           } else if (!e.isSurface && e.bossStageLvl === 3) {
@@ -3566,10 +3868,14 @@
           return u;
         });
         const available = mappedPool.filter(u => {
-          // Strict early progression: ONLY Close-In Guns (+ Airframe Repair) until Stand-Off Missiles unlock!
-          if (!sessionUnlocks.missiles) {
+          // Strict Guns-Only in-flight cards until Missiles Tree is unlocked & first pylon is fitted at base!
+          const missilesFitted = hasFittedMissileTree(ac.id);
+          if (!missilesFitted) {
             if (u.id !== 'vulcan' && u.id !== 'hull') return false;
           }
+          if (u.id === 'sidewinder' && !getAircraftTreeOwned(ac.id).m1_sidewinder) return false;
+          if (u.id === 'sparrow' && !getAircraftTreeOwned(ac.id).m1_sparrow) return false;
+          if (u.id === 'phoenix' && !getAircraftTreeOwned(ac.id).m3_phoenix) return false;
           if (u.id === 'sparrow' && !sessionUnlocks.altitude) return false;
           if (u.id === 'afterburner' && !sessionUnlocks.superState) return false;
           return u.id === 'hull' || (p.weapons[u.id] || 0) < u.maxLvl;
@@ -4015,8 +4321,8 @@
             ix *= 0.7071; iy *= 0.7071;
           }
 
-          // AFTERBURNER TURBO BOOST (Hold C / V / B / Ctrl / On-Screen Button — gated by sessionUnlocks.afterburner!)
-          const wantAb = sessionUnlocks.afterburner && Boolean(keys['KeyC'] || keys['KeyV'] || keys['KeyB'] || keys['ControlLeft'] || keys['ControlRight'] || holdAfterburnerBtn);
+          // AFTERBURNER TURBO BOOST (Hold SHIFT / On-Screen Button — gated by sessionUnlocks.afterburner!)
+          const wantAb = sessionUnlocks.afterburner && Boolean(keys['ShiftLeft'] || keys['ShiftRight'] || holdAfterburnerBtn);
           if (wantAb && p.abFuel > 1) {
             p.abActive = true;
             p.abFuel = Math.max(0, p.abFuel - 32 * dt); // ~3.1s full continuous burn
@@ -4722,12 +5028,12 @@
             } else if (airAct) {
               zbp.textContent = `⚠ AIR: ${bCfg.shortName} (${clearedTot}/8)`;
               zbp.className = 'text-rose-400 font-arcade';
-            } else if (sessionUnlocks.altitude && !state.surfaceBossSpawnedStages[threat.lvl]) {
+            } else if (!state.bossSpawnedStages[threat.lvl] && !airDone) {
+              setHudText(zbp, `Z${threat.lvl} AIR BOSS: ${k}/${bCfg.killsNeeded} (${clearedTot}/8)`);
+              setHudClass(zbp, 'text-sky-300 font-arcade');
+            } else if (sessionUnlocks.altitude && !state.surfaceBossSpawnedStages[threat.lvl] && !surfDone) {
               setHudText(zbp, `Z${threat.lvl} DECK BOSS: ${k}/${sCfg.killsNeeded} (${clearedTot}/8)`);
               setHudClass(zbp, 'text-amber-300 font-arcade');
-            } else if (!airDone) {
-              setHudText(zbp, `Z${threat.lvl} AIR BOSS: ${k}/${bCfg.killsNeeded}`);
-              setHudClass(zbp, 'text-sky-300 font-arcade');
             } else {
               const nextZ = threat.lvl < 4 ? threat.lvl + 1 : 4;
               const nextNM = [0, 5.5, 16, 36, 76][nextZ];
@@ -5455,7 +5761,7 @@
           border = '#fbbf24';
           fg = '#fef08a';
         } else if (p.plane !== 0 && sessionUnlocks.altitude) {
-          text = '▼ DROP TO HARD DECK (SHIFT / TAP JET) TO TRAP';
+          text = '▼ DROP TO HARD DECK (E / TAP JET) TO TRAP';
           bg = 'rgba(120, 53, 15, 0.88)';
           border = '#f59e0b';
           fg = '#fde68a';
@@ -6020,6 +6326,13 @@
         if (!state) return;
         if (e.code === 'KeyM') { AudioFX.setMuted(!AudioFX.isMuted()); setMuteIcon(AudioFX.isMuted()); }
         if (e.code === 'KeyP' || e.code === 'Escape') { if (state.mode === 'playing' || state.mode === 'paused') togglePause(); }
+        if (state.mode === 'radiocomm') {
+          if (!e.repeat && (e.code === 'Space' || e.code === 'Enter' || e.code === 'Escape' || e.code === 'KeyE')) {
+            e.preventDefault();
+            dismissRadioComm();
+          }
+          return;
+        }
         if (state.mode === 'catshot') {
           if (!e.repeat && (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyW' || e.code === 'ArrowUp')) {
             triggerCatapultShot();
@@ -6029,7 +6342,7 @@
         if (state.mode !== 'playing') return;
 
         if (e.repeat) return;
-        if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'Tab' || e.code === 'KeyQ' || e.code === 'KeyE') {
+        if (e.code === 'KeyE') {
           swapPlane();
         } else if (e.code === 'Space' || e.code === 'KeyF') {
           igniteSuperState();
@@ -6100,6 +6413,69 @@
       const _lbMine = document.getElementById('lbTabMineBtn');
       if (_lbAll) _lbAll.addEventListener('click', () => { lbActiveTab = 'all'; renderLeaderboardUI(); });
       if (_lbMine) _lbMine.addEventListener('click', () => { lbActiveTab = 'mine'; renderLeaderboardUI(); });
+
+      // Full Progress Wipe & Confirmation Dialog
+      const resetConfirmOverlay = document.getElementById('resetConfirmOverlay');
+      function openResetConfirm() {
+        if (!resetConfirmOverlay) return;
+        resetConfirmOverlay.classList.remove('hidden');
+        resetConfirmOverlay.classList.add('flex');
+      }
+      function closeResetConfirm() {
+        if (!resetConfirmOverlay) return;
+        resetConfirmOverlay.classList.add('hidden');
+        resetConfirmOverlay.classList.remove('flex');
+      }
+      function executeFullProgressReset() {
+        try {
+          localStorage.removeItem(PROFILE_STORE_KEY);
+          localStorage.removeItem(LEADERBOARD_KEY);
+        } catch (e) {}
+        // Reset in-memory profileStore & active pilot back to factory zero
+        profileStore.selectedPilot = 'maverick';
+        profileStore.ownedAircraft = ['f14'];
+        profileStore.customPilots = [];
+        profileStore.profiles = {};
+        BUILTIN_PILOTS.forEach(pl => { profileStore.profiles[pl.id] = defaultPilotRecord(); });
+        profile = profileStore.profiles.maverick;
+        selectedPilotCfgCache = null;
+        _acCacheKey = '';
+        selectedMapIdx = 0;
+        // Reset all session progression & unlocks
+        sessionUnlocks.afterburner = false;
+        sessionUnlocks.missiles = false;
+        sessionUnlocks.altitude = false;
+        sessionUnlocks.superState = false;
+        sessionSplashes = 0;
+        sessionCombatSec = 0;
+        tutorialWelcomeSent = false;
+        radioCommTimer = 0;
+        radioCommBlocking = false;
+        radioCommQueue.length = 0;
+        dismissRadioComm();
+        lbLastEntryId = null;
+        saveProfile();
+
+        closeResetConfirm();
+        titleOverlay.classList.add('hidden'); titleOverlay.classList.remove('flex');
+        hangarOverlay.classList.add('hidden'); hangarOverlay.classList.remove('flex');
+        pilotSelectOverlay.classList.add('hidden'); pilotSelectOverlay.classList.remove('flex');
+        hudLayer.classList.add('hidden'); hudLayer.classList.remove('flex');
+        if (splashOverlay) splashOverlay.classList.remove('hidden');
+        state = createInitialState('title');
+        renderPilotSelector();
+        renderAircraftBayUI();
+        renderMapSelector();
+        refreshRecordLine();
+        syncUnlockHud();
+        render();
+      }
+      const _openResetBtn = document.getElementById('openResetConfirmBtn');
+      const _cancelResetBtn = document.getElementById('cancelResetBtn');
+      const _confirmResetBtn = document.getElementById('confirmResetBtn');
+      if (_openResetBtn) _openResetBtn.addEventListener('click', () => { AudioFX.unlock(); openResetConfirm(); });
+      if (_cancelResetBtn) _cancelResetBtn.addEventListener('click', closeResetConfirm);
+      if (_confirmResetBtn) _confirmResetBtn.addEventListener('click', () => { AudioFX.explode(false); executeFullProgressReset(); });
       document.getElementById('closeHangarBtn').addEventListener('click', () => {
         hangarOverlay.classList.add('hidden'); hangarOverlay.classList.remove('flex');
         state = createInitialState('title'); titleOverlay.classList.remove('hidden'); titleOverlay.classList.add('flex');
@@ -6161,9 +6537,26 @@
         if (activeLvl)  activeLvl.textContent = `LV.${curData.level}`;
         if (perkLine)   perkLine.textContent = `${cur.perk} • +${Math.max(0, curData.level - 1) * 3}% Career Dmg`;
 
+        const createBtn = document.getElementById('toggleCreatePilotBtn');
+        const createBox = document.getElementById('createPilotBox');
+        const descEl = document.getElementById('pilotSelectDesc');
+        const swPilotBtn = document.getElementById('switchPilotBtn');
+        if (createBtn) createBtn.classList.toggle('hidden', LEVEL1_PILOT_ONLY);
+        if (LEVEL1_PILOT_ONLY && createBox) createBox.classList.add('hidden');
+        if (swPilotBtn) swPilotBtn.classList.toggle('hidden', LEVEL1_PILOT_ONLY);
+        if (descEl) {
+          descEl.textContent = LEVEL1_PILOT_ONLY
+            ? 'Level 1 Deployment: LTJG MAVERICK assigned to VF-1. Additional squadron pilots unlock in later theaters.'
+            : 'Each pilot saves their own Career Level, Credits, Hangar upgrades, and Theater progress independently.';
+        }
+
         if (!roster) return;
+        const visiblePilots = getVisiblePilots();
+        roster.className = visiblePilots.length === 1
+          ? 'grid grid-cols-1 max-w-[230px] mx-auto gap-2.5 mb-4'
+          : 'grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4';
         roster.innerHTML = '';
-        getAllPilots().forEach((pl) => {
+        visiblePilots.forEach((pl) => {
           const active = pl.id === profileStore.selectedPilot;
           const pd = profileStore.profiles[pl.id] || defaultPilotRecord();
           const xpPct = Math.min(100, Math.round((pd.xp / Math.max(1, pd.xpNext)) * 100));
@@ -6205,42 +6598,42 @@
         introMusicUrl: null, // Drop custom intro track URL here when ready!
         scenes: [
           {
-            img: "./assets/intro_scene_1.jpg",
+            img: "assets/intro_scene_1.jpg",
             animClass: "intro-anim-rise",
             durationMs: 6600,
             stamp: "NOVEMBER 1986 • INDIAN OCEAN • 0430 LOCAL",
             sub: "UNIDENTIFIED AIRCRAFT JUST CROSSED THE OUTER PERIMETER WITHOUT TRANSPONDERS."
           },
           {
-            img: "./assets/intro_scene_radar.jpg",
+            img: "assets/intro_scene_radar.jpg",
             animClass: "intro-anim-push",
             durationMs: 6600,
             stamp: "USS ENTERPRISE (CVN-65) • COMBAT INFORMATION CENTER",
             sub: "NO MARKINGS. NO WARNINGS. SOVIET PROTOTYPES TESTING THE FLEET'S RESPONSE."
           },
           {
-            img: "./assets/intro_scene_2.jpg",
+            img: "assets/intro_scene_2.jpg",
             animClass: "intro-anim-pan",
             durationMs: 6600,
             stamp: "VF-1 WOLFPACK • FLIGHT DECK ALERT",
             sub: "COMMAND WANTS INTEL — NOT A WAR. PUSH OUT, SURVIVE THE SWARM, AND BRING IT HOME."
           },
           {
-            img: "./assets/intro_scene_pilot.jpg",
+            img: "assets/intro_scene_pilot.jpg",
             animClass: "intro-anim-push",
             durationMs: 6600,
             stamp: "COCKPIT SEALED • SYSTEMS CHECK",
             sub: "GOING UP LEAN — CLOSE-IN GUNS ONLY — UNTIL COMMAND CLEARS FULL SYSTEMS OVER UHF."
           },
           {
-            img: "./assets/intro_scene_3.jpg",
+            img: "assets/intro_scene_3.jpg",
             animClass: "intro-anim-pan",
             durationMs: 6800,
             stamp: "FLIGHT DECK • DAWN MARSHALING",
             sub: "THE FURTHER YOU FLY FROM THE CARRIER, THE DEADLIER THE SKIES — AND THE BIGGER THE HAUL."
           },
           {
-            img: "./assets/intro_scene_4.jpg",
+            img: "assets/intro_scene_4.jpg",
             animClass: "intro-anim-push",
             durationMs: 7200,
             stamp: "CATAPULT 1 • ARMED",
