@@ -113,15 +113,16 @@
       0%   { transform: scale(1.02); }
       100% { transform: scale(1.13); }
     }
-    .intro-anim-rise { animation: introElevatorRise 5.2s ease-in-out forwards; }
-    .intro-anim-pan  { animation: introDeckPan 5.0s ease-in-out forwards; }
-    .intro-anim-push { animation: introCatPush 5.2s ease-in-out forwards; }
+    .intro-anim-rise { animation: introElevatorRise 7.2s ease-in-out forwards; }
+    .intro-anim-pan  { animation: introDeckPan 7.2s ease-in-out forwards; }
+    .intro-anim-push { animation: introCatPush 7.4s ease-in-out forwards; }
     /* Cohesive 1986 Top Gun warm golden-sepia grade across all pre-launch menus & Catapult spool-up */
     body.prelaunch-sepia #splashOverlay,
     body.prelaunch-sepia #pilotSelectOverlay,
     body.prelaunch-sepia #aircraftSelectOverlay,
     body.prelaunch-sepia #titleOverlay,
-    body.prelaunch-sepia #hangarOverlay {
+    body.prelaunch-sepia #hangarOverlay,
+    body.prelaunch-sepia #leaderboardOverlay {
       background: rgba(24, 14, 4, 0.78) !important;
       filter: sepia(0.84) saturate(1.18) contrast(1.06) brightness(0.95);
     }
@@ -225,7 +226,7 @@
           <span class="text-slate-600">•</span>
           <span id="lootMultText" class="text-amber-300 font-arcade">1.0×</span>
           <span class="text-slate-600">•</span>
-          <span id="zoneBossProgress" class="text-rose-300 font-arcade">FLY &gt;3.5 NM</span>
+          <span id="zoneBossProgress" class="text-rose-300 font-arcade">FLY &gt;5.5 NM</span>
           <span id="nextUnlockHud" class="hidden text-amber-300 font-arcade">• UNLOCK BURNER: 0/5</span>
           <span class="text-slate-600">•</span>
           <span id="scoreText" class="text-white tabular-nums">0 PTS</span>
@@ -347,7 +348,7 @@
         <!-- Subtle Cinema Caption (Non-interactive vibe only) -->
         <div id="storyCaptionWrap" class="absolute inset-x-0 bottom-5 sm:bottom-7 px-6 text-center pointer-events-none opacity-0 transition-opacity duration-1000">
           <div id="storySceneStamp" class="font-arcade text-[9px] sm:text-[11px] font-bold tracking-[0.34em] text-amber-300/90 drop-shadow mb-1"></div>
-          <div id="storySceneSub" class="font-arcade text-[11px] sm:text-sm font-black tracking-[0.22em] text-slate-100/95 drop-shadow"></div>
+          <div id="storySceneSub" class="font-arcade text-[10px] sm:text-xs font-bold tracking-[0.14em] text-amber-50/95 drop-shadow max-w-2xl mx-auto leading-relaxed"></div>
         </div>
       </div>
     </div>
@@ -514,7 +515,10 @@
           LAUNCH SORTIE ▶
         </button>
         <button id="openHangarTitleBtn" class="btn-navy py-3.5 px-4 rounded-xl font-arcade text-xs sm:text-sm font-black tracking-wider text-sky-200 transition cursor-pointer inline-flex items-center justify-center gap-1.5">
-          <svg class="w-4 h-4 text-amber-300" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="3.5" r="1.5"/><path d="M8 5v8.5M5 7h6M3.2 10.2A4.8 4.8 0 0 0 8 13.5a4.8 4.8 0 0 0 4.8-3.3"/></svg><span>HANGAR &amp; VAULT</span>
+          <svg class="w-4 h-4 text-amber-300" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="3.5" r="1.5"/><path d="M8 5v8.5M5 7h6M3.2 10.2A4.8 4.8 0 0 0 8 13.5a4.8 4.8 0 0 0 4.8-3.3"/></svg><span>HANGAR</span>
+        </button>
+        <button id="openLeaderboardTitleBtn" class="btn-navy py-3.5 px-3.5 rounded-xl font-arcade text-xs font-black tracking-wider text-amber-300 transition cursor-pointer inline-flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4 text-amber-300" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.3 4.2 13.3l.7-4.3-3.1-3 4.3-.6L8 1.5z"/></svg><span>TOP ACES</span>
         </button>
       </div>
 
@@ -567,6 +571,9 @@
       <div class="flex flex-col sm:flex-row gap-2.5 pt-2 border-t border-slate-800">
         <button id="launchFromHangarBtn" class="btn-catapult flex-1 py-3 rounded-xl font-arcade text-sm sm:text-base font-black tracking-widest transition cursor-pointer">
           LAUNCH NEXT SORTIE — CATAPULT 1 ▶
+        </button>
+        <button id="openLeaderboardHangarBtn" class="btn-navy py-3 px-4 rounded-xl font-arcade text-xs font-black text-amber-300 transition cursor-pointer">
+          ★ TOP ACES
         </button>
         <button id="closeHangarBtn" class="py-3 px-5 rounded-xl font-arcade text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 transition cursor-pointer">
           MAIN DECK
@@ -634,8 +641,37 @@
         <button id="restartBtn" class="btn-catapult flex-1 py-3 rounded-xl font-arcade text-sm font-black tracking-widest transition cursor-pointer">
           LAUNCH AGAIN ▶
         </button>
-        <button id="openHangarGoBtn" class="py-3 px-4 rounded-xl font-arcade text-xs font-black text-sky-200 bg-slate-900 hover:bg-sky-950 border border-sky-400/50 transition cursor-pointer">
-          ⚓ HANGAR
+        <button id="openHangarGoBtn" class="btn-navy py-3 px-4 rounded-xl font-arcade text-xs font-black text-sky-200 transition cursor-pointer">
+          HANGAR
+        </button>
+        <button id="openLeaderboardGoBtn" class="btn-navy py-3 px-3.5 rounded-xl font-arcade text-xs font-black text-amber-300 transition cursor-pointer">
+          ★ TOP ACES
+        </button>
+      </div>
+      <div id="goRankCallout" class="hidden mt-3 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/60 font-arcade text-[10px] font-black text-amber-300 tracking-wider"></div>
+    </div>
+  </div>
+
+  <!-- TOPGUN ALL-TIME LEADERBOARD PLAQUE ("BEST OF THE BEST") -->
+  <div id="leaderboardOverlay" class="menu-scroll-overlay fixed inset-0 z-50 hidden items-start justify-center p-3 sm:p-5 bg-slate-950/88 backdrop-blur-md">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-amber-400/65 my-auto">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-700/80">
+        <div>
+          <div class="font-arcade text-[10px] text-amber-300 tracking-[0.22em] font-bold">NAVAL FIGHTER WEAPONS SCHOOL • MIRAMAR</div>
+          <h2 class="font-stencil text-2xl sm:text-3xl topgun-chrome leading-tight">BEST OF THE BEST</h2>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button id="lbTabAllBtn" class="px-2.5 py-1 rounded-lg font-arcade text-[9px] font-black bg-amber-400 text-slate-950 cursor-pointer">ALL-TIME TOP 10</button>
+          <button id="lbTabMineBtn" class="px-2.5 py-1 rounded-lg font-arcade text-[9px] font-bold bg-slate-900 text-slate-300 border border-slate-700 cursor-pointer">YOUR SORTIES</button>
+        </div>
+      </div>
+
+      <div id="leaderboardTableWrap" class="space-y-1.5 mb-4"></div>
+
+      <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-700/70">
+        <span id="lbFooterNote" class="font-arcade text-[9px] text-slate-400 tracking-wider">ALL-TIME SQUADRON PLAQUE • SAVED LOCALLY</span>
+        <button id="closeLeaderboardBtn" class="btn-catapult px-5 py-2 rounded-xl font-arcade text-xs font-black tracking-widest transition cursor-pointer">
+          CLOSE ▶
         </button>
       </div>
     </div>
@@ -742,12 +778,6 @@
       function getActivePalette() {
         const cm = (typeof getCurrentMap === 'function') ? getCurrentMap() : { theme: 'ocean' };
         return THEATER_PALETTES[cm.theme] || THEATER_PALETTES.ocean;
-      }
-
-      function getSortieWeirdness() {
-        const cm = (typeof getCurrentMap === 'function') ? getCurrentMap() : { num: 1 };
-        const pLvl = (state && state.player) ? (state.player.level || 1) : 1;
-        return Math.min(1, ((cm.num - 1) * 0.16) + Math.max(0, pLvl - 1) * 0.065);
       }
 
       // Offscreen backdrop cache: rebuilds ocean, sunset glow/disc, and super vignette only on resize, theater, level, or zone change
@@ -1341,15 +1371,32 @@
               if (!r.ok) { entry.status = 'err'; return; }
               const data = await r.json();
               if (!data || !Array.isArray(data.elements)) { entry.status = 'err'; return; }
+              const hasPath2D = typeof Path2D === 'function';
+              const pParks = hasPath2D ? new Path2D() : null;
+              const pUrban = hasPath2D ? new Path2D() : null;
+              const pMotor = hasPath2D ? new Path2D() : null;
+              const pRoad  = hasPath2D ? new Path2D() : null;
+              const pRunway = hasPath2D ? new Path2D() : null;
+              const addPath = (target, pts, close) => {
+                if (!target || pts.length < 2) return;
+                target.moveTo(pts[0][0], pts[0][1]);
+                for (let k = 1; k < pts.length; k++) target.lineTo(pts[k][0], pts[k][1]);
+                if (close) target.closePath();
+              };
               for (const el of data.elements) {
                 if (!el.geometry || el.geometry.length < 2) continue;
                 const pts = el.geometry.map(g => latLngToWorld(g.lat, g.lon));
                 const tags = el.tags || {};
-                if (tags.aeroway === 'runway') entry.runways.push(pts);
-                else if (tags.highway) entry.roads.push({ pts, isMotorway: tags.highway === 'motorway' });
-                else if (tags.leisure) entry.parks.push(pts);
-                else if (tags.landuse) entry.urban.push(pts);
+                if (tags.aeroway === 'runway') { entry.runways.push(pts); addPath(pRunway, pts, false); }
+                else if (tags.highway) {
+                  const isM = tags.highway === 'motorway';
+                  entry.roads.push({ pts, isMotorway: isM });
+                  addPath(isM ? pMotor : pRoad, pts, false);
+                }
+                else if (tags.leisure) { entry.parks.push(pts); addPath(pParks, pts, true); }
+                else if (tags.landuse) { entry.urban.push(pts); addPath(pUrban, pts, true); }
               }
+              entry.paths = hasPath2D ? { parks: pParks, urban: pUrban, motor: pMotor, road: pRoad, runway: pRunway } : null;
               entry.status = 'ready';
               liveTileCount++;
             } catch (e) {
@@ -1432,19 +1479,29 @@
           tileCache.forEach((tile) => {
             if (tile.status !== 'ready') return;
             if (tile.maxX < viewMinX || tile.minX > viewMaxX || tile.maxY < viewMinY || tile.minY > viewMaxY) return;
-            // Real Parks & Golf Courses
+            if (tile.paths) {
+              if (tile.parks.length) { ctx.fillStyle = 'rgba(22, 101, 52, 0.55)'; ctx.fill(tile.paths.parks); }
+              if (tile.urban.length) { ctx.fillStyle = 'rgba(30, 41, 59, 0.48)'; ctx.fill(tile.paths.urban); }
+              if (tile.roads.length) {
+                ctx.strokeStyle = 'rgba(148, 163, 184, 0.42)'; ctx.lineWidth = 2.5; ctx.stroke(tile.paths.road);
+                ctx.strokeStyle = 'rgba(251, 191, 36, 0.52)'; ctx.lineWidth = 5; ctx.stroke(tile.paths.motor);
+              }
+              if (tile.runways.length) {
+                ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 18; ctx.stroke(tile.paths.runway);
+                ctx.strokeStyle = 'rgba(248, 250, 252, 0.7)'; ctx.lineWidth = 1.8; ctx.setLineDash([8, 8]);
+                ctx.stroke(tile.paths.runway); ctx.setLineDash([]);
+              }
+              return;
+            }
             ctx.fillStyle = 'rgba(22, 101, 52, 0.55)';
             for (const poly of tile.parks) { tracePoly(poly); ctx.fill(); }
-            // Real Commercial / Military / Urban Zones
             ctx.fillStyle = 'rgba(30, 41, 59, 0.48)';
             for (const poly of tile.urban) { tracePoly(poly); ctx.fill(); }
-            // Real Freeways (I-5, I-8, SR-75, I-15)
             for (const rd of tile.roads) {
               ctx.strokeStyle = rd.isMotorway ? 'rgba(251, 191, 36, 0.52)' : 'rgba(148, 163, 184, 0.42)';
               ctx.lineWidth = rd.isMotorway ? 5 : 2.5;
               traceLine(rd.pts); ctx.stroke();
             }
-            // Real Runways (Lindbergh Field, MCAS Miramar, Brown Field, Montgomery Field!)
             for (const rw of tile.runways) {
               ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 18; traceLine(rw); ctx.stroke();
               ctx.strokeStyle = 'rgba(248, 250, 252, 0.7)'; ctx.lineWidth = 1.8; ctx.setLineDash([8, 8]);
@@ -1567,15 +1624,15 @@
       // ============================================================
       // RADIAL DISTANCE THREAT RINGS (THE FURTHER OUT, THE GNARLIER!)
       // ============================================================
-      const SAFE_ZONE_NM = 3.5;
-      const SAFE_ZONE_PX = SAFE_ZONE_NM * 140; // 490px tight CIWS-protected perimeter
+      const SAFE_ZONE_NM = 5.5;
+      const SAFE_ZONE_PX = SAFE_ZONE_NM * 140; // 770px fortified Carrier Battle Group / Airbase CIWS perimeter
 
       function getThreatInfo(distNM) {
-        if (distNM < SAFE_ZONE_NM) return { lvl: 0, name: 'SAFE ZONE • CIWS', color: '#4ade80', lootMult: 1.0, spawnMult: 0.0, hpMult: 1.0, seaTop: '#0a3366', seaBot: '#041d3d', deepFactor: 0 };
-        if (distNM < 12) return { lvl: 1, name: 'OUTER PATROL', color: '#38bdf8', lootMult: 1.4, spawnMult: 1.0, hpMult: 1.18, seaTop: '#0b2d5c', seaBot: '#041a38', deepFactor: 0 };
-        if (distNM < 30) return { lvl: 2, name: 'CONTESTED WATERS', color: '#facc15', lootMult: 2.1, spawnMult: 1.38, hpMult: 1.72, seaTop: '#1c244f', seaBot: '#0a1633', deepFactor: 0 };
-        if (distNM < 68) return { lvl: 3, name: 'DANGER ZONE', color: '#f97316', lootMult: 3.2, spawnMult: 1.82, hpMult: 2.45, seaTop: '#381938', seaBot: '#121029', deepFactor: 0 };
-        const deep = Math.max(0, distNM - 68) / 28;
+        if (distNM < SAFE_ZONE_NM) return { lvl: 0, name: 'FORTIFIED BASE • CIWS', color: '#4ade80', lootMult: 1.0, spawnMult: 0.0, hpMult: 1.0, seaTop: '#0a3366', seaBot: '#041d3d', deepFactor: 0 };
+        if (distNM < 16) return { lvl: 1, name: 'OUTER PATROL', color: '#38bdf8', lootMult: 1.4, spawnMult: 1.0, hpMult: 1.18, seaTop: '#0b2d5c', seaBot: '#041a38', deepFactor: 0 };
+        if (distNM < 36) return { lvl: 2, name: 'CONTESTED WATERS', color: '#facc15', lootMult: 2.1, spawnMult: 1.38, hpMult: 1.72, seaTop: '#1c244f', seaBot: '#0a1633', deepFactor: 0 };
+        if (distNM < 76) return { lvl: 3, name: 'DANGER ZONE', color: '#f97316', lootMult: 3.2, spawnMult: 1.82, hpMult: 2.45, seaTop: '#381938', seaBot: '#121029', deepFactor: 0 };
+        const deep = Math.max(0, distNM - 76) / 28;
         return {
           lvl: 4,
           name: deep >= 1 ? `BLACK-OPS ENDLESS +${Math.floor(deep)}` : 'BLACK-OPS ENDLESS',
@@ -1842,11 +1899,17 @@
         return profileStore.ownedAircraft;
       }
 
+      let _acCacheKey = '';
+      let _acCacheVal = AIRCRAFT[0];
       function getSelectedAircraftCfg() {
         const id = (profile && profile.selectedAircraft) || 'f14';
         const owned = getOwnedAircraft();
+        const k = id + '|' + owned.length;
+        if (_acCacheKey === k) return _acCacheVal;
         const validId = owned.includes(id) ? id : 'f14';
-        return AIRCRAFT.find(a => a.id === validId) || AIRCRAFT[0];
+        _acCacheVal = AIRCRAFT.find(a => a.id === validId) || AIRCRAFT[0];
+        _acCacheKey = k;
+        return _acCacheVal;
       }
 
       function getPilotAircraftSynergy(pilotCfg = null, acCfg = null) {
@@ -1942,6 +2005,132 @@
           profileStore.profiles[profileStore.selectedPilot] = profile;
           localStorage.setItem(PROFILE_STORE_KEY, JSON.stringify(profileStore));
         } catch (e) {}
+      }
+
+      // ============================================================
+      // TOPGUN "BEST OF THE BEST" ALL-TIME LEADERBOARD
+      // ============================================================
+      const LEADERBOARD_KEY = 'coronado_cowboys_leaderboard_v1';
+      const LEADERBOARD_API_URL = null; // Optional shared online endpoint (e.g. Supabase/Cloudflare Worker)
+      const SQUADRON_BENCHMARKS = [
+        { id: 'seed_viper',     callsign: 'VIPER',     helmet: 'viper',     aircraft: 'F-14A',   theater: 'CORONADO',  score: 18500, kills: 94, maxNM: 72.4, outcome: 'BUZZED',  isSeed: true },
+        { id: 'seed_iceman',    callsign: 'ICEMAN',    helmet: 'iceman',    aircraft: 'F/A-18C', theater: 'CHINA LAKE',score: 14200, kills: 76, maxNM: 58.1, outcome: 'BUZZED',  isSeed: true },
+        { id: 'seed_jester',    callsign: 'JESTER',    helmet: 'hollywood', aircraft: 'A-6E',    theater: 'PAX RIVER', score: 10800, kills: 58, maxNM: 41.5, outcome: 'TRAPPED', isSeed: true },
+        { id: 'seed_hollywood', callsign: 'HOLLYWOOD', helmet: 'hollywood', aircraft: 'F-14A',   theater: 'MIRAMAR',   score: 7400,  kills: 42, maxNM: 29.0, outcome: 'TRAPPED', isSeed: true },
+        { id: 'seed_wolfman',   callsign: 'WOLFMAN',   helmet: 'maverick',  aircraft: 'F-14A',   theater: 'IND OCEAN', score: 4600,  kills: 28, maxNM: 19.6, outcome: 'TRAPPED', isSeed: true }
+      ];
+      let lbActiveTab = 'all';
+      let lbLastEntryId = null;
+
+      function loadLeaderboard() {
+        let userRows = [];
+        try {
+          const raw = localStorage.getItem(LEADERBOARD_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) userRows = parsed;
+          }
+        } catch (e) {}
+        return [...SQUADRON_BENCHMARKS, ...userRows].sort((a, b) => b.score - a.score);
+      }
+
+      function recordLeaderboardRun(outcome = 'TRAPPED') {
+        if (!state || state.score <= 0) return null;
+        const pc = getSelectedPilotCfg();
+        const ac = getSelectedAircraftCfg();
+        const cm = getCurrentMap();
+        const entry = {
+          id: 'run_' + Date.now() + '_' + Math.floor(Math.random() * 999),
+          callsign: pc.callsign || 'PILOT',
+          helmet: pc.helmet || 'maverick',
+          aircraft: ac.short || 'F-14A',
+          theater: cm.short || 'IND OCEAN',
+          score: Math.round(state.score),
+          kills: state.kills || 0,
+          maxNM: +(state.maxDistNM || 0).toFixed(1),
+          outcome,
+          isSeed: false,
+          ts: Date.now()
+        };
+        let userRows = [];
+        try {
+          const raw = localStorage.getItem(LEADERBOARD_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) userRows = parsed;
+          }
+          userRows.push(entry);
+          userRows.sort((a, b) => b.score - a.score);
+          userRows = userRows.slice(0, 50);
+          localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(userRows));
+        } catch (e) {}
+        lbLastEntryId = entry.id;
+        const all = loadLeaderboard();
+        const rank = all.findIndex(r => r.id === entry.id) + 1;
+        return { entry, rank };
+      }
+
+      function renderLeaderboardUI() {
+        const wrap = document.getElementById('leaderboardTableWrap');
+        const tabAll = document.getElementById('lbTabAllBtn');
+        const tabMine = document.getElementById('lbTabMineBtn');
+        if (!wrap) return;
+        if (tabAll && tabMine) {
+          tabAll.className = lbActiveTab === 'all'
+            ? 'px-2.5 py-1 rounded-lg font-arcade text-[9px] font-black bg-amber-400 text-slate-950 cursor-pointer'
+            : 'px-2.5 py-1 rounded-lg font-arcade text-[9px] font-bold bg-slate-900 text-slate-300 border border-slate-700 cursor-pointer';
+          tabMine.className = lbActiveTab === 'mine'
+            ? 'px-2.5 py-1 rounded-lg font-arcade text-[9px] font-black bg-amber-400 text-slate-950 cursor-pointer'
+            : 'px-2.5 py-1 rounded-lg font-arcade text-[9px] font-bold bg-slate-900 text-slate-300 border border-slate-700 cursor-pointer';
+        }
+        const all = loadLeaderboard();
+        const rows = (lbActiveTab === 'mine' ? all.filter(r => !r.isSeed) : all).slice(0, 10);
+        if (!rows.length) {
+          wrap.innerHTML = '<div class="mfd-card rounded-xl p-5 text-center font-arcade text-xs text-slate-300">NO RECORDED SORTIES YET — LAUNCH OFF CATAPULT 1 TO CLAIM #1!</div>';
+          return;
+        }
+        wrap.innerHTML = rows.map((r, i) => {
+          const rank = i + 1;
+          const isNew = r.id === lbLastEntryId;
+          const rankCol = rank === 1 ? 'text-amber-300' : (rank === 2 ? 'text-slate-200' : (rank === 3 ? 'text-orange-300' : 'text-slate-400'));
+          const badge = r.isSeed
+            ? '<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-arcade text-[7px]">SQUADRON</span>'
+            : `<span class="px-1.5 py-0.5 rounded ${isNew ? 'bg-amber-400 text-slate-950' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'} font-arcade text-[7px] font-black">${isNew ? 'NEW!' : 'YOU'}</span>`;
+          const outCol = r.outcome === 'BUZZED' ? 'text-amber-300' : (r.outcome === 'TRAPPED' ? 'text-emerald-300' : 'text-rose-300');
+          return `
+            <div class="mfd-card rounded-xl px-3 py-2 flex items-center justify-between gap-2 ${isNew ? 'border-amber-400/80 ring-1 ring-amber-400/40' : ''}">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="font-arcade text-sm font-black w-6 text-center shrink-0 ${rankCol}">#${rank}</span>
+                <img src="${PORTRAIT_URLS[r.helmet] || PORTRAIT_URLS.maverick}" alt="${r.callsign}" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 object-contain shrink-0" />
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-arcade text-xs font-black text-white truncate">${r.callsign}</span>
+                    ${badge}
+                  </div>
+                  <div class="font-arcade text-[8px] text-slate-400 truncate">${r.aircraft} • ${r.theater} • ${r.kills} SPLASH • ${r.maxNM} NM</div>
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="font-arcade text-xs sm:text-sm font-black text-amber-300 tabular-nums">${r.score.toLocaleString()}</div>
+                <div class="font-arcade text-[8px] font-bold ${outCol}">${r.outcome}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function openLeaderboard() {
+        const ov = document.getElementById('leaderboardOverlay');
+        if (!ov) return;
+        renderLeaderboardUI();
+        ov.classList.remove('hidden');
+        ov.classList.add('flex');
+      }
+      function closeLeaderboard() {
+        const ov = document.getElementById('leaderboardOverlay');
+        if (!ov) return;
+        ov.classList.add('hidden');
+        ov.classList.remove('flex');
       }
       selectedMapIdx = Math.max(0, Math.min(MAPS.length - 1, profile.currentCampaignIdx || 0));
 
@@ -2057,41 +2246,52 @@
         }
       ];
 
+      const HUD_DOM = {
+        bankSummary: document.getElementById('bankSummary'),
+        holdRow: document.getElementById('holdRow'),
+        zoneBossProgress: document.getElementById('zoneBossProgress'),
+        geoStatusText: document.getElementById('geoStatusText'),
+        nextUnlockHud: document.getElementById('nextUnlockHud'),
+        goSupersCard: document.getElementById('goSupersCard'),
+        titleControlsGrid: document.getElementById('titleControlsGrid'),
+        ctrlSwapCard: document.getElementById('ctrlSwapCard'),
+        ctrlSuperCard: document.getElementById('ctrlSuperCard'),
+        ctrlFlightTitle: document.getElementById('ctrlFlightTitle'),
+        ctrlFlightKeys: document.getElementById('ctrlFlightKeys'),
+        ctrlFlightSub: document.getElementById('ctrlFlightSub')
+      };
+
+      function updateNextUnlockPill() {
+        const nxtEl = HUD_DOM.nextUnlockHud;
+        if (!nxtEl) return;
+        const nextM = SESSION_MILESTONES.find(m => !sessionUnlocks[m.key]);
+        if (nextM) {
+          nxtEl.classList.remove('hidden');
+          setHudText(nxtEl, `• UNLOCK ${nextM.shortLabel}: ${Math.min(sessionSplashes, nextM.killsReq)}/${nextM.killsReq}`);
+        } else {
+          nxtEl.classList.add('hidden');
+        }
+      }
+
       function syncUnlockHud() {
         if (afterburnerBtn) afterburnerBtn.classList.toggle('hidden', !sessionUnlocks.afterburner);
         if (superBtn) superBtn.classList.toggle('hidden', !sessionUnlocks.superState);
         if (streakPill) streakPill.classList.toggle('hidden', !sessionUnlocks.superState);
         if (altInlineBadge) altInlineBadge.classList.toggle('hidden', !sessionUnlocks.altitude);
         if (bossPlaneLabel) bossPlaneLabel.classList.toggle('hidden', !sessionUnlocks.altitude);
-        const goSup = document.getElementById('goSupersCard');
-        if (goSup) goSup.classList.toggle('hidden', !sessionUnlocks.superState);
-        const cGrid = document.getElementById('titleControlsGrid');
-        const cSwap = document.getElementById('ctrlSwapCard');
-        const cSup  = document.getElementById('ctrlSuperCard');
-        if (cSwap) cSwap.classList.toggle('hidden', !sessionUnlocks.altitude);
-        if (cSup)  cSup.classList.toggle('hidden', !sessionUnlocks.superState);
-        if (cGrid) {
+        if (HUD_DOM.goSupersCard) HUD_DOM.goSupersCard.classList.toggle('hidden', !sessionUnlocks.superState);
+        if (HUD_DOM.ctrlSwapCard) HUD_DOM.ctrlSwapCard.classList.toggle('hidden', !sessionUnlocks.altitude);
+        if (HUD_DOM.ctrlSuperCard) HUD_DOM.ctrlSuperCard.classList.toggle('hidden', !sessionUnlocks.superState);
+        if (HUD_DOM.titleControlsGrid) {
           const cols = 1 + (sessionUnlocks.altitude ? 1 : 0) + (sessionUnlocks.superState ? 1 : 0);
-          cGrid.className = `grid ${cols === 3 ? 'grid-cols-3' : (cols === 2 ? 'grid-cols-2' : 'grid-cols-1')} gap-2 text-left mb-4`;
+          HUD_DOM.titleControlsGrid.className = `grid ${cols === 3 ? 'grid-cols-3' : (cols === 2 ? 'grid-cols-2' : 'grid-cols-1')} gap-2 text-left mb-4`;
         }
-        const cfTitle = document.getElementById('ctrlFlightTitle');
-        const cfKeys  = document.getElementById('ctrlFlightKeys');
-        const cfSub   = document.getElementById('ctrlFlightSub');
-        if (cfTitle && sessionUnlocks.afterburner) {
-          cfTitle.textContent = 'JET FLIGHT + BURNER';
-          if (cfKeys) cfKeys.textContent = 'WASD + C (Burner)';
-          if (cfSub) cfSub.textContent = 'Auto-cruise • Hold C turbo';
+        if (HUD_DOM.ctrlFlightTitle && sessionUnlocks.afterburner) {
+          HUD_DOM.ctrlFlightTitle.textContent = 'JET FLIGHT + BURNER';
+          if (HUD_DOM.ctrlFlightKeys) HUD_DOM.ctrlFlightKeys.textContent = 'WASD + C (Burner)';
+          if (HUD_DOM.ctrlFlightSub) HUD_DOM.ctrlFlightSub.textContent = 'Auto-cruise • Hold C turbo';
         }
-        const nxtEl = document.getElementById('nextUnlockHud');
-        if (nxtEl) {
-          const nextM = SESSION_MILESTONES.find(m => !sessionUnlocks[m.key]);
-          if (nextM) {
-            nxtEl.classList.remove('hidden');
-            setHudText(nxtEl, `• UNLOCK ${nextM.shortLabel}: ${Math.min(sessionSplashes, nextM.killsReq)}/${nextM.killsReq}`);
-          } else {
-            nxtEl.classList.add('hidden');
-          }
-        }
+        updateNextUnlockPill();
       }
 
       function showRadioComm(m) {
@@ -2160,11 +2360,12 @@
       }
       let holdAfterburnerBtn = false;
 
-      // Escort fleet anchored around USS Enterprise (0,0)
+      // Expanded Carrier Battle Group Escort Fleet flanking USS Enterprise (0,0)
       const escortOffsets = [
-        { x: -250, y: -120 },
-        { x: 260,  y: 90 },
-        { x: -210, y: 240 }
+        { x: -340, y: -165 },
+        { x: 355,  y: -120 },
+        { x: -310, y: 270 },
+        { x: 320,  y: 255 }
       ];
 
       function createInitialState(mode = 'title') {
@@ -2359,6 +2560,7 @@
         profile.currentCampaignIdx = selectedMapIdx;
         if (state.score > profile.highScore) profile.highScore = state.score;
         saveProfile();
+        recordLeaderboardRun('BUZZED');
         refreshRecordLine();
         renderMapSelector();
         renderPilotSelector();
@@ -2387,6 +2589,7 @@
         addCareerXP(60 + Math.round(state.maxDistNM * 2));
         if (state.score > profile.highScore) profile.highScore = state.score;
         saveProfile();
+        recordLeaderboardRun('TRAPPED');
         refreshRecordLine();
         renderPilotSelector();
 
@@ -2609,17 +2812,22 @@
       // ============================================================
       // FX HELPERS (WORLD COORDINATES)
       // ============================================================
+      // O(1) swap-and-pop removal (zero splice array-shift overhead in 60 Hz hot loops)
+      function swapRemove(arr, idx) {
+        const last = arr.length - 1;
+        if (idx !== last) arr[idx] = arr[last];
+        arr.pop();
+      }
+      let _ptCursor = 0, _trCursor = 0, _swCursor = 0, _ftCursor = 0;
       function pushParticle(pt) {
-        if (state.particles.length >= ENGINE_CFG.maxParticles) {
-          state.particles.shift();
-        }
-        state.particles.push(pt);
+        const arr = state.particles;
+        if (arr.length < ENGINE_CFG.maxParticles) arr.push(pt);
+        else { arr[_ptCursor % arr.length] = pt; _ptCursor = (_ptCursor + 1) % ENGINE_CFG.maxParticles; }
       }
       function pushTracer(tr) {
-        if (state.tracers.length >= ENGINE_CFG.maxTracers) {
-          state.tracers.shift();
-        }
-        state.tracers.push(tr);
+        const arr = state.tracers;
+        if (arr.length < ENGINE_CFG.maxTracers) arr.push(tr);
+        else { arr[_trCursor % arr.length] = tr; _trCursor = (_trCursor + 1) % ENGINE_CFG.maxTracers; }
       }
       function spawnExplosion(x, y, plane, color, count = 16, big = false) {
         // Dynamically scale burst density when many particles are already active (keeps Going Ballistic locked at 60fps!)
@@ -2639,12 +2847,16 @@
         if (big) { spawnRing(x, y, color, 10, 100, plane); state.screenShake = Math.max(state.screenShake, 9); }
       }
       function spawnRing(x, y, color, startR, maxR, plane) {
-        if (state.shockwaves.length >= ENGINE_CFG.maxShockwaves) state.shockwaves.shift();
-        state.shockwaves.push({ x, y, plane, color, r: startR, maxR, life: 0.34, maxLife: 0.34 });
+        const arr = state.shockwaves;
+        const item = { x, y, plane, color, r: startR, maxR, life: 0.34, maxLife: 0.34 };
+        if (arr.length < ENGINE_CFG.maxShockwaves) arr.push(item);
+        else { arr[_swCursor % arr.length] = item; _swCursor = (_swCursor + 1) % ENGINE_CFG.maxShockwaves; }
       }
       function addFloatingText(x, y, text, color = '#ffffff', size = 11) {
-        if (state.floatingTexts.length >= ENGINE_CFG.maxFloatingTexts) state.floatingTexts.shift();
-        state.floatingTexts.push({ x, y, text, color, size, life: 0.85, maxLife: 0.85 });
+        const arr = state.floatingTexts;
+        const item = { x, y, text, color, size, life: 0.85, maxLife: 0.85 };
+        if (arr.length < ENGINE_CFG.maxFloatingTexts) arr.push(item);
+        else { arr[_ftCursor % arr.length] = item; _ftCursor = (_ftCursor + 1) % ENGINE_CFG.maxFloatingTexts; }
       }
 
       // ============================================================
@@ -3353,11 +3565,23 @@
         profile.carriedLevel = 1;
         if (state.score > profile.highScore) profile.highScore = state.score;
         saveProfile();
+        const _lbRes = recordLeaderboardRun('EJECTED');
+        const _goRank = document.getElementById('goRankCallout');
+        if (_goRank) {
+          if (_lbRes && _lbRes.rank > 0 && _lbRes.rank <= 10) {
+            _goRank.textContent = _lbRes.rank === 1
+              ? '★ NEW #1 ALL-TIME TOPGUN RECORD! BEST OF THE BEST! ★'
+              : `★ RANKED #${_lbRes.rank} ON THE ALL-TIME TOPGUN PLAQUE! ★`;
+            _goRank.classList.remove('hidden');
+          } else {
+            _goRank.classList.add('hidden');
+          }
+        }
         refreshRecordLine();
         const c = state.cargo;
         const lostAny = c.credits > 0 || c.intel > 0 || c.parts > 0;
         document.getElementById('lostCargoNote').textContent = lostAny
-          ? `Lost at sea: 🪙${c.credits} CR, 📦${c.intel} Intel, ⚙️${c.parts} Parts. Follow the green ⚓ CVN-65 beacon home & land on Hard Deck to bank!`
+          ? `Unbanked cargo lost: ${c.credits} CR, ${c.intel} Intel, ${c.parts} Parts. Follow the green Home Beacon back and land to bank!`
           : 'Venture out from CVN-65 for richer salvage, then fly back and trap the 3-wire on Hard Deck!';
 
         document.getElementById('goScore').textContent = state.score.toLocaleString();
@@ -3450,7 +3674,7 @@
         for (let i = state.particles.length - 1; i >= 0; i--) {
           const pt = state.particles[i];
           pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.life -= dt;
-          if (pt.life <= 0) state.particles.splice(i, 1);
+          if (pt.life <= 0) swapRemove(state.particles, i);
         }
         if (cs.timer >= 5.2) triggerCatapultShot();
       }
@@ -3563,11 +3787,11 @@
 
           for (let i = state.particles.length - 1; i >= 0; i--) {
             const pt = state.particles[i]; pt.life -= dt; pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.vx *= 0.95; pt.vy *= 0.95;
-            if (pt.life <= 0) state.particles.splice(i, 1);
+            if (pt.life <= 0) swapRemove(state.particles, i);
           }
           for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
             const ft = state.floatingTexts[i]; ft.life -= dt; ft.y -= 28 * dt;
-            if (ft.life <= 0) state.floatingTexts.splice(i, 1);
+            if (ft.life <= 0) swapRemove(state.floatingTexts, i);
           }
 
           for (const pl of c.pilots) {
@@ -3828,40 +4052,51 @@
           }
         }
 
-        // HOME BASE PHALANX CIWS SELF-DEFENSE (Shreds any enemy/bullet entering Safe Zone < 3.5 NM!)
+        // FORTIFIED HOME BASE QUAD-PHALANX CIWS & BATTLE GROUP SUPPORT (5.5 NM Perimeter!)
+        if (distNM < SAFE_ZONE_NM && state.trapGrace <= 0) {
+          // Gentle base logistics support inside the fortified perimeter
+          if (p.hp < p.maxHp) p.hp = Math.min(p.maxHp, p.hp + 8 * dt);
+          if (p.fuel < p.maxFuel) p.fuel = Math.min(p.maxFuel, p.fuel + 18 * dt);
+        }
         state.ciwsTimer -= dt;
         if (state.ciwsTimer <= 0) {
-          state.ciwsTimer = 0.085;
-          // Intercept hostile projectiles entering base perimeter
+          state.ciwsTimer = 0.065;
+          // Intercept all hostile projectiles crossing into the 5.5 NM fortified perimeter
           for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
             const b = state.enemyBullets[i];
-            if (Math.hypot(b.x, b.y) < SAFE_ZONE_PX - 40) {
-              pushParticle({ x: b.x, y: b.y, plane: b.plane, vx: 0, vy: 0, life: 0.16, maxLife: 0.16, size: 3.5, color: '#fef08a' });
-              state.enemyBullets.splice(i, 1);
+            if (Math.hypot(b.x, b.y) < SAFE_ZONE_PX - 20) {
+              pushParticle({ x: b.x, y: b.y, plane: b.plane, vx: 0, vy: 0, life: 0.16, maxLife: 0.16, size: 3.8, color: '#fef08a' });
+              swapRemove(state.enemyBullets, i);
             }
           }
-          // Track & shred any enemy crossing into the tight Safe Zone
-          let ciwsTarget = null, ciwsDist = Infinity;
+          // Quad-mount Phalanx + Escort SAMs engage up to 2 intruders simultaneously!
+          const intruders = [];
           for (const e of state.enemies) {
             if (e.hp <= 0) continue;
             const d0 = Math.hypot(e.x, e.y);
-            if (d0 < SAFE_ZONE_PX && d0 < ciwsDist) { ciwsDist = d0; ciwsTarget = e; }
+            if (d0 < SAFE_ZONE_PX) intruders.push({ e, d0 });
           }
-          if (ciwsTarget) {
-            const mounts = [[-34, -52], [34, 52]];
-            for (const [mx, my] of mounts) {
-              const jx = (Math.random() - 0.5) * 10;
-              const jy = (Math.random() - 0.5) * 10;
-              pushTracer({
-                x1: mx, y1: my, x2: ciwsTarget.x + jx, y2: ciwsTarget.y + jy,
-                plane: ciwsTarget.plane, color: '#fef08a', width: 2.6, life: 0.08, maxLife: 0.08
-              });
+          if (intruders.length) {
+            intruders.sort((a, b) => a.d0 - b.d0);
+            const mounts = [[-52, -88], [52, -88], [-52, 88], [52, 88]];
+            const targets = intruders.slice(0, 2);
+            targets.forEach((entry, idx) => {
+              const t = entry.e;
+              const pair = idx === 0 ? [mounts[0], mounts[1]] : [mounts[2], mounts[3]];
+              for (const [mx, my] of pair) {
+                const jx = (Math.random() - 0.5) * 12;
+                const jy = (Math.random() - 0.5) * 12;
+                pushTracer({
+                  x1: mx, y1: my, x2: t.x + jx, y2: t.y + jy,
+                  plane: t.plane, color: '#fef08a', width: 3.0, life: 0.08, maxLife: 0.08
+                });
+              }
+              damageEnemy(t, t.type === 'boss' ? 115 : 165);
+            });
+            if (Math.random() < 0.22 && distNM < 8.5) {
+              addFloatingText(0, -165, 'QUAD CIWS PHALANX ENGAGED!', '#4ade80', 11);
             }
-            damageEnemy(ciwsTarget, ciwsTarget.type === 'boss' ? 42 : 75);
-            if (Math.random() < 0.25 && distNM < 6) {
-              addFloatingText(0, -110, 'CIWS PHALANX ENGAGED!', '#4ade80', 10);
-            }
-            if (distNM < 5.5) AudioFX.vulcan();
+            if (distNM < 7.5) AudioFX.vulcan();
           }
         }
 
@@ -3883,7 +4118,7 @@
         }
 
         // USS ENTERPRISE / AIRBASE (0, 0) EXTRACTION TRAP CHECK!
-        const onDeck = Math.abs(p.x) < 64 && Math.abs(p.y) < 118;
+        const onDeck = Math.abs(p.x) < 86 && Math.abs(p.y) < 156;
         if (state.trapGrace <= 0 && onDeck && p.plane === 0 && !p.superActive) {
           state.trapProgress += dt / 0.72;
           if (state.trapProgress >= 1.0) {
@@ -3929,14 +4164,14 @@
         // Update Enemies
         for (let i = state.enemies.length - 1; i >= 0; i--) {
           const e = state.enemies[i];
-          if (e.hp <= 0) { state.enemies.splice(i, 1); continue; }
+          if (e.hp <= 0) { swapRemove(state.enemies, i); continue; }
           e.hitFlash = Math.max(0, e.hitFlash - dt);
           e.phaseTimer += dt;
 
           const dx = p.x - e.x, dy = p.y - e.y, dist = Math.hypot(dx, dy) || 1;
           // Despawn enemies left far behind across the ocean
           if (dist > Math.max(W, H) * 1.45 && e.type !== 'boss') {
-            state.enemies.splice(i, 1); continue;
+            swapRemove(state.enemies, i); continue;
           }
 
           if (e.fleeing) {
@@ -3944,7 +4179,7 @@
             e.angle = away;
             e.x += Math.cos(away) * (e.speed * 2.2) * dt;
             e.y += Math.sin(away) * (e.speed * 2.2) * dt;
-            if (dist > Math.max(W, H) * 0.95) state.enemies.splice(i, 1);
+            if (dist > Math.max(W, H) * 0.95) swapRemove(state.enemies, i);
             continue;
           }
           if (e.type === 'boss') {
@@ -4152,7 +4387,7 @@
             }
           }
           b.x += b.vx * dt; b.y += b.vy * dt;
-          if (b.life <= 0) { state.bullets.splice(i, 1); continue; }
+          if (b.life <= 0) { swapRemove(state.bullets, i); continue; }
 
           let hit = false;
           for (const e of state.enemies) {
@@ -4169,17 +4404,17 @@
               hit = true; break;
             }
           }
-          if (hit) state.bullets.splice(i, 1);
+          if (hit) swapRemove(state.bullets, i);
         }
 
         // Update Enemy Bullets
         for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
           const b = state.enemyBullets[i];
           b.life -= dt; b.x += b.vx * dt; b.y += b.vy * dt;
-          if (b.life <= 0) { state.enemyBullets.splice(i, 1); continue; }
+          if (b.life <= 0) { swapRemove(state.enemyBullets, i); continue; }
           if (!p.superActive && b.plane === p.plane && Math.hypot(b.x - p.x, b.y - p.y) < b.r + 12) {
             damagePlayer(12);
-            state.enemyBullets.splice(i, 1);
+            swapRemove(state.enemyBullets, i);
           }
         }
 
@@ -4188,7 +4423,7 @@
         for (let i = state.pickups.length - 1; i >= 0; i--) {
           const g = state.pickups[i];
           g.life -= dt;
-          if (g.life <= 0) { state.pickups.splice(i, 1); continue; }
+          if (g.life <= 0) { swapRemove(state.pickups, i); continue; }
           const dx = p.x - g.x, dy = p.y - g.y, dist = Math.hypot(dx, dy) || 1;
           if (dist < magnetR) {
             const pull = 440 + (magnetR - dist) * 2.2;
@@ -4203,42 +4438,42 @@
               AudioFX.coinLoot(); checkSuperArmed();
             } else if (g.kind === 'credit') {
               state.cargo.credits += g.val;
-              addFloatingText(p.x, p.y - 22, `+${g.val} CR 🪙`, '#fde047', 10);
+              addFloatingText(p.x, p.y - 22, `+${g.val} CR`, '#fde047', 10);
               AudioFX.coinLoot();
             } else if (g.kind === 'intel') {
               state.cargo.intel += g.val;
-              addFloatingText(p.x, p.y - 24, '+CLASSIFIED INTEL 📦', '#38bdf8', 11);
+              addFloatingText(p.x, p.y - 24, '+CLASSIFIED INTEL', '#38bdf8', 11);
               AudioFX.coinLoot();
             } else if (g.kind === 'part') {
               state.cargo.parts += g.val;
-              addFloatingText(p.x, p.y - 24, '+ORDNANCE PART ⚙️', '#c084fc', 11);
+              addFloatingText(p.x, p.y - 24, '+ORDNANCE PART', '#c084fc', 11);
               AudioFX.coinLoot();
             } else {
               gainXP(g.val);
             }
-            state.pickups.splice(i, 1);
+            swapRemove(state.pickups, i);
           }
         }
 
         // Update Hitscan Tracers & FX
         for (let i = state.tracers.length - 1; i >= 0; i--) {
           state.tracers[i].life -= dt;
-          if (state.tracers[i].life <= 0) state.tracers.splice(i, 1);
+          if (state.tracers[i].life <= 0) swapRemove(state.tracers, i);
         }
         for (let i = state.particles.length - 1; i >= 0; i--) {
           const pt = state.particles[i];
           pt.life -= dt; pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.vx *= 0.96; pt.vy *= 0.96;
-          if (pt.life <= 0) state.particles.splice(i, 1);
+          if (pt.life <= 0) swapRemove(state.particles, i);
         }
         for (let i = state.shockwaves.length - 1; i >= 0; i--) {
           const sw = state.shockwaves[i];
           sw.life -= dt; sw.r += (sw.maxR - sw.r) * Math.min(1, dt * 11);
-          if (sw.life <= 0) state.shockwaves.splice(i, 1);
+          if (sw.life <= 0) swapRemove(state.shockwaves, i);
         }
         for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
           const ft = state.floatingTexts[i];
           ft.life -= dt; ft.y -= 34 * dt;
-          if (ft.life <= 0) state.floatingTexts.splice(i, 1);
+          if (ft.life <= 0) swapRemove(state.floatingTexts, i);
         }
 
         state.hudTimer -= dt;
@@ -4330,8 +4565,8 @@
         setHudWidth(xpBar, Math.min(100, (p.xp / p.xpNext) * 100).toFixed(1) + '%');
         setHudText(xpText, `${Math.floor(p.xp)} / ${p.xpNext} EGO`);
 
-        const bankEl = document.getElementById('bankSummary');
-        const holdRowEl = document.getElementById('holdRow');
+        const bankEl = HUD_DOM.bankSummary;
+        const holdRowEl = HUD_DOM.holdRow;
         setHudText(bankEl, `${profile.credits} CR • ${profile.intel} INT • ${profile.parts} PRT`);
         const c = state.cargo;
         const hasHold = (c.credits > 0 || c.intel > 0 || c.parts > 0);
@@ -4351,7 +4586,7 @@
         const _pdHud = getSelectedPilotData();
         setHudText(levelBadge, `${_pcHud.callsign} • CAREER LV.${_pdHud.level} (SORTIE L${p.level})`);
 
-        const zbp = document.getElementById('zoneBossProgress');
+        const zbp = HUD_DOM.zoneBossProgress;
         if (zbp) {
           const clearedTot = [1,2,3,4].reduce((a,z)=>a+(state.surfaceBossDefeatedStages[z]?1:0)+(state.bossDefeatedStages[z]?1:0),0);
           if (state.allBossesCleared) {
@@ -4359,7 +4594,7 @@
             zbp.className = 'text-amber-300 font-arcade animate-pulse';
           } else if (threat.lvl === 0) {
             const nextZ = [1,2,3,4].find(z => !state.surfaceBossDefeatedStages[z] || !state.bossDefeatedStages[z]) || 1;
-            const zReqNM = [0, 3.5, 12, 30, 68][nextZ];
+            const zReqNM = [0, 5.5, 16, 36, 76][nextZ];
             zbp.textContent = `OBJ [${clearedTot}/8]: FLY >${zReqNM} NM (Z${nextZ})`;
             zbp.className = 'text-emerald-300 font-arcade';
           } else {
@@ -4372,7 +4607,7 @@
             const k = state.zoneKills[threat.lvl] || 0;
             if (airDone && surfDone) {
               const nextZ = [1,2,3,4].find(z => !state.surfaceBossDefeatedStages[z] || !state.bossDefeatedStages[z]);
-              const nextNM = nextZ ? [0, 3.5, 12, 30, 68][nextZ] : 0;
+              const nextNM = nextZ ? [0, 5.5, 16, 36, 76][nextZ] : 0;
               zbp.textContent = nextZ ? `✓ Z${threat.lvl} CLEAR • PUSH TO Z${nextZ} (${nextNM}+ NM)` : `✓ ALL BOSSES CLEARED!`;
               zbp.className = 'text-emerald-300 font-arcade';
             } else if (surfAct && airAct) {
@@ -4398,7 +4633,7 @@
         scoreText.textContent = state.score.toLocaleString() + ' PTS';
         scoreTextMobile.textContent = state.score.toLocaleString() + ' PTS';
         killsText.textContent = state.kills + ' SPLASHES';
-        const geoEl = document.getElementById('geoStatusText');
+        const geoEl = HUD_DOM.geoStatusText;
         if (geoEl) {
           const cm = getCurrentMap();
           if (cm.theme === 'coronado') {
@@ -4455,7 +4690,7 @@
           setHudColor(altInlineBadge, PLANE_CFG[p.plane].color);
         }
 
-        syncUnlockHud();
+        updateNextUnlockPill();
         const activeBoss = getPrimaryBoss();
         if (activeBoss && activeBoss.bossCfg) {
           bossHudBar.classList.remove('hidden');
@@ -4712,7 +4947,7 @@
         }
 
         // Subtle Nautical Threat Ring Markers centered on USS Enterprise (0, 0)
-        [3.5 * 140, 12 * 140, 30 * 140, 68 * 140].forEach((rad, idx) => {
+        [5.5 * 140, 16 * 140, 36 * 140, 76 * 140].forEach((rad, idx) => {
           const cols = ['rgba(74,222,128,0.16)', 'rgba(56,189,248,0.15)', 'rgba(250,204,21,0.16)', 'rgba(244,63,94,0.2)'];
           ctx.strokeStyle = cols[idx];
           ctx.setLineDash([14, 14]); ctx.lineWidth = 2;
@@ -4872,11 +5107,11 @@
           }
 
           ctx.save();
-          ctx.fillStyle = 'rgba(186, 230, 253, 0.22)';
-          ctx.beginPath(); ctx.moveTo(-28, 118); ctx.lineTo(-56, 260); ctx.lineTo(56, 260); ctx.lineTo(28, 118); ctx.fill();
+          ctx.fillStyle = 'rgba(186, 230, 253, 0.24)';
+          ctx.beginPath(); ctx.moveTo(-42, 168); ctx.lineTo(-86, 360); ctx.lineTo(86, 360); ctx.lineTo(42, 168); ctx.fill();
           if (spriteReady('carrier')) {
             const im = SPRITES.carrier;
-            const ch = 265;
+            const ch = 375;
             const cw = ch * (im.naturalWidth / im.naturalHeight);
             ctx.drawImage(im, -cw / 2, -ch / 2, cw, ch);
           }
@@ -4884,17 +5119,17 @@
             const canTrap = p.plane === 0 && !p.superActive;
             const pulse = 0.55 + Math.sin(state.time * 8) * 0.35;
             ctx.strokeStyle = canTrap ? `rgba(74, 222, 128, ${pulse})` : `rgba(251, 191, 36, ${pulse})`;
-            ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
-            ctx.strokeRect(-42, -82, 84, 164); ctx.setLineDash([]);
+            ctx.lineWidth = 2.8; ctx.setLineDash([7, 4]);
+            ctx.strokeRect(-58, -118, 116, 236); ctx.setLineDash([]);
             if (state.trapProgress > 0) {
               ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 5;
-              ctx.beginPath(); ctx.arc(0, 0, 58, -Math.PI / 2, -Math.PI / 2 + state.trapProgress * Math.PI * 2); ctx.stroke();
+              ctx.beginPath(); ctx.arc(0, 0, 74, -Math.PI / 2, -Math.PI / 2 + state.trapProgress * Math.PI * 2); ctx.stroke();
             }
             ctx.font = '800 10px Orbitron, sans-serif'; ctx.textAlign = 'center';
             const msg = state.trapProgress > 0
               ? `TRAPPING 3-WIRE... ${Math.round(state.trapProgress * 100)}%`
               : (canTrap ? '⚓ LAND ON DECK TO BANK CARGO' : '▼ SWAP TO HARD DECK TO TRAP');
-            fillOutlinedText(msg, 0, -98, canTrap ? '#4ade80' : '#fde047', '#000000', 3.4);
+            fillOutlinedText(msg, 0, -142, canTrap ? '#4ade80' : '#fde047', '#000000', 3.4);
           }
           ctx.restore();
         }
@@ -5088,7 +5323,7 @@
       }
 
       function drawGlideslopeHudCue(distNM) {
-        if (state.mode !== 'playing' || state.trapGrace > 0 || distNM > 4.6) return;
+        if (state.mode !== 'playing' || state.trapGrace > 0 || distNM > 6.4) return;
         const p = state.player;
         const pulse = 0.72 + Math.sin(state.time * 10) * 0.28;
         let text = '';
@@ -5445,7 +5680,7 @@
         ctx.font = '800 10px Orbitron, sans-serif';
         ctx.fillStyle = 'rgba(74, 222, 128, 0.58)';
         ctx.textAlign = 'center';
-        ctx.fillText('⚓ CIWS SAFE PERIMETER (3.5 NM)', 0, -SAFE_ZONE_PX - 10);
+        ctx.fillText('⚓ FORTIFIED CIWS PERIMETER (5.5 NM)', 0, -SAFE_ZONE_PX - 12);
         ctx.restore();
 
         // Catapult Deck Crew & Jet Blast Deflector
@@ -5742,6 +5977,17 @@
       document.getElementById('launchFromHangarBtn').addEventListener('click', startGame);
       document.getElementById('openHangarTitleBtn').addEventListener('click', () => { AudioFX.unlock(); AudioFX.playTrack('menu', false); openHangar(null); });
       document.getElementById('openHangarGoBtn').addEventListener('click', () => { AudioFX.unlock(); AudioFX.playTrack('menu', false); openHangar(null); });
+      const _lbBtns = ['openLeaderboardTitleBtn', 'openLeaderboardHangarBtn', 'openLeaderboardGoBtn'];
+      _lbBtns.forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.addEventListener('click', () => { AudioFX.unlock(); openLeaderboard(); });
+      });
+      const _closeLb = document.getElementById('closeLeaderboardBtn');
+      if (_closeLb) _closeLb.addEventListener('click', closeLeaderboard);
+      const _lbAll = document.getElementById('lbTabAllBtn');
+      const _lbMine = document.getElementById('lbTabMineBtn');
+      if (_lbAll) _lbAll.addEventListener('click', () => { lbActiveTab = 'all'; renderLeaderboardUI(); });
+      if (_lbMine) _lbMine.addEventListener('click', () => { lbActiveTab = 'mine'; renderLeaderboardUI(); });
       document.getElementById('closeHangarBtn').addEventListener('click', () => {
         document.body.classList.add('prelaunch-sepia');
         hangarOverlay.classList.add('hidden'); hangarOverlay.classList.remove('flex');
@@ -5824,7 +6070,7 @@
             </div>
             <div class="text-[11px] font-black text-white truncate w-full">${pl.callsign}</div>
             <div class="text-[9px] text-amber-300 font-bold">LV.${pd.level} • ${pl.title}</div>
-            <div class="text-[8px] text-slate-400 mt-0.5">🪙${pd.credits} • ${clears}/6 CLEARS</div>
+            <div class="text-[8px] text-slate-400 mt-0.5">${pd.credits} CR • ${clears}/6 CLEARS</div>
             <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden mt-1.5">
               <div class="h-full bg-amber-400" style="width:${xpPct}%"></div>
             </div>
@@ -5850,30 +6096,44 @@
           {
             img: "./assets/intro_scene_1.jpg",
             animClass: "intro-anim-rise",
-            durationMs: 5500,
-            stamp: "0430 LOCAL • INDIAN OCEAN • 1986",
-            sub: "USS ENTERPRISE (CVN-65)"
+            durationMs: 6600,
+            stamp: "NOVEMBER 1986 • INDIAN OCEAN • 0430 LOCAL",
+            sub: "UNIDENTIFIED AIRCRAFT JUST CROSSED THE OUTER PERIMETER WITHOUT TRANSPONDERS."
+          },
+          {
+            img: "./assets/intro_scene_radar.jpg",
+            animClass: "intro-anim-push",
+            durationMs: 6600,
+            stamp: "USS ENTERPRISE (CVN-65) • COMBAT INFORMATION CENTER",
+            sub: "NO MARKINGS. NO WARNINGS. SOVIET PROTOTYPES TESTING THE FLEET'S RESPONSE."
           },
           {
             img: "./assets/intro_scene_2.jpg",
             animClass: "intro-anim-pan",
-            durationMs: 5500,
-            stamp: "VF-1 WOLFPACK • HANGAR ELEVATOR",
-            sub: "DAWN LAUNCH PREP"
+            durationMs: 6600,
+            stamp: "VF-1 WOLFPACK • FLIGHT DECK ALERT",
+            sub: "COMMAND WANTS INTEL — NOT A WAR. PUSH OUT, SURVIVE THE SWARM, AND BRING IT HOME."
+          },
+          {
+            img: "./assets/intro_scene_pilot.jpg",
+            animClass: "intro-anim-push",
+            durationMs: 6600,
+            stamp: "COCKPIT SEALED • SYSTEMS CHECK",
+            sub: "GOING UP LEAN — CLOSE-IN GUNS ONLY — UNTIL COMMAND CLEARS FULL SYSTEMS OVER UHF."
           },
           {
             img: "./assets/intro_scene_3.jpg",
             animClass: "intro-anim-pan",
-            durationMs: 5200,
-            stamp: "FLIGHT DECK • MARSHALING",
-            sub: "ALL HANDS TO LAUNCH STATIONS"
+            durationMs: 6800,
+            stamp: "FLIGHT DECK • DAWN MARSHALING",
+            sub: "THE FURTHER YOU FLY FROM THE CARRIER, THE DEADLIER THE SKIES — AND THE BIGGER THE HAUL."
           },
           {
             img: "./assets/intro_scene_4.jpg",
             animClass: "intro-anim-push",
-            durationMs: 5500,
+            durationMs: 7200,
             stamp: "CATAPULT 1 • ARMED",
-            sub: "STAND BY FOR LAUNCH"
+            sub: "ONLY THE BEST OF THE BEST MAKE IT BACK TO THE 3-WIRE. STAND BY FOR LAUNCH."
           }
         ]
       };
@@ -6096,7 +6356,7 @@
         const acPilotLabel = document.getElementById('acPilotLabel');
         const synStatus = document.getElementById('splashSynergyStatus');
         if (acPilotIcon) acPilotIcon.src = PORTRAIT_URLS[curPl.helmet] || PORTRAIT_URLS.maverick;
-        if (acPilotLabel) acPilotLabel.textContent = `${curPl.callsign} • 🪙${profile.credits} CR`;
+        if (acPilotLabel) acPilotLabel.textContent = `${curPl.callsign} • ${profile.credits} CR`;
         if (synStatus) synStatus.textContent = activeSyn ? `${activeSyn.name}: ${activeSyn.desc}` : `${curAc.name} READY FOR LAUNCH`;
 
         if (splashCards) {
@@ -6131,7 +6391,7 @@
                   : (isOwned
                       ? 'bg-sky-500 hover:bg-sky-400 text-slate-950'
                       : (canBuy ? 'bg-amber-400 hover:bg-amber-300 text-slate-950' : 'bg-slate-800 text-slate-500 cursor-not-allowed'))
-              }">${active ? '✓ SELECTED' : (isOwned ? 'FLY THIS JET' : `UNLOCK UNIVERSAL • 🪙${ac.cost} CR`)}</button>
+              }">${active ? '✓ SELECTED' : (isOwned ? 'FLY THIS JET' : `UNLOCK UNIVERSAL • ${ac.cost} CR`)}</button>
             `;
             const b = card.querySelector('button');
             b.addEventListener('click', () => {
@@ -6218,7 +6478,7 @@
                   : (isOwned
                       ? 'bg-sky-500 hover:bg-sky-400 text-slate-950'
                       : (canBuy ? 'bg-amber-400 hover:bg-amber-300 text-slate-950' : 'bg-slate-800 text-slate-500 cursor-not-allowed'))
-              }">${active ? '✓ EQUIPPED' : (isOwned ? 'SELECT AIRFRAME' : `BUY AIRFRAME • 🪙${ac.cost} CR`)}</button>
+              }">${active ? '✓ EQUIPPED' : (isOwned ? 'SELECT AIRFRAME' : `BUY AIRFRAME • ${ac.cost} CR`)}</button>
             `;
             const btn = card.querySelector('button');
             btn.addEventListener('click', () => {
