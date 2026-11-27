@@ -1147,7 +1147,39 @@
         berkut: "assets/sprite_berkut.png",
         freestyle: "assets/sprite_freestyle.png",
         skyking: "assets/sprite_skyking.png",
-        escort: "assets/sprite_escort.png"
+        escort: "assets/sprite_escort.png",
+        backfire: "assets/sprite_backfire.png",
+        mainstay: "assets/sprite_mainstay.png",
+        typhoon: "assets/sprite_typhoon.png",
+        tbilisi: "assets/sprite_tbilisi.png",
+        zubr: "assets/sprite_zubr.png",
+        ferret: "assets/sprite_ferret.png",
+        ka50: "assets/sprite_ka50.png",
+        su34: "assets/sprite_su34.png",
+        mig144: "assets/sprite_mig144.png",
+        blackjack: "assets/sprite_blackjack.png",
+        halo: "assets/sprite_halo.png",
+        tunguska: "assets/sprite_tunguska.png",
+        mriya: "assets/sprite_mriya.png",
+        obj279: "assets/sprite_obj279.png",
+        firefox: "assets/sprite_firefox.png",
+        tsar86: "assets/sprite_tsar86.png",
+        f35: "assets/sprite_f35.png",
+        lun: "assets/sprite_lun.png",
+        felon: "assets/sprite_felon.png",
+        oscar: "assets/sprite_oscar.png",
+        tu2000: "assets/sprite_tu2000.png",
+        ulyanovsk: "assets/sprite_ulyanovsk.png",
+        f22: "assets/sprite_f22.png",
+        mig41: "assets/sprite_mig41.png",
+        s400: "assets/sprite_s400.png",
+        katyusha: "assets/sprite_katyusha.png",
+        s4saucer: "assets/sprite_s4saucer.png",
+        ufo_scout: "assets/sprite_ufo_scout.png",
+        ufo_heavy: "assets/sprite_ufo_heavy.png",
+        alien_harvester: "assets/sprite_alien_harvester.png",
+        alien_crystal: "assets/sprite_alien_crystal.png",
+        alien_mothership: "assets/sprite_alien_mothership.png"
       };
       const PORTRAIT_URLS = {
         maverick:  "assets/portrait_maverick.png",
@@ -1209,7 +1241,7 @@
         let beatPulseVal = 0;
         let lastBeatDropMs = 0;
         if (bgmEl) {
-          bgmEl.volume = 0.65;
+          bgmEl.volume = 0.42;
           bgmEl.addEventListener('ended', () => {
             if (queuedNextTrackKey) {
               const nxt = queuedNextTrackKey;
@@ -1230,11 +1262,11 @@
             comp.threshold.value = -12;
             comp.ratio.value = 4;
             master = actx.createGain();
-            master.gain.value = muted ? 0 : 0.85;
+            master.gain.value = muted ? 0 : 0.96;
             musicBus = actx.createGain();
             musicBus.gain.value = 0.72;
             sfxBus = actx.createGain();
-            sfxBus.gain.value = 0.78;
+            sfxBus.gain.value = 2.65;
             musicBus.connect(comp);
             sfxBus.connect(comp);
             comp.connect(master);
@@ -1263,7 +1295,7 @@
         }
         function setMuted(m) {
           muted = m;
-          if (master && actx) master.gain.setTargetAtTime(muted ? 0 : 0.85, actx.currentTime, 0.02);
+          if (master && actx) master.gain.setTargetAtTime(muted ? 0 : 0.96, actx.currentTime, 0.02);
           if (bgmEl) bgmEl.muted = muted;
         }
         function isMuted() { return muted; }
@@ -1530,7 +1562,7 @@
                 bgmEl.currentTime = 0;
               }
               bgmEl.muted = muted;
-              bgmEl.volume = targetKey === 'menu' ? 0.58 : 0.65;
+              bgmEl.volume = targetKey === 'menu' ? 0.36 : 0.42;
               bgmEl.playbackRate = 1.0;
               if (!muted) {
                 const p = bgmEl.play();
@@ -2138,7 +2170,398 @@
         return { maxZone: 4, maxNM: Infinity, maxPx: Infinity, lockedNext: null };
       }
 
+      // LEVEL 2: CORONADO (NAS NORTH ISLAND) — 8 BRAND-NEW SOVIET BOSSES (4 AIR + 4 COASTAL/NAVAL)!
+      const STAGE_BOSSES_L2 = {
+        1: {
+          key: 'backfire', bossMusic: 'boss_air1',
+          title: 'CORONADO Z1 BOSS • Tu-22M3 "BACKFIRE-C" BOMBER',
+          shortName: 'Tu-22M3 "BACKFIRE"',
+          sprite: 'backfire',
+          hp: 3400, speed: 96, r: 54, drawSize: 156, fireRate: 1.15,
+          killsNeeded: 40, score: 3200, xp: 140, crDrop: 185, intelDrop: 1, partDrop: 2
+        },
+        2: {
+          key: 'mainstay', bossMusic: 'boss_air2',
+          title: 'CORONADO Z2 BOSS • A-50 "MAINSTAY" AWACS COMMAND',
+          shortName: 'A-50 "MAINSTAY"',
+          sprite: 'mainstay',
+          hp: 7400, speed: 78, r: 58, drawSize: 168, fireRate: 0.92,
+          killsNeeded: 54, score: 5000, xp: 195, crDrop: 270, intelDrop: 2, partDrop: 3
+        },
+        3: {
+          key: 'blackjackBoss', bossMusic: 'boss_air3',
+          title: 'CORONADO Z3 BOSS • Tu-160 "BLACKJACK-M" WHITE SWAN',
+          shortName: 'Tu-160 "BLACKJACK-M"',
+          sprite: 'blackjack',
+          hp: 12200, speed: 146, r: 58, drawSize: 172, fireRate: 0.78,
+          killsNeeded: 66, score: 7600, xp: 265, crDrop: 365, intelDrop: 3, partDrop: 4
+        },
+        4: {
+          key: 'ferret', bossMusic: 'boss_air4',
+          title: 'CORONADO FINAL AIR • MiG-37B "FERRET-E" STEALTH PROTOTYPE',
+          shortName: 'MiG-37B "FERRET-E"',
+          sprite: 'ferret',
+          hp: 18500, speed: 178, r: 52, drawSize: 158, fireRate: 0.66,
+          killsNeeded: 82, score: 13500, xp: 410, crDrop: 550, intelDrop: 5, partDrop: 6
+        }
+      };
+
+      const SURFACE_BOSSES_L2 = {
+        1: {
+          key: 'zubr', bossMusic: 'boss_naval1',
+          title: 'CORONADO Z1 SURFACE • "ZUBR" POMORNIK ASSAULT HOVERCRAFT',
+          shortName: '"ZUBR" HOVERCRAFT',
+          sprite: 'zubr',
+          isSurface: true, isNaval: true,
+          hp: 4400, speed: 74, r: 50, drawSize: 156, fireRate: 1.08,
+          killsNeeded: 48, score: 3400, xp: 145, crDrop: 195, intelDrop: 1, partDrop: 2
+        },
+        2: {
+          key: 'udaloy', bossMusic: 'boss_naval2',
+          title: 'CORONADO Z2 SURFACE • UDALOY-II DESTROYER "CHABANENKO"',
+          shortName: 'UDALOY-II "CHABANENKO"',
+          sprite: 'moskva',
+          isSurface: true, isNaval: true,
+          hp: 7800, speed: 48, r: 56, drawSize: 215, fireRate: 0.90,
+          killsNeeded: 62, score: 5400, xp: 205, crDrop: 285, intelDrop: 2, partDrop: 3
+        },
+        3: {
+          key: 'typhoon', bossMusic: 'boss_naval3',
+          title: 'CORONADO Z3 SURFACE • "TYPHOON" AKULA-941 BALLISTIC SUB',
+          shortName: '"TYPHOON" SSBN-941',
+          sprite: 'typhoon',
+          isSurface: true, isNaval: true,
+          hp: 12800, speed: 44, r: 62, drawSize: 224, fireRate: 0.80,
+          killsNeeded: 74, score: 8200, xp: 280, crDrop: 390, intelDrop: 3, partDrop: 4
+        },
+        4: {
+          key: 'tbilisi', bossMusic: 'boss_naval4',
+          title: 'CORONADO FINAL FLEET • CARRIER CRUISER "TBILISI"',
+          shortName: 'CARRIER "TBILISI"',
+          sprite: 'tbilisi',
+          isSurface: true, isNaval: true,
+          hp: 19500, speed: 36, r: 74, drawSize: 270, fireRate: 0.68,
+          killsNeeded: 88, score: 15000, xp: 450, crDrop: 620, intelDrop: 5, partDrop: 6
+        }
+      };
+
+      // LEVEL 3: NAS MIRAMAR — FIGHTERTOWN USA (8 BRAND-NEW SOVIET DESERT INVASION BOSSES!)
+      const STAGE_BOSSES_L3 = {
+        1: {
+          key: 'halo', bossMusic: 'boss_air1',
+          title: 'MIRAMAR Z1 AIR • Mi-26 "HALO" HEAVY GUNSHIP',
+          shortName: 'Mi-26 "HALO"',
+          sprite: 'halo',
+          hp: 4200, speed: 78, r: 58, drawSize: 168, fireRate: 1.06,
+          killsNeeded: 42, score: 4000, xp: 170, crDrop: 225, intelDrop: 1, partDrop: 2
+        },
+        2: {
+          key: 'candid', bossMusic: 'boss_air2',
+          title: 'MIRAMAR Z2 AIR • Il-76 "CANDID" COMMAND GUNSHIP',
+          shortName: 'Il-76 "CANDID"',
+          sprite: 'mainstay',
+          hp: 8600, speed: 84, r: 60, drawSize: 172, fireRate: 0.88,
+          killsNeeded: 56, score: 6200, xp: 230, crDrop: 325, intelDrop: 2, partDrop: 3
+        },
+        3: {
+          key: 'mriya', bossMusic: 'boss_air3',
+          title: 'MIRAMAR Z3 AIR • An-225 "MRIYA-X" SKY-FORTRESS',
+          shortName: 'An-225 "MRIYA-X"',
+          sprite: 'mriya',
+          hp: 14200, speed: 72, r: 68, drawSize: 204, fireRate: 0.76,
+          killsNeeded: 68, score: 9400, xp: 315, crDrop: 440, intelDrop: 3, partDrop: 4
+        },
+        4: {
+          key: 'firefox', bossMusic: 'boss_air4',
+          title: 'MIRAMAR FINAL AIR • "FIREFOX-86" MiG-31M HYPERSONIC',
+          shortName: '"FIREFOX-86" MiG-31M',
+          sprite: 'firefox',
+          hp: 22000, speed: 192, r: 54, drawSize: 166, fireRate: 0.62,
+          killsNeeded: 84, score: 16500, xp: 490, crDrop: 660, intelDrop: 5, partDrop: 6
+        }
+      };
+
+      const SURFACE_BOSSES_L3 = {
+        1: {
+          key: 'tunguska', bossMusic: 'boss_naval1',
+          title: 'MIRAMAR Z1 GROUND • 2S6 "TUNGUSKA" RADAR AA BATTERY',
+          shortName: '2S6 "TUNGUSKA"',
+          sprite: 'tunguska',
+          isSurface: true, isNaval: false,
+          hp: 5400, speed: 52, r: 52, drawSize: 152, fireRate: 1.02,
+          killsNeeded: 48, score: 4200, xp: 175, crDrop: 235, intelDrop: 1, partDrop: 2
+        },
+        2: {
+          key: 'scud', bossMusic: 'boss_naval2',
+          title: 'MIRAMAR Z2 GROUND • "SCUD-B" MAZ-543 BALLISTIC LAUNCHER',
+          shortName: '"SCUD-B" LAUNCHER',
+          sprite: 'groundBoss',
+          isSurface: true, isNaval: false,
+          hp: 9200, speed: 46, r: 58, drawSize: 184, fireRate: 0.88,
+          killsNeeded: 62, score: 6600, xp: 240, crDrop: 340, intelDrop: 2, partDrop: 3
+        },
+        3: {
+          key: 'obj279', bossMusic: 'boss_naval3',
+          title: 'MIRAMAR Z3 GROUND • "OBJECT 279" NUCLEAR QUAD-TRACK TANK',
+          shortName: '"OBJECT 279" SUPER-TANK',
+          sprite: 'obj279',
+          isSurface: true, isNaval: false,
+          hp: 15000, speed: 48, r: 62, drawSize: 176, fireRate: 0.76,
+          killsNeeded: 76, score: 9800, xp: 330, crDrop: 465, intelDrop: 3, partDrop: 4
+        },
+        4: {
+          key: 'tsar86', bossMusic: 'boss_naval4',
+          title: 'MIRAMAR FINAL GROUND • "TSAR-86" ARMORED LAND-DREADNOUGHT',
+          shortName: '"TSAR-86" DREADNOUGHT',
+          sprite: 'tsar86',
+          isSurface: true, isNaval: false,
+          hp: 23500, speed: 36, r: 74, drawSize: 224, fireRate: 0.64,
+          killsNeeded: 90, score: 18000, xp: 520, crDrop: 720, intelDrop: 5, partDrop: 6
+        }
+      };
+
+      // LEVEL 4: NAS PATUXENT RIVER — CHESAPEAKE BAY (8 SECRET SOVIET TEST-RANGE & NAVAL BOSSES!)
+      const STAGE_BOSSES_L4 = {
+        1: {
+          key: 'albatross', bossMusic: 'boss_air1',
+          title: 'PAX RIVER Z1 AIR • BERIEV A-40 "ALBATROSS" JET BOAT',
+          shortName: 'A-40 "ALBATROSS"',
+          sprite: 'backfire',
+          hp: 5200, speed: 94, r: 58, drawSize: 168, fireRate: 1.00,
+          killsNeeded: 44, score: 5000, xp: 205, crDrop: 270, intelDrop: 2, partDrop: 2
+        },
+        2: {
+          key: 'felon', bossMusic: 'boss_air2',
+          title: 'PAX RIVER Z2 AIR • Su-57 "FELON-86" T-50 STEALTH',
+          shortName: 'Su-57 "FELON-86"',
+          sprite: 'felon',
+          hp: 10200, speed: 168, r: 52, drawSize: 162, fireRate: 0.82,
+          killsNeeded: 58, score: 7800, xp: 275, crDrop: 380, intelDrop: 2, partDrop: 3
+        },
+        3: {
+          key: 'spiral50', bossMusic: 'boss_air3',
+          title: 'PAX RIVER Z3 AIR • "SPIRAL-50" MiG-105 SPACEPLANE',
+          shortName: '"SPIRAL-50" SPACEPLANE',
+          sprite: 'buran',
+          hp: 16800, speed: 158, r: 56, drawSize: 168, fireRate: 0.72,
+          killsNeeded: 70, score: 11800, xp: 370, crDrop: 520, intelDrop: 3, partDrop: 4
+        },
+        4: {
+          key: 'tu2000', bossMusic: 'boss_air4',
+          title: 'PAX RIVER FINAL AIR • Tu-2000 "SATAN-86" HYPERSONIC',
+          shortName: 'Tu-2000 "SATAN-86"',
+          sprite: 'tu2000',
+          hp: 26000, speed: 196, r: 62, drawSize: 192, fireRate: 0.58,
+          killsNeeded: 86, score: 21000, xp: 580, crDrop: 790, intelDrop: 5, partDrop: 6
+        }
+      };
+
+      const SURFACE_BOSSES_L4 = {
+        1: {
+          key: 'lun', bossMusic: 'boss_naval1',
+          title: 'PAX RIVER Z1 BAY • "LUN" MD-160 MISSILE EKRANOPLAN',
+          shortName: '"LUN" EKRANOPLAN',
+          sprite: 'lun',
+          isSurface: true, isNaval: true,
+          hp: 6400, speed: 92, r: 56, drawSize: 186, fireRate: 0.96,
+          killsNeeded: 50, score: 5200, xp: 210, crDrop: 280, intelDrop: 2, partDrop: 2
+        },
+        2: {
+          key: 'bora', bossMusic: 'boss_naval2',
+          title: 'PAX RIVER Z2 BAY • "BORA" DERGACH MISSILE CATAMARAN',
+          shortName: '"BORA" CATAMARAN',
+          sprite: 'zubr',
+          isSurface: true, isNaval: true,
+          hp: 11000, speed: 78, r: 54, drawSize: 172, fireRate: 0.84,
+          killsNeeded: 64, score: 8200, xp: 285, crDrop: 395, intelDrop: 2, partDrop: 3
+        },
+        3: {
+          key: 'oscar', bossMusic: 'boss_naval3',
+          title: 'PAX RIVER Z3 BAY • "OSCAR-II" KURSK CRUISE-MISSILE SUB',
+          shortName: '"OSCAR-II" SSGN',
+          sprite: 'oscar',
+          isSurface: true, isNaval: true,
+          hp: 17800, speed: 48, r: 64, drawSize: 220, fireRate: 0.72,
+          killsNeeded: 78, score: 12400, xp: 390, crDrop: 550, intelDrop: 3, partDrop: 4
+        },
+        4: {
+          key: 'ulyanovsk', bossMusic: 'boss_naval4',
+          title: 'PAX RIVER FINAL FLEET • "ULYANOVSK" NUCLEAR SUPERCARRIER',
+          shortName: 'CARRIER "ULYANOVSK"',
+          sprite: 'ulyanovsk',
+          isSurface: true, isNaval: true,
+          hp: 28000, speed: 34, r: 78, drawSize: 280, fireRate: 0.60,
+          killsNeeded: 92, score: 22500, xp: 620, crDrop: 840, intelDrop: 6, partDrop: 7
+        }
+      };
+
+      // LEVEL 5: NAWS CHINA LAKE — MOJAVE WEAPONS RANGE (8 BLACK-PROJECT SOVIET SUPER-BOSSES!)
+      const STAGE_BOSSES_L5 = {
+        1: {
+          key: 'freestyleBoss', bossMusic: 'boss_air1',
+          title: 'CHINA LAKE Z1 AIR • Yak-141M "FREESTYLE-X" VTOL',
+          shortName: 'Yak-141M "FREESTYLE-X"',
+          sprite: 'freestyle',
+          hp: 6400, speed: 128, r: 54, drawSize: 162, fireRate: 0.94,
+          killsNeeded: 46, score: 6200, xp: 245, crDrop: 325, intelDrop: 2, partDrop: 3
+        },
+        2: {
+          key: 'mig41', bossMusic: 'boss_air2',
+          title: 'CHINA LAKE Z2 AIR • MiG-41 "PAK-DP" MACH-4 INTERCEPTOR',
+          shortName: 'MiG-41 "PAK-DP"',
+          sprite: 'mig41',
+          hp: 12400, speed: 205, r: 54, drawSize: 172, fireRate: 0.76,
+          killsNeeded: 60, score: 9800, xp: 330, crDrop: 460, intelDrop: 2, partDrop: 4
+        },
+        3: {
+          key: 'checkmate', bossMusic: 'boss_air3',
+          title: 'CHINA LAKE Z3 AIR • Su-75 "CHECKMATE-86" STEALTH',
+          shortName: 'Su-75 "CHECKMATE-86"',
+          sprite: 'felon',
+          hp: 20000, speed: 184, r: 56, drawSize: 172, fireRate: 0.68,
+          killsNeeded: 74, score: 15000, xp: 440, crDrop: 630, intelDrop: 4, partDrop: 5
+        },
+        4: {
+          key: 'buranOmega', bossMusic: 'boss_air4',
+          title: 'CHINA LAKE FINAL AIR • "BURAN-OMEGA" ORBITAL RAILGUN',
+          shortName: '"BURAN-OMEGA" RAILGUN',
+          sprite: 'tu2000',
+          hp: 32000, speed: 174, r: 66, drawSize: 204, fireRate: 0.56,
+          killsNeeded: 88, score: 26500, xp: 680, crDrop: 940, intelDrop: 6, partDrop: 7
+        }
+      };
+
+      const SURFACE_BOSSES_L5 = {
+        1: {
+          key: 'pantsir', bossMusic: 'boss_naval1',
+          title: 'CHINA LAKE Z1 GROUND • "PANTSIR-86" RADAR SAM BATTERY',
+          shortName: '"PANTSIR-86" SAM',
+          sprite: 'tunguska',
+          isSurface: true, isNaval: false,
+          hp: 7600, speed: 56, r: 54, drawSize: 162, fireRate: 0.92,
+          killsNeeded: 52, score: 6600, xp: 255, crDrop: 340, intelDrop: 2, partDrop: 3
+        },
+        2: {
+          key: 'iskander', bossMusic: 'boss_naval2',
+          title: 'CHINA LAKE Z2 GROUND • "ISKANDER-86" HYPERSONIC CRAWLER',
+          shortName: '"ISKANDER-86" CRAWLER',
+          sprite: 's400',
+          isSurface: true, isNaval: false,
+          hp: 13200, speed: 50, r: 58, drawSize: 186, fireRate: 0.80,
+          killsNeeded: 66, score: 10400, xp: 345, crDrop: 480, intelDrop: 2, partDrop: 4
+        },
+        3: {
+          key: 's400Boss', bossMusic: 'boss_naval3',
+          title: 'CHINA LAKE Z3 GROUND • "S-400 TRIUMF-X" COMMAND FORTRESS',
+          shortName: '"S-400 TRIUMF-X"',
+          sprite: 's400',
+          isSurface: true, isNaval: false,
+          hp: 21500, speed: 46, r: 64, drawSize: 204, fireRate: 0.68,
+          killsNeeded: 80, score: 15800, xp: 465, crDrop: 670, intelDrop: 4, partDrop: 5
+        },
+        4: {
+          key: 'katyushaOmega', bossMusic: 'boss_naval4',
+          title: 'CHINA LAKE FINAL GROUND • "KATYUSHA-OMEGA" ATOMIC CRAWLER',
+          shortName: '"KATYUSHA-OMEGA"',
+          sprite: 'katyusha',
+          isSurface: true, isNaval: false,
+          hp: 34000, speed: 38, r: 78, drawSize: 238, fireRate: 0.58,
+          killsNeeded: 94, score: 28000, xp: 720, crDrop: 990, intelDrop: 6, partDrop: 8
+        }
+      };
+
+      // SECRET LEVEL 6: GROOM LAKE — AREA 51, NEVADA (8 EXTRATERRESTRIAL ALIEN BOSSES!)
+      const STAGE_BOSSES_L6 = {
+        1: {
+          key: 'fooPrime', bossMusic: 'boss_air1',
+          title: 'AREA 51 Z1 AIR • "FOO-FIGHTER PRIME" ZETA SCOUT LEADER',
+          shortName: '"FOO-FIGHTER PRIME"',
+          sprite: 'ufo_scout',
+          hp: 7800, speed: 155, r: 54, drawSize: 162, fireRate: 0.88,
+          killsNeeded: 46, score: 8000, xp: 290, crDrop: 400, intelDrop: 2, partDrop: 3
+        },
+        2: {
+          key: 'dreadTriangle', bossMusic: 'boss_air2',
+          title: 'AREA 51 Z2 AIR • "TR-3B DREAD-TRIANGLE" OBSIDIAN CRUISER',
+          shortName: '"TR-3B DREAD-TRIANGLE"',
+          sprite: 'ufo_heavy',
+          hp: 15000, speed: 175, r: 58, drawSize: 176, fireRate: 0.72,
+          killsNeeded: 62, score: 12500, xp: 390, crDrop: 560, intelDrop: 3, partDrop: 4
+        },
+        3: {
+          key: 'pleiadian', bossMusic: 'boss_air3',
+          title: 'AREA 51 Z3 AIR • "PLEIADIAN" CRYSTALLINE DREADNOUGHT',
+          shortName: '"PLEIADIAN" DREADNOUGHT',
+          sprite: 'alien_crystal',
+          hp: 24000, speed: 145, r: 66, drawSize: 204, fireRate: 0.64,
+          killsNeeded: 76, score: 19500, xp: 520, crDrop: 760, intelDrop: 4, partDrop: 5
+        },
+        4: {
+          key: 'zetaPrime', bossMusic: 'boss_air4',
+          title: 'FINAL COSMIC BOSS • "ZETA RETICULI" MOTHERSHIP PRIME',
+          shortName: '"ZETA MOTHERSHIP PRIME"',
+          sprite: 'alien_mothership',
+          hp: 38000, speed: 95, r: 80, drawSize: 248, fireRate: 0.52,
+          killsNeeded: 90, score: 40000, xp: 900, crDrop: 1400, intelDrop: 8, partDrop: 10
+        }
+      };
+
+      const SURFACE_BOSSES_L6 = {
+        1: {
+          key: 'abductor01', bossMusic: 'boss_naval1',
+          title: 'AREA 51 Z1 LOW-ALT • "ABDUCTOR-01" HARVESTER SAUCER',
+          shortName: '"ABDUCTOR-01" SAUCER',
+          sprite: 'alien_harvester',
+          isSurface: true, isNaval: false,
+          hp: 9200, speed: 88, r: 58, drawSize: 174, fireRate: 0.86,
+          killsNeeded: 52, score: 8500, xp: 300, crDrop: 420, intelDrop: 2, partDrop: 3
+        },
+        2: {
+          key: 'monolithX', bossMusic: 'boss_naval2',
+          title: 'AREA 51 Z2 LOW-ALT • "MONOLITH-X" ALIEN CRYSTAL SPIRE',
+          shortName: '"MONOLITH-X" SPIRE',
+          sprite: 'alien_crystal',
+          isSurface: true, isNaval: false,
+          hp: 16200, speed: 74, r: 62, drawSize: 188, fireRate: 0.74,
+          killsNeeded: 68, score: 13200, xp: 410, crDrop: 590, intelDrop: 3, partDrop: 4
+        },
+        3: {
+          key: 'greyHarvester', bossMusic: 'boss_naval3',
+          title: 'AREA 51 Z3 LOW-ALT • "GREY HARVESTER" WAR-SAUCER',
+          shortName: '"GREY HARVESTER"',
+          sprite: 'alien_harvester',
+          isSurface: true, isNaval: false,
+          hp: 26000, speed: 86, r: 68, drawSize: 212, fireRate: 0.62,
+          killsNeeded: 82, score: 21000, xp: 550, crDrop: 820, intelDrop: 4, partDrop: 6
+        },
+        4: {
+          key: 'overlordCore', bossMusic: 'boss_naval4',
+          title: 'FINAL ALIEN CORE • "OVERLORD SINGULARITY" PLANETARY ENGINE',
+          shortName: '"OVERLORD SINGULARITY"',
+          sprite: 'alien_mothership',
+          isSurface: true, isNaval: false,
+          hp: 42000, speed: 68, r: 84, drawSize: 256, fireRate: 0.52,
+          killsNeeded: 96, score: 45000, xp: 980, crDrop: 1600, intelDrop: 8, partDrop: 10
+        }
+      };
+
+      function getStageBossCfg(stageLvl) {
+        const th = getCurrentMap().theme;
+        if (th === 'area51') return STAGE_BOSSES_L6[stageLvl];
+        if (th === 'chinalake') return STAGE_BOSSES_L5[stageLvl];
+        if (th === 'pax') return STAGE_BOSSES_L4[stageLvl];
+        if (th === 'miramar') return STAGE_BOSSES_L3[stageLvl];
+        if (th === 'coronado') return STAGE_BOSSES_L2[stageLvl];
+        return STAGE_BOSSES[stageLvl];
+      }
+
       function getSurfaceBossCfg(stageLvl, x, y) {
+        const th = getCurrentMap().theme;
+        if (th === 'area51') return SURFACE_BOSSES_L6[stageLvl];
+        if (th === 'chinalake') return SURFACE_BOSSES_L5[stageLvl];
+        if (th === 'pax') return SURFACE_BOSSES_L4[stageLvl];
+        if (th === 'miramar') return SURFACE_BOSSES_L3[stageLvl];
+        if (th === 'coronado') return SURFACE_BOSSES_L2[stageLvl];
         return isOceanAt(x, y) ? SURFACE_BOSSES_OCEAN[stageLvl] : SURFACE_BOSSES_LAND[stageLvl];
       }
 
@@ -2204,8 +2627,8 @@
           roleColor: 'text-sky-300', cost: 0,
           sprite: 'f14', sweptSprite: 'f14Swept', bellySprite: 'f14Belly',
           hasSwingWings: true, hasAfterburner: true, hasLexVapor: false, hasGroundSplash: false,
-          superType: 'inverted', superName: '★ INVERTED', superTag: '★ INVERTED ★', reversesControls: true,
-          superBanner: '★ "BECAUSE I WAS INVERTED!" — CONTROLS REVERSED! ★',
+          superType: 'inverted', superName: '★ INVERTED', superTag: '★ INVERTED ★', reversesControls: false,
+          superBanner: '★ INVERTED - GIVING THEM THE FINGER ★',
           airDmgMult: 1.24, groundDmgMult: 0.92, speedMult: 1.08, turnMult: 1.0,
           hullBonus: 0, fuelMax: 100, abMult: 1.85, abFuelMult: 1.0,
           exhausts: [-6.5, 6.5], exhaustY: 22,
@@ -2242,15 +2665,69 @@
           hasSwingWings: false, hasAfterburner: false, hasLexVapor: false, hasGroundSplash: true,
           superType: 'carpetBomb', superName: '★ CARPET BOMB', superTag: '★ IRON HAND ★', reversesControls: false,
           superBanner: '★ IRON HAND CARPET BOMB — BOMBS AWAY! ★',
-          airDmgMult: 0.86, groundDmgMult: 1.38, speedMult: 0.92, turnMult: 0.92,
-          hullBonus: 45, fuelMax: 130, abMult: 1.52, abFuelMult: 0.72,
+          airDmgMult: 0.90, groundDmgMult: 1.55, speedMult: 0.92, turnMult: 0.94,
+          hullBonus: 95, fuelMax: 145, armorMitigation: 0.25, hullRegenPerSec: 1.8, abMult: 1.55, abFuelMult: 0.70,
           exhausts: [-9.5, 9.5], exhaustY: 12,
-          desc: '+38% Ground/Naval Dmg + HE Splash • +45 Hull • 130% Fuel • Mil-Power Overdrive.',
+          desc: 'FLYING TANK: +95 Hull • -25% Incoming Dmg • Auto-Armor Regen • +55% Hard Deck Dmg & HE Splash!',
           arsenal: {
             vulcan:     { name: 'Mk-4 20mm Gun Pods',  icon: 'vulcan', desc: (l) => `Close-In Guns Ring: Lvl ${l+1} twin underwing explosive HE cannon pods with ground splash.` },
             sidewinder: { name: 'Zuni 5" Rocket Pods', icon: 'sidewinder', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} high-explosive stand-off rocket salvos outside Guns Ring.` },
             sparrow:    { name: 'AGM-65 Maverick',     icon: 'sparrow', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} precision cross-plane armor & ship killer missiles.` },
             phoenix:    { name: 'AGM-84 Harpoon',      icon: 'phoenix', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} massive anti-ship & bunker-buster splash missiles.` }
+          }
+        },
+        {
+          id: 'f35', short: 'F-35B', name: 'F-35B LIGHTNING II', role: 'STEALTH VTOL',
+          roleColor: 'text-cyan-300', cost: 420,
+          sprite: 'f35', sweptSprite: null, bellySprite: null,
+          hasSwingWings: false, hasAfterburner: true, hasLexVapor: true, hasGroundSplash: false,
+          superType: 'vtolBlossom', superName: '★ VTOL BLOSSOM', superTag: '★ DEATH BLOSSOM ★', reversesControls: false,
+          superBanner: '★ VTOL HOVER LOCKED — 360° DEATH BLOSSOM ENGAGED! ★',
+          airDmgMult: 1.22, groundDmgMult: 1.28, speedMult: 1.06, turnMult: 1.18,
+          hullBonus: 55, fuelMax: 125, armorMitigation: 0.12, abMult: 1.80, abFuelMult: 0.90,
+          exhausts: [0], exhaustY: 22,
+          desc: 'STEALTH ALL-ROUNDER: +22% Air & +28% Ground Dmg • -12% Stealth Mitigation • ★ VTOL Hover 360° Death Blossom Laser!',
+          arsenal: {
+            vulcan:     { name: 'GAU-22/A 25mm Stealth', icon: 'vulcan', desc: (l) => `Close-In Guns Ring: Lvl ${l+1} internal-bay 25mm stealth rotary cannon streams.` },
+            sidewinder: { name: 'AIM-9X Block II',       icon: 'sidewinder', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} lock-after-launch internal bay Fox 2 seekers.` },
+            sparrow:    { name: 'AIM-120D AMRAAM',       icon: 'sparrow', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} long-range cross-plane Fox 3 active-radar missiles.` },
+            phoenix:    { name: 'JSM Stealth Strike',    icon: 'phoenix', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} Joint Strike anti-ship & bunker-buster splash missiles.` }
+          }
+        },
+        {
+          id: 'f22', short: 'F-22A', name: 'F-22A RAPTOR', role: 'GLASS CANNON',
+          roleColor: 'text-fuchsia-300', cost: 580,
+          sprite: 'f22', sweptSprite: null, bellySprite: null,
+          hasSwingWings: false, hasAfterburner: true, hasLexVapor: true, hasGroundSplash: false,
+          superType: 'raptorApex', superName: '★ SUPERCRUISE', superTag: '★ APEX RAPTOR ★', reversesControls: false,
+          superBanner: '★ F-22A SUPERCRUISE — 6-TARGET STEALTH ALPHA! ★',
+          airDmgMult: 1.65, groundDmgMult: 1.15, speedMult: 1.24, turnMult: 1.32,
+          hullBonus: -30, fuelMax: 115, armorMitigation: -0.25, abMult: 2.15, abFuelMult: 1.05,
+          exhausts: [-6, 6], exhaustY: 22,
+          desc: 'EXTREME GLASS CANNON: +65% Air Dmg • Fastest Mach-2.4 Thrust-Vectoring • Fragile (-30 Hull, +25% Dmg Taken)!',
+          arsenal: {
+            vulcan:     { name: 'M61A2 Apex 20mm',     icon: 'vulcan', desc: (l) => `Close-In Guns Ring: Lvl ${l+1} blazing hyper-velocity internal stealth rotary streams.` },
+            sidewinder: { name: 'AIM-9X Block III',    icon: 'sidewinder', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} ultra-agile high-G side-bay Fox 2 seekers.` },
+            sparrow:    { name: 'AIM-260 JATM Fox 3',  icon: 'sparrow', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} classified ultra-long-range cross-plane BVR killers.` },
+            phoenix:    { name: 'AIM-260X Heavy BVR',  icon: 'phoenix', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} devastating multi-target stealth BVR splash salvos.` }
+          }
+        },
+        {
+          id: 's4', short: 'S-4 UFO', name: 'S-4 "SPORT MODEL"', role: 'ELEMENT-115',
+          roleColor: 'text-emerald-300', cost: 999,
+          sprite: 's4saucer', sweptSprite: null, bellySprite: null,
+          hasSwingWings: false, hasAfterburner: true, hasLexVapor: false, hasGroundSplash: true,
+          superType: 'singularity', superName: '★ SINGULARITY', superTag: '★ ELEMENT-115 ★', reversesControls: false,
+          superBanner: '★ ELEMENT-115 GRAVITY SINGULARITY — OMICRON MODE! ★',
+          airDmgMult: 1.48, groundDmgMult: 1.48, speedMult: 1.30, turnMult: 1.48,
+          hullBonus: 80, fuelMax: 160, armorMitigation: 0.20, hullRegenPerSec: 1.5, abMult: 2.25, abFuelMult: 0.65,
+          exhausts: [], exhaustY: 0,
+          desc: 'AREA 51 TEST ARTICLE: Zero-Inertia Gravity Drive • +48% All Dmg • +80 Shield • ★ Element-115 Singularity Super!',
+          arsenal: {
+            vulcan:     { name: 'Gravity-A Energy Beam',  icon: 'vulcan', desc: (l) => `Close-In Emitter: Lvl ${l+1} zero-recoil Element-115 cyan-emerald directed energy beams.` },
+            sidewinder: { name: 'Foo-Fighter Orbs',       icon: 'sidewinder', desc: (l) => `Subspace Ring: Lvl ${l+1} homing extraterrestrial emerald-cyan plasma orbs.` },
+            sparrow:    { name: 'Tachyon Phase-Lances',   icon: 'sparrow', desc: (l) => `Subspace Ring: Lvl ${l+1} cross-plane alien phase-lances hitting EITHER altitude.` },
+            phoenix:    { name: 'Dark-Matter Singularity',icon: 'phoenix', desc: (l) => `Subspace Ring: Lvl ${l+1} violet-emerald antimatter gravity-well splash bombs.` }
           }
         }
       ];
@@ -2270,10 +2747,36 @@
         if (typeof profile !== 'undefined' && profile && profile.clearedMaps && profile.clearedMaps.indian_ocean) return true;
         return false;
       }
+      function isLevel3Unlocked() {
+        if (typeof profileStore !== 'undefined' && profileStore && profileStore.level3Unlocked) return true;
+        if (typeof profile !== 'undefined' && profile && profile.clearedMaps && profile.clearedMaps.coronado) return true;
+        return false;
+      }
+      function isLevel4Unlocked() {
+        if (typeof profileStore !== 'undefined' && profileStore && profileStore.level4Unlocked) return true;
+        if (typeof profile !== 'undefined' && profile && profile.clearedMaps && profile.clearedMaps.miramar) return true;
+        return false;
+      }
+      function isLevel5Unlocked() {
+        if (typeof profileStore !== 'undefined' && profileStore && profileStore.level5Unlocked) return true;
+        if (typeof profile !== 'undefined' && profile && profile.clearedMaps && profile.clearedMaps.pax_river) return true;
+        return false;
+      }
+      function isLevel6Unlocked() {
+        if (typeof profileStore !== 'undefined' && profileStore && profileStore.level6Unlocked) return true;
+        if (typeof profile !== 'undefined' && profile && profile.clearedMaps && profile.clearedMaps.china_lake) return true;
+        return false;
+      }
       function getVisibleAircraft() {
+        if (isLevel6Unlocked()) return AIRCRAFT.slice(0, 6);
+        if (isLevel5Unlocked()) return AIRCRAFT.slice(0, 5);
+        if (isLevel4Unlocked()) return AIRCRAFT.slice(0, 4);
+        if (isLevel3Unlocked()) return AIRCRAFT.slice(0, 3);
         return isLevel2Unlocked() ? [AIRCRAFT[0], AIRCRAFT[1]] : [AIRCRAFT[0]];
       }
       function getVisiblePilots() {
+        if (isLevel4Unlocked()) return [BUILTIN_PILOTS[0], BUILTIN_PILOTS[1], BUILTIN_PILOTS[2], BUILTIN_PILOTS[3]];
+        if (isLevel3Unlocked()) return [BUILTIN_PILOTS[0], BUILTIN_PILOTS[1], BUILTIN_PILOTS[2]];
         return isLevel2Unlocked() ? [BUILTIN_PILOTS[0], BUILTIN_PILOTS[1]] : [BUILTIN_PILOTS[0]];
       }
       function unlockCoronadoAndHornet() {
@@ -2286,6 +2789,64 @@
         _acCacheKey = '';
         selectedMapIdx = 1;
         profile.currentCampaignIdx = 1;
+        saveProfile();
+      }
+      function unlockMiramarAndIntruder() {
+        profileStore.level2Unlocked = true;
+        profileStore.level3Unlocked = true;
+        const owned = getOwnedAircraft();
+        if (!owned.includes('a6')) profileStore.ownedAircraft = [...owned, 'a6'];
+        if (!profile.freeMissilePickByAc) profile.freeMissilePickByAc = {};
+        if (!hasFittedMissileTree('a6')) profile.freeMissilePickByAc.a6 = true;
+        profile.selectedAircraft = 'a6';
+        _acCacheKey = '';
+        selectedMapIdx = 2;
+        profile.currentCampaignIdx = 2;
+        saveProfile();
+      }
+      function unlockPaxAndF35() {
+        profileStore.level2Unlocked = true;
+        profileStore.level3Unlocked = true;
+        profileStore.level4Unlocked = true;
+        const owned = getOwnedAircraft();
+        if (!owned.includes('f35')) profileStore.ownedAircraft = [...owned, 'f35'];
+        if (!profile.freeMissilePickByAc) profile.freeMissilePickByAc = {};
+        if (!hasFittedMissileTree('f35')) profile.freeMissilePickByAc.f35 = true;
+        profile.selectedAircraft = 'f35';
+        _acCacheKey = '';
+        selectedMapIdx = 3;
+        profile.currentCampaignIdx = 3;
+        saveProfile();
+      }
+      function unlockChinaLakeAndF22() {
+        profileStore.level2Unlocked = true;
+        profileStore.level3Unlocked = true;
+        profileStore.level4Unlocked = true;
+        profileStore.level5Unlocked = true;
+        const owned = getOwnedAircraft();
+        if (!owned.includes('f22')) profileStore.ownedAircraft = [...owned, 'f22'];
+        if (!profile.freeMissilePickByAc) profile.freeMissilePickByAc = {};
+        if (!hasFittedMissileTree('f22')) profile.freeMissilePickByAc.f22 = true;
+        profile.selectedAircraft = 'f22';
+        _acCacheKey = '';
+        selectedMapIdx = 4;
+        profile.currentCampaignIdx = 4;
+        saveProfile();
+      }
+      function unlockArea51AndS4() {
+        profileStore.level2Unlocked = true;
+        profileStore.level3Unlocked = true;
+        profileStore.level4Unlocked = true;
+        profileStore.level5Unlocked = true;
+        profileStore.level6Unlocked = true;
+        const owned = getOwnedAircraft();
+        if (!owned.includes('s4')) profileStore.ownedAircraft = [...owned, 's4'];
+        if (!profile.freeMissilePickByAc) profile.freeMissilePickByAc = {};
+        if (!hasFittedMissileTree('s4')) profile.freeMissilePickByAc.s4 = true;
+        profile.selectedAircraft = 's4';
+        _acCacheKey = '';
+        selectedMapIdx = 5;
+        profile.currentCampaignIdx = 5;
         saveProfile();
       }
 
@@ -2335,12 +2896,96 @@
             { id: 'h_m4_wildweasel', tier: 4, branch: true, name: 'SEAD "Magnum" Rapid Bus', icon: 'sidewinder', cr: 235, prt: 3, req: ['h_m3_harm'], desc: 'SNOWBALL: -25% all missile CDs & every missile kill pulses emerald SEAD (-0.35s CD)!' },
             { id: 'h_m5_strikegroup',tier: 5, name: 'CVW-14 "Alpha Strike" Package', icon: 'phoenix', cr: 310, prt: 5, reqAny: ['h_m4_jsow', 'h_m4_wildweasel'], desc: 'CAPSTONE: +2 ranks to ALL missiles, +30% dmg & free 4-missile AMRAAM+HARM Storm every 8 kills!' }
           ]
+        },
+        a6: {
+          guns: [
+            { id: 'a_g1_mk4',          tier: 1, name: 'Mk-4 Mod 0 20mm Gun Pods', icon: 'vulcan', cr: 0, prt: 0, req: [], freeDefault: true, desc: 'Stock twin underwing heavy cannon pods — rugged HE bursts with built-in ground splash.' },
+            { id: 'a_g2_heavybarrels', tier: 2, branch: true, name: 'Chrome-Lined Heavy Barrels', icon: 'vulcan', cr: 65, prt: 1, req: ['a_g1_mk4'], desc: '+22% pod ROF, +18% dmg & dense molten-amber twin tracer streams.' },
+            { id: 'a_g2_trams',        tier: 2, branch: true, name: 'TRAM Laser Targeter Turret', icon: 'scanner', cr: 65, prt: 1, req: ['a_g1_mk4'], desc: '+28% gun reach & every 3rd burst lases an opposite-plane target with a heavy laser strike!' },
+            { id: 'a_g3_napalm',       tier: 3, branch: true, name: 'Mk-77 Incendiary HE Shells', icon: 'vulcan', cr: 115, prt: 2, reqAny: ['a_g2_heavybarrels', 'a_g2_trams'], desc: '+28% gun dmg, +50% vs Hard Deck armor/bosses & massive 68px fiery HE flak splash!' },
+            { id: 'a_g3_cbu',          tier: 3, branch: true, name: 'CBU-59 APAM Cluster Pods', icon: 'flares', cr: 115, prt: 2, reqAny: ['a_g2_heavybarrels', 'a_g2_trams'], desc: 'Each cannon burst scatters cluster bomblet shrapnel chaining to +2 extra enemies!' },
+            { id: 'a_g4_quadpods',     tier: 4, name: 'Quad-Pylon Gunship Mounts', icon: 'vulcan', cr: 175, prt: 3, reqAny: ['a_g3_napalm', 'a_g3_cbu'], desc: 'Launch with +2 permanent Mk-4 Gun Pod ranks & +1 simultaneous heavy cannon stream!' },
+            { id: 'a_g5_ironhand',     tier: 5, name: 'J52-P-8B "Iron Hand" Juggernaut', icon: 'hull', cr: 250, prt: 4, req: ['a_g4_quadpods'], desc: 'TANK SNOWBALL: Gun kills stack +5% ROF & +6% dmg (max 12×) AND repair +2.5 Hull HP per kill!' }
+          ],
+          missiles: [
+            { id: 'a_m1_zuni',        tier: 1, branch: true, name: 'Zuni 5" Folding-Fin Rockets', icon: 'sidewinder', cr: 100, prt: 1, req: [], desc: 'Heavy unguided-to-laser high-explosive salvo rockets pounding targets outside Guns Ring.' },
+            { id: 'a_m1_maverick',    tier: 1, branch: true, name: 'AGM-65E Laser Maverick', icon: 'sparrow', cr: 100, prt: 1, req: [], desc: 'Heavy cross-plane armor & bunker-killer missiles locking EITHER altitude automatically.' },
+            { id: 'a_m2_diane',       tier: 2, branch: true, name: 'DIANE All-Weather Attack Radar', icon: 'scanner', cr: 130, prt: 2, reqAny: ['a_m1_zuni', 'a_m1_maverick'], desc: '+1 fitted missile rank, +22% dmg, +35% speed & +40% vs Hard Deck armor & surface bosses!' },
+            { id: 'a_m2_mer',         tier: 2, branch: true, name: 'MER-6 Multiple Ejector Racks', icon: 'sparrow', cr: 130, prt: 2, reqAny: ['a_m1_zuni', 'a_m1_maverick'], desc: '+1 extra rocket/missile per salvo, +26% stand-off reach & amber bomber lock rings!' },
+            { id: 'a_m3_harpoon',     tier: 3, name: 'AGM-84D Harpoon Anti-Ship', icon: 'phoenix', cr: 195, prt: 3, reqAny: ['a_m2_diane', 'a_m2_mer'], desc: 'Launch armed with massive bunker-buster & capital-ship Harpoon splash missiles!' },
+            { id: 'a_m4_walleye',     tier: 4, branch: true, name: 'AGM-62 Walleye II Glide Cluster', icon: 'phoenix', cr: 235, prt: 3, req: ['a_m3_harpoon'], desc: '+2 Harpoons per salvo, +40% blast radius & splits into 3 homing cluster sub-munitions!' },
+            { id: 'a_m4_sead',        tier: 4, branch: true, name: 'VA-115 "Bunker Buster" Bus', icon: 'hull', cr: 235, prt: 3, req: ['a_m3_harpoon'], desc: 'TANK SNOWBALL: -25% all missile CDs, -0.35s CD & +1.5 Hull repair on every missile kill!' },
+            { id: 'a_m5_alphastrike', tier: 5, name: 'All-Weather "Iron Hand" Armada', icon: 'phoenix', cr: 310, prt: 5, reqAny: ['a_m4_walleye', 'a_m4_sead'], desc: 'CAPSTONE: +2 ranks to ALL missiles, +35% dmg & free 4-missile Harpoon Storm every 8 kills!' }
+          ]
+        },
+        f35: {
+          guns: [
+            { id: 'f_g1_gau22',    tier: 1, name: 'GAU-22/A 25mm Stealth Cannon', icon: 'vulcan', cr: 0, prt: 0, req: [], freeDefault: true, desc: 'Internal-bay 25mm stealth cannon — razor-sharp cyan-white bolts for Air & Surface.' },
+            { id: 'f_g2_das',      tier: 2, branch: true, name: 'AN/AAQ-37 360° DAS Tracking', icon: 'scanner', cr: 70, prt: 1, req: ['f_g1_gau22'], desc: '+24% gun ROF, +18% dmg & crisp high-velocity cyan stealth tracers.' },
+            { id: 'f_g2_eots',     tier: 2, branch: true, name: 'AN/AAQ-40 EOTS Targeting', icon: 'scanner', cr: 70, prt: 1, req: ['f_g1_gau22'], desc: '+28% gun reach & every 3rd burst lases an opposite-plane target with an EOTS laser!' },
+            { id: 'f_g3_apex',     tier: 3, branch: true, name: 'PGU-47/U APEX 25mm Rounds', icon: 'vulcan', cr: 120, prt: 2, reqAny: ['f_g2_das', 'f_g2_eots'], desc: '+28% gun dmg, +40% vs armor/bosses & 60px cyan-gold plasma flak splash!' },
+            { id: 'f_g3_prism',    tier: 3, branch: true, name: 'Directed-Energy Prism Splitter', icon: 'afterburner', cr: 120, prt: 2, reqAny: ['f_g2_das', 'f_g2_eots'], desc: 'Each burst arcs electric violet-cyan laser chains to +2 nearby bogeys!' },
+            { id: 'f_g4_dualbay',  tier: 4, name: 'Internal Twin-Bay Synchro', icon: 'vulcan', cr: 185, prt: 3, reqAny: ['f_g3_apex', 'f_g3_prism'], desc: 'Launch with +2 permanent GAU-22 ranks & +1 simultaneous stealth cannon beam!' },
+            { id: 'f_g5_blossom',  tier: 5, name: 'F135-PW-600 "Death Blossom" Core', icon: 'afterburner', cr: 265, prt: 4, req: ['f_g4_dualbay'], desc: 'SNOWBALL: Kills stack +5% ROF & +6% dmg (max 12×) + recharge +2.5% VTOL Blossom & +1.5% Fuel!' }
+          ],
+          missiles: [
+            { id: 'f_m1_aim9x',       tier: 1, branch: true, name: 'AIM-9X Block II Stealth Fox 2', icon: 'sidewinder', cr: 105, prt: 1, req: [], desc: 'Lock-after-launch internal-bay heat-seekers outside Guns Ring.' },
+            { id: 'f_m1_aim120d',     tier: 1, branch: true, name: 'AIM-120D AMRAAM (Fox 3)', icon: 'sparrow', cr: 105, prt: 1, req: [], desc: 'Long-range cross-plane Fox 3 active-radar missiles locking EITHER altitude!' },
+            { id: 'f_m2_apg81',       tier: 2, branch: true, name: 'AN/APG-81 AESA Stealth Radar', icon: 'scanner', cr: 135, prt: 2, reqAny: ['f_m1_aim9x', 'f_m1_aim120d'], desc: '+1 fitted missile rank, +22% dmg, +38% speed & +35% vs Hard Deck armor & ships!' },
+            { id: 'f_m2_madl',        tier: 2, branch: true, name: 'MADL Stealth Datalink', icon: 'sparrow', cr: 135, prt: 2, reqAny: ['f_m1_aim9x', 'f_m1_aim120d'], desc: '+1 extra missile per salvo, +30% lock range & cyan stealth lock diamonds!' },
+            { id: 'f_m3_jsm',         tier: 3, name: 'JSM Joint Strike Stealth Missile', icon: 'phoenix', cr: 205, prt: 3, reqAny: ['f_m2_apg81', 'f_m2_madl'], desc: 'Launch armed with internal-bay anti-ship & bunker-buster JSM splash missiles!' },
+            { id: 'f_m4_sdb2',        tier: 4, branch: true, name: 'GBU-53/B StormBreaker Bus', icon: 'phoenix', cr: 245, prt: 3, req: ['f_m3_jsm'], desc: '+2 JSMs per salvo, +38% blast radius & splits into 3 homing StormBreaker micro-seekers!' },
+            { id: 'f_m4_beastmode',   tier: 4, branch: true, name: '"Beast Mode" External Pylons', icon: 'sidewinder', cr: 245, prt: 3, req: ['f_m3_jsm'], desc: 'SNOWBALL: -25% all missile CDs & every missile kill pulses cyan radar (-0.35s CD)!' },
+            { id: 'f_m5_loyalwingman',tier: 5, name: '"Ghost Bat" Stealth Alpha Strike', icon: 'phoenix', cr: 325, prt: 5, reqAny: ['f_m4_sdb2', 'f_m4_beastmode'], desc: 'CAPSTONE: +2 ranks to ALL missiles, +35% dmg & free 4-missile JSM Storm every 8 kills!' }
+          ]
+        },
+        f22: {
+          guns: [
+            { id: 'r_g1_m61a2',      tier: 1, name: 'M61A2 Internal Stealth 20mm', icon: 'vulcan', cr: 0, prt: 0, req: [], freeDefault: true, desc: 'Blistering 6,000 RPM internal stealth rotary cannon — pure glass-cannon punch.' },
+            { id: 'r_g2_overclock',  tier: 2, branch: true, name: '7,200 RPM Apex Rotary Drive', icon: 'vulcan', cr: 75, prt: 1, req: ['r_g1_m61a2'], desc: '+30% gun ROF, +24% dmg & searing violet-white twin tracer streams!' },
+            { id: 'r_g2_ir_lock',    tier: 2, branch: true, name: 'AN/AAR-56 MLD Stealth Lock', icon: 'scanner', cr: 75, prt: 1, req: ['r_g1_m61a2'], desc: '+32% Guns Ring reach & every 3rd burst fires a devastating 2.5× Optical CRIT beam!' },
+            { id: 'r_g3_tungsten',   tier: 3, branch: true, name: 'DU-22 Tungsten Sabot Shells', icon: 'vulcan', cr: 130, prt: 2, reqAny: ['r_g2_overclock', 'r_g2_ir_lock'], desc: '+36% gun dmg, +45% vs Bosses & 58px hyper-velocity shrapnel splash!' },
+            { id: 'r_g3_arc',        tier: 3, branch: true, name: 'Thrust-Vector Snap-Shot Sweep', icon: 'afterburner', cr: 130, prt: 2, reqAny: ['r_g2_overclock', 'r_g2_ir_lock'], desc: 'Each burst chains blazing violet-gold snap-shots to +2 nearby bogeys!' },
+            { id: 'r_g4_twinbay',    tier: 4, name: 'Dual-Feed Apex Drum', icon: 'vulcan', cr: 195, prt: 3, reqAny: ['r_g3_tungsten', 'r_g3_arc'], desc: 'Launch with +2 permanent M61A2 ranks & +2 simultaneous target streams!' },
+            { id: 'r_g5_supercruise',tier: 5, name: 'F119-PW-100 "Apex Predator"', icon: 'afterburner', cr: 280, prt: 4, req: ['r_g4_twinbay'], desc: 'GLASS CANNON SNOWBALL: Kills stack +6% ROF & +8% dmg (max 12×) + +2% Fuel per kill!' }
+          ],
+          missiles: [
+            { id: 'r_m1_aim9x',        tier: 1, branch: true, name: 'AIM-9X Block III Apex Fox 2', icon: 'sidewinder', cr: 110, prt: 1, req: [], desc: 'Ultra-high-G internal side-bay heat-seekers locking targets outside Guns Ring.' },
+            { id: 'r_m1_aim260',       tier: 1, branch: true, name: 'AIM-260 JATM (Fox 3)', icon: 'sparrow', cr: 110, prt: 1, req: [], desc: 'Classified ultra-long-range cross-plane BVR missile locking EITHER altitude!' },
+            { id: 'r_m2_apg77',        tier: 2, branch: true, name: 'AN/APG-77 "First-Look" AESA', icon: 'scanner', cr: 145, prt: 2, reqAny: ['r_m1_aim9x', 'r_m1_aim260'], desc: '+1 fitted missile rank, +28% dmg & +45% hypersonic missile speed!' },
+            { id: 'r_m2_ifdl',         tier: 2, branch: true, name: 'IFDL Stealth Swarm Datalink', icon: 'sparrow', cr: 145, prt: 2, reqAny: ['r_m1_aim9x', 'r_m1_aim260'], desc: '+2 extra missiles per salvo & +35% lock range!' },
+            { id: 'r_m3_jatm_heavy',   tier: 3, name: 'AIM-260X Heavy BVR Salvo', icon: 'phoenix', cr: 220, prt: 3, reqAny: ['r_m2_apg77', 'r_m2_ifdl'], desc: 'Launch armed with devastating long-range multi-target stealth BVR splash salvos!' },
+            { id: 'r_m4_baymax',       tier: 4, branch: true, name: '6-Rail Internal Bay Saturation', icon: 'phoenix', cr: 260, prt: 3, req: ['r_m3_jatm_heavy'], desc: '+2 JATM-X per salvo, +40% blast radius & splits into 3 hypersonic sub-seekers!' },
+            { id: 'r_m4_ripple',       tier: 4, branch: true, name: '"First-Kill" Rapid Ripple Bus', icon: 'sidewinder', cr: 260, prt: 3, req: ['r_m3_jatm_heavy'], desc: 'SNOWBALL: -28% all missile CDs & -0.40s CD shave on every missile kill!' },
+            { id: 'r_m5_airdominance', tier: 5, name: '"AIR DOMINANCE" 6-Target Alpha', icon: 'phoenix', cr: 350, prt: 5, reqAny: ['r_m4_baymax', 'r_m4_ripple'], desc: 'CAPSTONE: +2 ranks to ALL missiles, +40% dmg & free 5-missile Apex Barrage every 7 kills!' }
+          ]
+        },
+        s4: {
+          guns: [
+            { id: 's_g1_gravbeam',   tier: 1, name: 'Element-115 Gravity-A Beam', icon: 'vulcan', cr: 0, prt: 0, req: [], freeDefault: true, desc: 'Zero-recoil extraterrestrial directed energy beam — slices through shields and hull alike.' },
+            { id: 's_g2_amp',        tier: 2, branch: true, name: 'Triple Gravity Amplifier', icon: 'afterburner', cr: 80, prt: 1, req: ['s_g1_gravbeam'], desc: '+28% beam ROF, +22% dmg & blazing emerald-cyan twin grav-beams!' },
+            { id: 's_g2_phase',      tier: 2, branch: true, name: 'Subspace Phase-Shift Lens', icon: 'scanner', cr: 80, prt: 1, req: ['s_g1_gravbeam'], desc: '+35% reach & every 3rd pulse lases an opposite-plane alien craft through subspace!' },
+            { id: 's_g3_antimatter', tier: 3, branch: true, name: 'Antimatter Annihilation Pulse', icon: 'vulcan', cr: 140, prt: 2, reqAny: ['s_g2_amp', 's_g2_phase'], desc: '+35% beam dmg, +45% vs Bosses & massive 72px violet-emerald plasma splash!' },
+            { id: 's_g3_tesla',      tier: 3, branch: true, name: 'Zeta Arc-Lightning Conduit', icon: 'afterburner', cr: 140, prt: 2, reqAny: ['s_g2_amp', 's_g2_phase'], desc: 'Each pulse arcs cosmic emerald-violet lightning to +3 nearby alien craft!' },
+            { id: 's_g4_reactor',    tier: 4, name: 'Bipolar Element-115 Reactor', icon: 'vulcan', cr: 210, prt: 3, reqAny: ['s_g3_antimatter', 's_g3_tesla'], desc: 'Launch with +2 permanent Gravity-A ranks & +2 simultaneous tachyon beams!' },
+            { id: 's_g5_omicron',    tier: 5, name: 'Omicron Configuration Overdrive', icon: 'hull', cr: 300, prt: 4, req: ['s_g4_reactor'], desc: 'COSMIC SNOWBALL: Kills stack +6% ROF & +8% dmg (max 12×) + +3% Fuel & +2 Shield Hull!' }
+          ],
+          missiles: [
+            { id: 's_m1_foo',        tier: 1, branch: true, name: 'Foo-Fighter Plasma Orbs', icon: 'sidewinder', cr: 115, prt: 1, req: [], desc: 'Homing extraterrestrial emerald-cyan plasma orbs locking targets outside emitter range.' },
+            { id: 's_m1_tachyon',    tier: 1, branch: true, name: 'Tachyon Phase-Lances', icon: 'sparrow', cr: 115, prt: 1, req: [], desc: 'Instant cross-plane alien phase-lances locking EITHER altitude automatically!' },
+            { id: 's_m2_zeropoint',  tier: 2, branch: true, name: 'Zero-Point Energy Array', icon: 'scanner', cr: 155, prt: 2, reqAny: ['s_m1_foo', 's_m1_tachyon'], desc: '+1 fitted rank, +28% dmg & +45% relativistic plasma speed!' },
+            { id: 's_m2_hive',       tier: 2, branch: true, name: 'Zeta Hive-Mind Datalink', icon: 'sparrow', cr: 155, prt: 2, reqAny: ['s_m1_foo', 's_m1_tachyon'], desc: '+2 extra plasma orbs per salvo & +35% cosmic lock range!' },
+            { id: 's_m3_novabomb',   tier: 3, name: 'Dark-Matter Singularity Bombs', icon: 'phoenix', cr: 235, prt: 3, reqAny: ['s_m2_zeropoint', 's_m2_hive'], desc: 'Launch armed with massive violet-emerald gravity-well singularity bombs!' },
+            { id: 's_m4_fractal',    tier: 4, branch: true, name: 'Fractal Prism Splitter', icon: 'phoenix', cr: 275, prt: 3, req: ['s_m3_novabomb'], desc: '+2 Singularity Bombs per salvo, +45% blast radius & splits into 3 homing plasma shards!' },
+            { id: 's_m4_chrono',     tier: 4, branch: true, name: 'Chrono-Distortion Bus', icon: 'hull', cr: 275, prt: 3, req: ['s_m3_novabomb'], desc: 'SNOWBALL: -28% all CDs & -0.40s CD shave + +1.5 Shield Hull on every kill!' },
+            { id: 's_m5_omega',      tier: 5, name: '"ZETA OMEGA" Cosmic Barrage', icon: 'phoenix', cr: 375, prt: 5, reqAny: ['s_m4_fractal', 's_m4_chrono'], desc: 'CAPSTONE: +2 ranks to ALL alien ordnance, +40% dmg & free 5-orb Singularity Storm every 7 kills!' }
+          ]
         }
       };
 
       function getAircraftTreeOwned(acId = 'f14') {
         if (!profile.aircraftTrees) profile.aircraftTrees = {};
-        const defaultNode = acId === 'f18' ? 'h_g1_m61a2' : 'g1_rotary';
+        const defaultNode = acId === 'f18' ? 'h_g1_m61a2' : (acId === 'a6' ? 'a_g1_mk4' : (acId === 'f35' ? 'f_g1_gau22' : (acId === 'f22' ? 'r_g1_m61a2' : (acId === 's4' ? 's_g1_gravbeam' : 'g1_rotary'))));
         if (!profile.aircraftTrees[acId]) profile.aircraftTrees[acId] = { [defaultNode]: true };
         profile.aircraftTrees[acId][defaultNode] = true;
         return profile.aircraftTrees[acId];
@@ -2349,6 +2994,10 @@
       function hasFittedMissileTree(acId = 'f14') {
         const owned = getAircraftTreeOwned(acId);
         if (acId === 'f18') return !!(owned.h_m1_aim9x || owned.h_m1_amraam);
+        if (acId === 'a6') return !!(owned.a_m1_zuni || owned.a_m1_maverick);
+        if (acId === 'f35') return !!(owned.f_m1_aim9x || owned.f_m1_aim120d);
+        if (acId === 'f22') return !!(owned.r_m1_aim9x || owned.r_m1_aim260);
+        if (acId === 's4')  return !!(owned.s_m1_foo || owned.s_m1_tachyon);
         return !!(owned.m1_sidewinder || owned.m1_sparrow);
       }
 
@@ -2366,6 +3015,166 @@
         let missileDmgMult = 1.0, missileCdMult = 1.0, missileSpeedMult = 1.0, missileRangeMult = 1.0;
         let gunTierCount = 0, missileTierCount = 0;
 
+        if (acId === 's4') {
+          if (owned.s_g2_amp)        { gunDmgMult += 0.22; gunRofMult += 0.28; gunTierCount++; }
+          if (owned.s_g2_phase)      { gunRangeMult += 0.35; gunTierCount++; }
+          if (owned.s_g3_antimatter) { gunDmgMult += 0.35; gunTierCount++; }
+          if (owned.s_g3_tesla)      { gunTierCount++; }
+          if (owned.s_g4_reactor)    { gunTierCount++; }
+          if (owned.s_g5_omicron)    { gunTierCount++; }
+          if (owned.s_m2_zeropoint)  { missileDmgMult += 0.28; missileSpeedMult += 0.45; missileTierCount++; }
+          if (owned.s_m2_hive)       { missileRangeMult += 0.35; missileTierCount++; }
+          if (owned.s_m3_novabomb)   { missileTierCount++; }
+          if (owned.s_m4_fractal)    { missileTierCount++; }
+          if (owned.s_m4_chrono)     { missileCdMult *= 0.72; missileTierCount++; }
+          if (owned.s_m5_omega)      { missileDmgMult += 0.40; gunDmgMult += 0.22; missileTierCount++; }
+          const t2B = owned.s_m2_zeropoint ? 1 : 0, capB = owned.s_m5_omega ? 2 : 0;
+          return {
+            dmgMult: Math.max(gunDmgMult, missileDmgMult),
+            gunDmgMult, gunRofMult, gunRangeMult, missileDmgMult, missileCdMult, missileSpeedMult, missileRangeMult,
+            gunTierCount, missileTierCount,
+            hasTcsCrit: false, hasFlirCrossPlane: !!owned.s_g2_phase, hasSapheiSplash: !!owned.s_g3_antimatter,
+            splashRadius: owned.s_g3_antimatter ? 72 : 48, groundBonusMult: owned.s_g3_antimatter ? 1.45 : 1.0,
+            missileGroundBonusMult: owned.s_m2_zeropoint ? 1.35 : 1.0, hasHudChain: !!owned.s_g3_tesla,
+            chainCount: owned.s_g3_tesla ? 3 : 1, extraGunBeams: owned.s_g4_reactor ? 2 : 0,
+            hasGunOverclock: !!owned.s_g5_omicron, fuelPerGunKill: owned.s_g5_omicron ? 3.0 : 0,
+            hullPerGunKill: owned.s_g5_omicron ? 2.0 : 0, hasSeamPlume: !!owned.s_m2_zeropoint,
+            extraTwsSalvo: owned.s_m2_hive ? 2 : 0, hasSixPallet: !!owned.s_m4_fractal, subSeekerCount: owned.s_m4_fractal ? 3 : 2,
+            hasRioRipple: !!owned.s_m4_chrono, hasSixShooter: !!owned.s_m5_omega, alphaStrikeKills: 7, alphaStrikeCount: 5,
+            vulcanBonus: owned.s_g4_reactor ? 2 : 0,
+            sidewinderBonus: owned.s_m1_foo ? (1 + t2B + capB) : 0,
+            sparrowBonus: owned.s_m1_tachyon ? (1 + t2B + capB) : 0,
+            phoenixBonus: owned.s_m3_novabomb ? (1 + capB) : 0
+          };
+        }
+        if (acId === 'f22') {
+          if (owned.r_g2_overclock)   { gunDmgMult += 0.24; gunRofMult += 0.30; gunTierCount++; }
+          if (owned.r_g2_ir_lock)     { gunRangeMult += 0.32; gunTierCount++; }
+          if (owned.r_g3_tungsten)    { gunDmgMult += 0.36; gunTierCount++; }
+          if (owned.r_g3_arc)         { gunTierCount++; }
+          if (owned.r_g4_twinbay)     { gunTierCount++; }
+          if (owned.r_g5_supercruise) { gunTierCount++; }
+          if (owned.r_m2_apg77)       { missileDmgMult += 0.28; missileSpeedMult += 0.45; missileTierCount++; }
+          if (owned.r_m2_ifdl)        { missileRangeMult += 0.35; missileTierCount++; }
+          if (owned.r_m3_jatm_heavy)  { missileTierCount++; }
+          if (owned.r_m4_baymax)      { missileTierCount++; }
+          if (owned.r_m4_ripple)      { missileCdMult *= 0.72; missileTierCount++; }
+          if (owned.r_m5_airdominance){ missileDmgMult += 0.40; gunDmgMult += 0.20; missileTierCount++; }
+          const t2B = owned.r_m2_apg77 ? 1 : 0, capB = owned.r_m5_airdominance ? 2 : 0;
+          return {
+            dmgMult: Math.max(gunDmgMult, missileDmgMult),
+            gunDmgMult, gunRofMult, gunRangeMult, missileDmgMult, missileCdMult, missileSpeedMult, missileRangeMult,
+            gunTierCount, missileTierCount,
+            hasTcsCrit: !!owned.r_g2_ir_lock, hasFlirCrossPlane: false, hasSapheiSplash: !!owned.r_g3_tungsten,
+            splashRadius: owned.r_g3_tungsten ? 58 : 46, groundBonusMult: owned.r_g3_tungsten ? 1.35 : 1.0,
+            missileGroundBonusMult: 1.0, hasHudChain: !!owned.r_g3_arc, chainCount: owned.r_g3_arc ? 2 : 1,
+            extraGunBeams: owned.r_g4_twinbay ? 2 : 0, hasGunOverclock: !!owned.r_g5_supercruise,
+            fuelPerGunKill: owned.r_g5_supercruise ? 2.0 : 0, hasSeamPlume: !!owned.r_m2_apg77,
+            extraTwsSalvo: owned.r_m2_ifdl ? 2 : 0, hasSixPallet: !!owned.r_m4_baymax, subSeekerCount: owned.r_m4_baymax ? 3 : 2,
+            hasRioRipple: !!owned.r_m4_ripple, hasSixShooter: !!owned.r_m5_airdominance, alphaStrikeKills: 7, alphaStrikeCount: 5,
+            vulcanBonus: owned.r_g4_twinbay ? 2 : 0,
+            sidewinderBonus: owned.r_m1_aim9x ? (1 + t2B + capB) : 0,
+            sparrowBonus: owned.r_m1_aim260 ? (1 + t2B + capB) : 0,
+            phoenixBonus: owned.r_m3_jatm_heavy ? (1 + capB) : 0
+          };
+        }
+        if (acId === 'f35') {
+          if (owned.f_g2_das)         { gunDmgMult += 0.18; gunRofMult += 0.24; gunTierCount++; }
+          if (owned.f_g2_eots)        { gunRangeMult += 0.28; gunTierCount++; }
+          if (owned.f_g3_apex)        { gunDmgMult += 0.28; gunTierCount++; }
+          if (owned.f_g3_prism)       { gunTierCount++; }
+          if (owned.f_g4_dualbay)     { gunTierCount++; }
+          if (owned.f_g5_blossom)     { gunTierCount++; }
+          if (owned.f_m2_apg81)       { missileDmgMult += 0.22; missileSpeedMult += 0.38; missileTierCount++; }
+          if (owned.f_m2_madl)        { missileRangeMult += 0.30; missileTierCount++; }
+          if (owned.f_m3_jsm)         { missileTierCount++; }
+          if (owned.f_m4_sdb2)        { missileTierCount++; }
+          if (owned.f_m4_beastmode)   { missileCdMult *= 0.75; missileTierCount++; }
+          if (owned.f_m5_loyalwingman){ missileDmgMult += 0.35; gunDmgMult += 0.18; missileTierCount++; }
+          const has9x = !!owned.f_m1_aim9x;
+          const has120 = !!owned.f_m1_aim120d;
+          const t2B = owned.f_m2_apg81 ? 1 : 0;
+          const capB = owned.f_m5_loyalwingman ? 2 : 0;
+          return {
+            dmgMult: Math.max(gunDmgMult, missileDmgMult),
+            gunDmgMult, gunRofMult, gunRangeMult,
+            missileDmgMult, missileCdMult, missileSpeedMult, missileRangeMult,
+            gunTierCount, missileTierCount,
+            hasTcsCrit: false,
+            hasFlirCrossPlane: !!owned.f_g2_eots,
+            hasSapheiSplash: !!owned.f_g3_apex,
+            splashRadius: owned.f_g3_apex ? 60 : 46,
+            groundBonusMult: owned.f_g3_apex ? 1.40 : 1.0,
+            missileGroundBonusMult: owned.f_m2_apg81 ? 1.35 : 1.0,
+            hasHudChain: !!owned.f_g3_prism,
+            chainCount: owned.f_g3_prism ? 2 : 1,
+            extraGunBeams: owned.f_g4_dualbay ? 1 : 0,
+            hasGunOverclock: !!owned.f_g5_blossom,
+            fuelPerGunKill: owned.f_g5_blossom ? 1.5 : 0,
+            burnPerGunKill: owned.f_g5_blossom ? 2.5 : 0,
+            hasSeamPlume: !!owned.f_m2_apg81,
+            extraTwsSalvo: owned.f_m2_madl ? 1 : 0,
+            hasSixPallet: !!owned.f_m4_sdb2,
+            subSeekerCount: owned.f_m4_sdb2 ? 3 : 2,
+            hasRioRipple: !!owned.f_m4_beastmode,
+            hasSixShooter: !!owned.f_m5_loyalwingman,
+            alphaStrikeKills: 8,
+            alphaStrikeCount: 4,
+            vulcanBonus: owned.f_g4_dualbay ? 2 : 0,
+            sidewinderBonus: has9x ? (1 + t2B + capB) : 0,
+            sparrowBonus: has120 ? (1 + t2B + capB) : 0,
+            phoenixBonus: owned.f_m3_jsm ? (1 + capB) : 0
+          };
+        }
+        if (acId === 'a6') {
+          if (owned.a_g2_heavybarrels) { gunDmgMult += 0.18; gunRofMult += 0.22; gunTierCount++; }
+          if (owned.a_g2_trams)        { gunRangeMult += 0.28; gunTierCount++; }
+          if (owned.a_g3_napalm)       { gunDmgMult += 0.28; gunTierCount++; }
+          if (owned.a_g3_cbu)          { gunTierCount++; }
+          if (owned.a_g4_quadpods)     { gunTierCount++; }
+          if (owned.a_g5_ironhand)     { gunTierCount++; }
+          if (owned.a_m2_diane)        { missileDmgMult += 0.22; missileSpeedMult += 0.35; missileTierCount++; }
+          if (owned.a_m2_mer)          { missileRangeMult += 0.26; missileTierCount++; }
+          if (owned.a_m3_harpoon)      { missileTierCount++; }
+          if (owned.a_m4_walleye)      { missileTierCount++; }
+          if (owned.a_m4_sead)         { missileCdMult *= 0.75; missileTierCount++; }
+          if (owned.a_m5_alphastrike)  { missileDmgMult += 0.35; gunDmgMult += 0.18; missileTierCount++; }
+          const hasZ = !!owned.a_m1_zuni;
+          const hasM = !!owned.a_m1_maverick;
+          const t2B = owned.a_m2_diane ? 1 : 0;
+          const capB = owned.a_m5_alphastrike ? 2 : 0;
+          return {
+            dmgMult: Math.max(gunDmgMult, missileDmgMult),
+            gunDmgMult, gunRofMult, gunRangeMult,
+            missileDmgMult, missileCdMult, missileSpeedMult, missileRangeMult,
+            gunTierCount, missileTierCount,
+            hasTcsCrit: false,
+            hasFlirCrossPlane: !!owned.a_g2_trams,
+            hasSapheiSplash: !!owned.a_g3_napalm,
+            splashRadius: owned.a_g3_napalm ? 68 : 48,
+            groundBonusMult: owned.a_g3_napalm ? 1.50 : 1.0,
+            missileGroundBonusMult: owned.a_m2_diane ? 1.40 : 1.0,
+            hasHudChain: !!owned.a_g3_cbu,
+            chainCount: owned.a_g3_cbu ? 2 : 1,
+            extraGunBeams: owned.a_g4_quadpods ? 1 : 0,
+            hasGunOverclock: !!owned.a_g5_ironhand,
+            hullPerGunKill: owned.a_g5_ironhand ? 2.5 : 0,
+            hullPerMissileKill: owned.a_m4_sead ? 1.5 : 0,
+            fuelPerGunKill: 0,
+            hasSeamPlume: !!owned.a_m2_diane,
+            extraTwsSalvo: owned.a_m2_mer ? 1 : 0,
+            hasSixPallet: !!owned.a_m4_walleye,
+            subSeekerCount: owned.a_m4_walleye ? 3 : 2,
+            hasRioRipple: !!owned.a_m4_sead,
+            hasSixShooter: !!owned.a_m5_alphastrike,
+            alphaStrikeKills: 8,
+            alphaStrikeCount: 4,
+            vulcanBonus: owned.a_g4_quadpods ? 2 : 0,
+            sidewinderBonus: hasZ ? (1 + t2B + capB) : 0,
+            sparrowBonus: hasM ? (1 + t2B + capB) : 0,
+            phoenixBonus: owned.a_m3_harpoon ? (1 + capB) : 0
+          };
+        }
         if (acId === 'f18') {
           if (owned.h_g2_highalpha) { gunDmgMult += 0.16; gunRofMult += 0.22; gunTierCount++; }
           if (owned.h_g2_flir)      { gunRangeMult += 0.26; gunTierCount++; }
@@ -3035,7 +3844,7 @@
         const syn = getPilotAircraftSynergy(pCfg, acCfg);
         const baseMaxHp = 100 + up.titanium * 20 + (pCfg.hullBonus || 0) + (acCfg.hullBonus || 0) + (syn ? syn.hull : 0) + careerLvlBonus * 5;
         const _curMap = getCurrentMap();
-        const _ms = (mode === 'playing' || mode === 'catshot') && profile.missionSave && profile.missionSave.mapId === _curMap.id
+        const _ms = (mode === 'playing' || mode === 'catshot' || mode === 'preflight') && profile.missionSave && profile.missionSave.mapId === _curMap.id
           ? profile.missionSave
           : null;
         if (_ms && _ms.sessionUnlocks) {
@@ -3326,9 +4135,17 @@
         const wasLockedL2 = !isLevel2Unlocked();
         if (curMap.id === 'indian_ocean') {
           unlockCoronadoAndHornet();
+        } else if (curMap.id === 'coronado') {
+          unlockMiramarAndIntruder();
+        } else if (curMap.id === 'miramar') {
+          unlockPaxAndF35();
+        } else if (curMap.id === 'pax_river') {
+          unlockChinaLakeAndF22();
+        } else if (curMap.id === 'china_lake') {
+          unlockArea51AndS4();
         } else {
-          selectedMapIdx = 1;
-          profile.currentCampaignIdx = 1;
+          selectedMapIdx = Math.min(isLevel6Unlocked() ? 5 : (isLevel5Unlocked() ? 4 : (isLevel4Unlocked() ? 3 : (isLevel3Unlocked() ? 2 : 1))), selectedMapIdx);
+          profile.currentCampaignIdx = selectedMapIdx;
         }
         if (state.score > profile.highScore) profile.highScore = state.score;
         saveProfile();
@@ -3374,8 +4191,16 @@
           profile.clearedMaps[clearedId] = true;
           if (clearedId === 'indian_ocean') {
             unlockCoronadoAndHornet();
+          } else if (clearedId === 'coronado') {
+            unlockMiramarAndIntruder();
+          } else if (clearedId === 'miramar') {
+            unlockPaxAndF35();
+          } else if (clearedId === 'pax_river') {
+            unlockChinaLakeAndF22();
+          } else if (clearedId === 'china_lake') {
+            unlockArea51AndS4();
           } else {
-            selectedMapIdx = Math.min(1, selectedMapIdx);
+            selectedMapIdx = Math.min(isLevel6Unlocked() ? 5 : (isLevel5Unlocked() ? 4 : (isLevel4Unlocked() ? 3 : (isLevel3Unlocked() ? 2 : 1))), selectedMapIdx);
             profile.currentCampaignIdx = selectedMapIdx;
           }
           saveProfile();
@@ -3440,7 +4265,7 @@
         const ac = getSelectedAircraftCfg();
         const tree = AIRCRAFT_TREES[ac.id] || AIRCRAFT_TREES.f14;
         const owned = getAircraftTreeOwned(ac.id);
-        const missilesOpen = !!(profile.missilesTreeUnlocked || sessionUnlocks.missiles || (ac.id === 'f18' && isLevel2Unlocked()));
+        const missilesOpen = !!(profile.missilesTreeUnlocked || sessionUnlocks.missiles || (ac.id === 'f18' && isLevel2Unlocked()) || (ac.id === 'a6' && isLevel3Unlocked()) || (ac.id === 'f35' && isLevel4Unlocked()) || (ac.id === 'f22' && isLevel5Unlocked()) || (ac.id === 's4' && isLevel6Unlocked()));
         const acFreeFlag = ac.id === 'f18'
           ? !!(profile.freeMissilePickByAc && profile.freeMissilePickByAc.f18)
           : !!profile.freeMissilePick;
@@ -3677,6 +4502,23 @@
         AudioFX.planeSwap(next === 1);
         spawnRing(p.x, p.y, PLANE_CFG[next].color, 18, 54, next);
         addFloatingText(p.x, p.y - 26, PLANE_CFG[next].name, PLANE_CFG[next].color, 11);
+        // F/A-18C HORNET SIGNATURE HYBRID PASSIVE: Diving to Hard Deck drops Mk-20 Rockeye cluster bomblets!
+        if (getSelectedAircraftCfg().id === 'f18' && next === 0) {
+          const hDmg = 45 + p.level * 8;
+          let hitAny = false;
+          for (let i = 0, n = state.enemies.length; i < n; i++) {
+            const en = state.enemies[i];
+            if (en.hp > 0 && en.plane === 0) {
+              const dx = en.x - p.x, dy = en.y - p.y;
+              if (dx * dx + dy * dy <= 235 * 235) {
+                damageEnemy(en, hDmg, false, 'missile');
+                spawnRing(en.x, en.y, '#38bdf8', 8, 56, 0);
+                hitAny = true;
+              }
+            }
+          }
+          if (hitAny) addFloatingText(p.x, p.y - 42, '★ HORNET HYBRID DIVE-STRIKE! ★', '#38bdf8', 11);
+        }
 
         // 🔥 GOING BALLISTIC! Swapping altitude right on top of an enemy!
         let ballisticHits = 0;
@@ -3801,7 +4643,7 @@
         const p = state.player;
         const distNM = Math.hypot(p.x, p.y) / 140;
         const threat = getThreatInfo(distNM);
-        const surfaceProb = (selectedMapIdx === 0) ? 0.18 : 0.50;
+        const surfaceProb = (selectedMapIdx === 0) ? 0.18 : (getCurrentMap().theme === 'miramar' ? 0.78 : (getCurrentMap().theme === 'chinalake' ? 0.28 : 0.48));
         const plane = planeOverride !== null ? planeOverride : (sessionUnlocks.altitude ? (Math.random() < surfaceProb ? 0 : 1) : 1);
 
         // Bias 68% of spawns into a forward CAP intercept cone ahead of the player's flight vector!
@@ -3820,16 +4662,29 @@
 
         const onOcean = isOceanAt(x, y);
         let type = typeOverride;
-        const isCoronado = getCurrentMap().theme === 'coronado';
+        const _curTheme = getCurrentMap().theme;
+        const isCoronado = _curTheme === 'coronado';
+        const isMiramar = _curTheme === 'miramar';
+        const isArea51 = _curTheme === 'area51';
         if (!type) {
           if (plane === 0) {
-            if (isCoronado) {
-              // Level 2 Coronado Hard Deck: Caspian Sea Monster Ekranoplan on Bay/Ocean; Mi-24 Hind Gunships & T-72s on Coast/Land!
+            if (isArea51) {
+              // SECRET LEVEL 6 AREA 51: 100% Extraterrestrial low-altitude hover saucers & plasma triangles!
+              type = (threat.lvl >= 2 && Math.random() < 0.55) ? 'ufo_heavy' : 'ufo_scout';
+            } else if (isCoronado) {
+              // Level 2 Coronado Hard Deck: Frigate/Ekranoplan on Bay/Ocean; Hind & new Ka-50 Black Shark on Coast/Bay!
               if (onOcean) {
-                type = (threat.lvl >= 2 && Math.random() < 0.58) ? 'ekranoplan' : 'frigate';
+                if (threat.lvl >= 3) type = Math.random() < 0.45 ? 'ka50' : 'ekranoplan';
+                else type = (threat.lvl >= 2 && Math.random() < 0.58) ? 'ekranoplan' : 'frigate';
               } else {
-                type = Math.random() < 0.62 ? 'hind' : 'tank';
+                if (threat.lvl >= 3) type = Math.random() < 0.56 ? 'ka50' : (Math.random() < 0.72 ? 'hind' : 'tank');
+                else type = Math.random() < 0.62 ? 'hind' : 'tank';
               }
+            } else if (isMiramar) {
+              // Level 3 Miramar Hard Deck: Heavy Soviet desert armor & Ka-50/Hind attack choppers (ideal for A-6E!)
+              if (threat.lvl >= 3) type = Math.random() < 0.45 ? 'ka50' : (Math.random() < 0.78 ? 'tank' : 'hind');
+              else if (threat.lvl === 2) type = Math.random() < 0.42 ? 'hind' : (Math.random() < 0.78 ? 'tank' : 'bmp');
+              else type = Math.random() < 0.52 ? 'tank' : 'bmp';
             } else {
               if (onOcean) {
                 type = 'frigate';
@@ -3840,16 +4695,30 @@
             }
           } else {
             const r = Math.random();
-            if (isCoronado) {
-              // Level 2 Coronado Exclusive Cold War Soviet Air Roster: Fishbed -> Flogger -> Frogfoot -> Tu-160 Blackjack!
+            if (isArea51) {
+              // SECRET LEVEL 6 AREA 51: 100% Extraterrestrial Zeta Scouts & TR-3B Obsidian Plasma Cruisers!
+              type = (threat.lvl >= 2 && r < (0.35 + threat.lvl * 0.12)) ? 'ufo_heavy' : 'ufo_scout';
+            } else if (isCoronado) {
+              // Level 2 Coronado Air Roster: Fishbed/Flogger + harder L1 Flanker/Foxhound/Berkut + NEW Su-34 Fullback & MiG 1.44 Flatpack!
               if (threat.lvl >= 4) {
-                type = r < 0.30 ? 'blackjack' : (r < 0.60 ? 'frogfoot' : (r < 0.82 ? 'flogger' : 'fishbed'));
+                type = r < 0.32 ? 'mig144' : (r < 0.58 ? 'su34' : (r < 0.80 ? 'blackjack' : 'berkut'));
               } else if (threat.lvl === 3) {
-                type = r < 0.24 ? 'blackjack' : (r < 0.58 ? 'frogfoot' : (r < 0.84 ? 'flogger' : 'fishbed'));
+                type = r < 0.30 ? 'su34' : (r < 0.55 ? 'foxhound' : (r < 0.78 ? 'blackjack' : 'frogfoot'));
               } else if (threat.lvl === 2) {
-                type = r < 0.34 ? 'frogfoot' : (r < 0.72 ? 'flogger' : 'fishbed');
+                type = r < 0.28 ? 'flanker' : (r < 0.58 ? 'frogfoot' : (r < 0.82 ? 'flogger' : 'fishbed'));
               } else {
-                type = r < 0.52 ? 'fishbed' : 'flogger';
+                type = r < 0.42 ? 'fishbed' : (r < 0.78 ? 'flogger' : 'flanker');
+              }
+            } else if (isMiramar) {
+              // Level 3 Miramar Air Roster: Elite Soviet fighters & heavy desert strike raiders!
+              if (threat.lvl >= 4) {
+                type = r < 0.36 ? 'mig144' : (r < 0.64 ? 'su34' : (r < 0.84 ? 'berkut' : 'blackjack'));
+              } else if (threat.lvl === 3) {
+                type = r < 0.32 ? 'su34' : (r < 0.60 ? 'berkut' : (r < 0.82 ? 'foxhound' : 'blackjack'));
+              } else if (threat.lvl === 2) {
+                type = r < 0.34 ? 'foxhound' : (r < 0.64 ? 'flanker' : (r < 0.84 ? 'frogfoot' : 'flogger'));
+              } else {
+                type = r < 0.44 ? 'flanker' : (r < 0.76 ? 'frogfoot' : 'flogger');
               }
             } else {
               // Level 1 Indian Ocean Escalating Cold War & Secret Prototype Aerial Waves!
@@ -3868,7 +4737,7 @@
           }
         }
 
-        const isSurface = (type === 'bmp' || type === 'tank' || type === 'frigate' || type === 'hind' || type === 'ekranoplan');
+        const isSurface = (type === 'bmp' || type === 'tank' || type === 'frigate' || type === 'hind' || type === 'ekranoplan' || type === 'ka50');
         const isNaval = (type === 'frigate' || type === 'ekranoplan');
         // Higher enemy density with slightly snappier HP & calmer per-enemy fire rates!
         const hpScale = threat.hpMult * (1 + state.time / 240) * 0.84;
@@ -3891,6 +4760,12 @@
           blackjack:  { hp: 168 * hpScale, speed: 126 + threat.lvl * 10 + deepSpd * 0.6, r: 29, score: 420, xp: 30, fireRate: 1.95 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.32 },
           hind:       { hp: 78 * hpScale,  speed: 78 + threat.lvl * 6 + deepSpd * 0.4, r: 22, score: 190, xp: 14, fireRate: 2.35 - threat.lvl * 0.10 - deepRoF, emblemDrop: 0.15 },
           ekranoplan: { hp: 132 * hpScale, speed: 92 + threat.lvl * 7 + deepSpd * 0.5, r: 28, score: 295, xp: 22, fireRate: 2.20 - threat.lvl * 0.10 - deepRoF, emblemDrop: 0.24 },
+          ka50:       { hp: 148 * hpScale, speed: 98 + threat.lvl * 8 + deepSpd * 0.5, r: 24, score: 340, xp: 24, fireRate: 1.88 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.26 },
+          su34:       { hp: 175 * hpScale, speed: 152 + threat.lvl * 12 + deepSpd * 0.7, r: 26, score: 440, xp: 30, fireRate: 1.78 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.30 },
+          mig144:     { hp: 220 * hpScale, speed: 198 + threat.lvl * 14 + deepSpd * 0.8, r: 25, score: 560, xp: 38, fireRate: 1.58 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.36 },
+          // Secret Level 6 Area 51 Extraterrestrial Fleet (ZERO Soviet units!)
+          ufo_scout:  { hp: 165 * hpScale, speed: 185 + threat.lvl * 15 + deepSpd, r: 22, score: 480, xp: 34, fireRate: 1.72 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.30 },
+          ufo_heavy:  { hp: 265 * hpScale, speed: 155 + threat.lvl * 12 + deepSpd * 0.8, r: 27, score: 680, xp: 46, fireRate: 1.48 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.42 },
           // Classic Surface Units & Bosses
           bmp:        { hp: 38 * hpScale,  speed: 62 + threat.lvl * 6 + deepSpd * 0.4, r: 18, score: 90,  xp: 8,  fireRate: 2.95 - threat.lvl * 0.14 - deepRoF, emblemDrop: 0.05 },
           tank:       { hp: 74 * hpScale,  speed: 44 + threat.lvl * 4 + deepSpd * 0.3, r: 22, score: 165, xp: 13, fireRate: 2.65 - threat.lvl * 0.12 - deepRoF, emblemDrop: 0.13 },
@@ -3938,7 +4813,7 @@
       }
 
       function spawnStageBoss(stageLvl) {
-        const cfg = STAGE_BOSSES[stageLvl];
+        const cfg = getStageBossCfg(stageLvl);
         if (!cfg) return;
         clearArenaForBoss(cfg.bossMusic || ('boss_air' + Math.min(4, Math.max(1, stageLvl))));
         const p = state.player;
@@ -4099,6 +4974,108 @@
             return;
           }
 
+          if (ac.superType === 'singularity') {
+            // ★ S-4 SPORT MODEL ELEMENT-115 SINGULARITY: Gravity well pulls enemies, erases bullets & fires 16-spoke cosmic tachyon storm!
+            t.superPhoenix -= dt;
+            if (t.superPhoenix <= 0) {
+              t.superPhoenix = 0.12;
+              const singR = 470;
+              const spokes = 16;
+              const rot = state.time * 5.2;
+              for (let s = 0; s < spokes; s++) {
+                const a = rot + (s / spokes) * Math.PI * 2;
+                pushTracer({
+                  x1: p.x + Math.cos(a) * 16, y1: p.y + Math.sin(a) * 16,
+                  x2: p.x + Math.cos(a) * singR, y2: p.y + Math.sin(a) * singR,
+                  plane: s % 2, color: s % 2 === 0 ? '#34d399' : '#c084fc', width: 3.6, glow: 0.78, life: 0.14, maxLife: 0.14
+                });
+              }
+              spawnRing(p.x, p.y, '#34d399', 22, singR * 0.9, p.plane);
+              const sRSq = singR * singR;
+              const tickDmg = (34 + p.level * 5) * dmgMult;
+              for (let i = state.enemies.length - 1; i >= 0; i--) {
+                const e = state.enemies[i];
+                if (e.hp <= 0) continue;
+                const dx = p.x - e.x, dy = p.y - e.y;
+                const dSq = dx * dx + dy * dy;
+                if (dSq <= sRSq) {
+                  if (e.type !== 'boss' && dSq > 110 * 110) {
+                    const d = Math.sqrt(dSq) || 1;
+                    e.x += (dx / d) * 38; e.y += (dy / d) * 38;
+                  }
+                  damageEnemy(e, tickDmg, true, 'heavyMissile');
+                }
+              }
+              for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
+                const b = state.enemyBullets[i];
+                const dx = b.x - p.x, dy = b.y - p.y;
+                if (dx * dx + dy * dy <= 340 * 340) swapRemove(state.enemyBullets, i);
+              }
+              AudioFX.phoenix();
+            }
+            return;
+          }
+          if (ac.superType === 'raptorApex') {
+            // ★ F-22A RAPTOR SUPERCRUISE: Blistering 6-target simultaneous stealth JATM + AIM-9X alpha barrages across BOTH planes!
+            t.superPhoenix -= dt;
+            if (t.superPhoenix <= 0) {
+              t.superPhoenix = 0.18;
+              const alive = state.enemies.filter(e => e.hp > 0);
+              for (let k = 0; k < 6; k++) {
+                const target = alive.length ? alive[k % alive.length] : null;
+                const ang = p.heading + (k - 2.5) * 0.24;
+                state.bullets.push({
+                  kind: k % 2 === 0 ? 'superPhoenix' : 'sparrow', isMissile: true,
+                  speedMult: 1.45, trailColor: '#e879f9', vfxTier: 5,
+                  x: p.x + Math.cos(ang) * 16, y: p.y + Math.sin(ang) * 16,
+                  vx: Math.cos(ang) * 480, vy: Math.sin(ang) * 480,
+                  plane: target ? target.plane : p.plane, hitsAllPlanes: true, target,
+                  dmg: (56 + p.level * 6) * dmgMult, blastR: 82, r: 7.5, color: '#e879f9', life: 2.4
+                });
+              }
+              AudioFX.sparrow();
+            }
+            return;
+          }
+          if (ac.superType === 'vtolBlossom') {
+            // ★ F-35B VTOL DEATH BLOSSOM: 360° omnidirectional AE laser storm hitting EVERY direction across BOTH planes!
+            t.superPhoenix -= dt;
+            if (t.superPhoenix <= 0) {
+              t.superPhoenix = 0.11;
+              const blossomR = 440;
+              const spokes = 12;
+              const baseRot = state.time * 4.6;
+              for (let s = 0; s < spokes; s++) {
+                const a = baseRot + (s / spokes) * Math.PI * 2;
+                const col = s % 2 === 0 ? '#22d3ee' : '#e879f9';
+                pushTracer({
+                  x1: p.x + Math.cos(a) * 14, y1: p.y + Math.sin(a) * 14,
+                  x2: p.x + Math.cos(a) * blossomR, y2: p.y + Math.sin(a) * blossomR,
+                  plane: s % 2, color: col, width: 3.4, glow: 0.72, life: 0.13, maxLife: 0.13
+                });
+              }
+              spawnRing(p.x, p.y, '#22d3ee', 26, blossomR * 0.92, p.plane);
+              // Vaporize nearby enemy bullets & scorch ALL enemies in 360° radius on BOTH planes!
+              const bRSq = blossomR * blossomR;
+              const tickDmg = (26 + p.level * 4) * dmgMult;
+              for (let i = state.enemies.length - 1; i >= 0; i--) {
+                const e = state.enemies[i];
+                if (e.hp <= 0) continue;
+                const dx = e.x - p.x, dy = e.y - p.y;
+                if (dx * dx + dy * dy <= bRSq) {
+                  damageEnemy(e, tickDmg, true, 'missile');
+                  if (Math.random() < 0.35) spawnRing(e.x, e.y, '#e879f9', 6, 36, e.plane);
+                }
+              }
+              for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
+                const b = state.enemyBullets[i];
+                const dx = b.x - p.x, dy = b.y - p.y;
+                if (dx * dx + dy * dy <= 280 * 280) swapRemove(state.enemyBullets, i);
+              }
+              AudioFX.sparrow();
+            }
+            return;
+          }
           if (ac.superType === 'carpetBomb') {
             // A-6E INTRUDER: IRON HAND CARPET BOMB & AGM-65 MAVERICK SATURATION RUN!
             t.superPhoenix -= dt;
@@ -4507,6 +5484,10 @@
         const mult = (p.superActive ? 2 : 1) * (e.lootMult || 1);
         state.score += Math.round(e.score * mult);
         state.kills++; sessionSplashes++;
+        const _tbKill = getAircraftTreeBonuses(getSelectedAircraftCfg().id);
+        if (_tbKill.hullPerGunKill > 0 && p.hp > 0 && p.hp < p.maxHp) {
+          p.hp = Math.min(p.maxHp, p.hp + _tbKill.hullPerGunKill);
+        }
 
         const isBig = e.type === 'bomber' || e.type === 'boss' || e.type === 'tank' || e.type === 'frigate' || e.type === 'berkut' || e.type === 'freestyle' || e.type === 'blackjack' || e.type === 'ekranoplan' || e.type === 'frogfoot';
         if (e.type !== 'boss') {
@@ -4520,14 +5501,14 @@
               spawnSurfaceBoss(zLvl);
             }
             // Guarantee Zone 1 Bear never gets skipped and bosses progress cleanly in order!
-            const z1BearCfg = STAGE_BOSSES[1];
+            const z1BearCfg = getStageBossCfg(1);
             const noAirBossActive = !state.enemies.some(en => en.type === 'boss' && !en.isSurface);
             if (z1BearCfg && !state.bossSpawnedStages[1] && !state.bossDefeatedStages[1] && state.kills >= z1BearCfg.killsNeeded && noAirBossActive) {
               checkSessionUnlocks(1, 'altitude');
               state.bossSpawnedStages[1] = true;
               spawnStageBoss(1);
             } else {
-              const bCfg = STAGE_BOSSES[zLvl];
+              const bCfg = getStageBossCfg(zLvl);
               if (bCfg && !state.bossSpawnedStages[zLvl] && state.zoneKills[zLvl] >= bCfg.killsNeeded && noAirBossActive) {
                 const zoneKey = [null, 'altitude', 'missiles', 'afterburner', 'superState'][zLvl];
                 if (zoneKey) checkSessionUnlocks(zLvl, zoneKey);
@@ -4629,7 +5610,10 @@
       function damagePlayer(amount) {
         const p = state.player;
         if (p.invuln > 0 || p.superActive) return;
-        p.hp = Math.max(0, p.hp - amount);
+        const _acArm = getSelectedAircraftCfg();
+        const mitigated = Math.max(1, Math.round(amount * (1 - (_acArm.armorMitigation || 0))));
+        p.hp = Math.max(0, p.hp - mitigated);
+        p.lastHitTime = state.time || 0;
         p.invuln = 0.8;
         if (!p.superArmed && p.aceStreak > 0) {
           p.aceStreak = 0;
@@ -4637,7 +5621,7 @@
         }
         state.screenShake = 11; AudioFX.playerHit();
         spawnExplosion(p.x, p.y, p.plane, '#ef4444', 14, false);
-        addFloatingText(p.x, p.y - 24, `-${amount}`, '#fb7185', 11);
+        addFloatingText(p.x, p.y - 24, `-${mitigated}`, '#fb7185', 11);
         if (p.hp > 0 && !profile.damageBriefed) {
           profile.damageBriefed = true;
           saveProfile();
@@ -4700,9 +5684,10 @@
           if (!missilesFitted) {
             if (u.id !== 'vulcan' && u.id !== 'hull' && u.id !== 'flares' && u.id !== 'sweep') return false;
           }
-          if (u.id === 'sidewinder' && !getAircraftTreeOwned(ac.id).m1_sidewinder) return false;
-          if (u.id === 'sparrow' && !getAircraftTreeOwned(ac.id).m1_sparrow) return false;
-          if (u.id === 'phoenix' && !getAircraftTreeOwned(ac.id).m3_phoenix) return false;
+          const _tOwned = getAircraftTreeOwned(ac.id);
+          if (u.id === 'sidewinder' && !(_tOwned.m1_sidewinder || _tOwned.h_m1_aim9x || _tOwned.a_m1_zuni || _tOwned.f_m1_aim9x || _tOwned.r_m1_aim9x || _tOwned.s_m1_foo)) return false;
+          if (u.id === 'sparrow' && !(_tOwned.m1_sparrow || _tOwned.h_m1_amraam || _tOwned.a_m1_maverick || _tOwned.f_m1_aim120d || _tOwned.r_m1_aim260 || _tOwned.s_m1_tachyon)) return false;
+          if (u.id === 'phoenix' && !(_tOwned.m3_phoenix || _tOwned.h_m3_harm || _tOwned.a_m3_harpoon || _tOwned.f_m3_jsm || _tOwned.r_m3_jatm_heavy || _tOwned.s_m3_novabomb)) return false;
           if (u.id === 'sparrow' && !sessionUnlocks.altitude) return false;
           if (u.id === 'afterburner' && !sessionUnlocks.superState) return false;
           return u.id === 'hull' || (p.weapons[u.id] || 0) < u.maxLvl;
@@ -5260,7 +6245,15 @@
             iy = -iy;
           }
 
-          if (ix !== 0 || iy !== 0) {
+          if (p.superActive && _ac.superType === 'vtolBlossom') {
+            // ★ F-35B VTOL HOVER MODE: Stops forward auto-cruise completely, hovers dead-still (or gentle omnidirectional strafe), and spins in 360° Death Blossom!
+            const hoverSpd = speed * 0.45;
+            p.x += ix * hoverSpd * dt;
+            p.y += iy * hoverSpd * dt;
+            p.heading += dt * 7.8;
+            p.bank = 0;
+            p._moveMult = 0.0;
+          } else if (ix !== 0 || iy !== 0) {
             // Active steering: bank smoothly toward input & fly at full combat airspeed!
             const targetAngle = Math.atan2(iy, ix);
             let diff = targetAngle - p.heading;
@@ -5364,6 +6357,11 @@
         p.wingSweep += (targetSweep - p.wingSweep) * Math.min(1, dt * 11);
 
         p.invuln = Math.max(0, p.invuln - dt);
+        // A-6E Intruder Flying Tank passive self-sealing titanium armor regeneration!
+        const _acRegen = getSelectedAircraftCfg().hullRegenPerSec || 0;
+        if (_acRegen > 0 && p.hp > 0 && p.hp < p.maxHp && (state.time - (p.lastHitTime || 0)) >= 3.0) {
+          p.hp = Math.min(p.maxHp, p.hp + _acRegen * dt);
+        }
         p.rollTimer = Math.max(0, p.rollTimer - dt);
         p.swapCooldown = Math.max(0, p.swapCooldown - dt);
         if (p.superCooldown > 0) {
@@ -5750,7 +6748,31 @@
             e.x += Math.cos(e.angle) * spd * dt;
             e.y += Math.sin(e.angle) * spd * dt;
           }
-          if (e.type === 'boss' && !e.isSurface) e.angle = Math.atan2(dy, dx);
+          if (e.type === 'boss') {
+            // Keep bosses strictly outside Carrier CIWS and all 4 Aegis Escort CIWS bubbles!
+            const minC = SAFE_ZONE_PX + e.r + 36;
+            const cdSq = e.x * e.x + e.y * e.y;
+            if (cdSq < minC * minC) {
+              const cd = Math.sqrt(cdSq) || 1;
+              e.x = (e.x / cd) * minC;
+              e.y = (e.y / cd) * minC;
+            }
+            if (getCurrentMap().baseType !== 'airbase') {
+              const minE = ESCORT_CIWS_PX + e.r + 28;
+              const minESq = minE * minE;
+              for (let k = 0; k < escortOffsets.length; k++) {
+                const es = escortOffsets[k];
+                const ex = e.x - es.x, ey = e.y - es.y;
+                const edSq = ex * ex + ey * ey;
+                if (edSq < minESq) {
+                  const ed = Math.sqrt(edSq) || 1;
+                  e.x = es.x + (ex / ed) * minE;
+                  e.y = es.y + (ey / ed) * minE;
+                }
+              }
+            }
+            if (!e.isSurface) e.angle = Math.atan2(p.y - e.y, p.x - e.x);
+          }
 
           if (e.fireRate > 0 && dist < Math.max(W, H) * 0.65) {
             e.fireTimer -= dt;
@@ -5802,6 +6824,96 @@
                       state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * (265 + ph * 18), vy: Math.sin(a) * (265 + ph * 18), plane: e.plane, r: 6, color: '#22d3ee', life: 4.2 });
                     }
                   }
+                } else if (bk === 'zetaPrime' || bk === 'overlordCore' || bk === 'pleiadian' || bk === 'dreadTriangle' || bk === 'fooPrime') {
+                  // Secret Level 6 Area 51 Extraterrestrial Bosses: cosmic dual-plane emerald-magenta spiral storms!
+                  const spokes = (bk === 'zetaPrime' || bk === 'overlordCore') ? (12 + ph * 4) : (8 + ph * 3);
+                  const spd = 225 + ph * 22;
+                  for (let k = 0; k < spokes; k++) {
+                    const a = e.phaseTimer * 1.55 + (k / spokes) * Math.PI * 2;
+                    const col = k % 2 === 0 ? '#34d399' : '#e879f9';
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: k % 2, r: 6.4, color: col, life: 4.8 });
+                  }
+                } else if (bk === 'tu2000' || bk === 'felon' || bk === 'spiral50' || bk === 'mig41' || bk === 'checkmate' || bk === 'buranOmega') {
+                  // Level 4 Experimental Hypersonic / Stealth Bosses: dual-plane plasma spears + cyan-magenta radial waves!
+                  const half = ph >= 3 ? 4 : (ph === 2 ? 3 : 2);
+                  const spd = (bk === 'tu2000' ? 350 : 320) + ph * 26;
+                  for (let k = -half; k <= half; k++) {
+                    const a = baseAng + k * 0.13;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 6.2, color: bk === 'tu2000' ? '#22d3ee' : '#e879f9', life: 4.2 });
+                  }
+                  if (e.attackSeq % 2 === 0) {
+                    const cnt = ph >= 3 ? 12 : 8;
+                    for (let k = 0; k < cnt; k++) {
+                      const a = e.phaseTimer * 1.4 + (k / cnt) * Math.PI * 2;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 235, vy: Math.sin(a) * 235, plane: k % 2, r: 5.8, color: '#f43f5e', life: 4.0 });
+                    }
+                  }
+                } else if (bk === 'firefox') {
+                  // "Firefox-86" MiG-31M Hypersonic Stealth: scorching 5-to-9-way crimson hypersonic spears + cross-plane locks!
+                  const half = ph >= 3 ? 4 : (ph === 2 ? 3 : 2);
+                  const spd = 335 + ph * 28;
+                  for (let k = -half; k <= half; k++) {
+                    const a = baseAng + k * 0.13;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 6.0, color: '#f43f5e', life: 4.0 });
+                  }
+                  if (e.attackSeq % 2 === 0) {
+                    const altP = e.plane === 0 ? 1 : 0;
+                    for (let k = -2; k <= 2; k++) {
+                      const a = baseAng + k * 0.19;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 280, vy: Math.sin(a) * 280, plane: altP, r: 5.8, color: '#fb7185', life: 3.8 });
+                    }
+                  }
+                } else if (bk === 'mriya' || bk === 'halo' || bk === 'candid') {
+                  // Heavy Soviet Sky-Fortress / Gunship Bosses: wide flak fans + rotating radial artillery rings!
+                  const half = (bk === 'mriya' ? 4 : 3) + (ph >= 3 ? 1 : 0);
+                  const spd = 210 + ph * 18;
+                  for (let k = -half; k <= half; k++) {
+                    const a = baseAng + k * 0.18;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 6.4, color: bk === 'mriya' ? '#f43f5e' : '#fbbf24', life: 4.5 });
+                  }
+                  if (ph >= 2 && e.attackSeq % 2 === 0) {
+                    const cnt = bk === 'mriya' ? 12 : 8;
+                    for (let k = 0; k < cnt; k++) {
+                      const a = e.phaseTimer * 1.2 + (k / cnt) * Math.PI * 2;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 190, vy: Math.sin(a) * 190, plane: k % 2 === 0 ? e.plane : (e.plane ? 0 : 1), r: 6.0, color: '#fb923c', life: 4.3 });
+                    }
+                  }
+                } else if (bk === 'ferret') {
+                  // MiG-37B "Ferret-E" Stealth Prototype: blistering crimson plasma fan + cross-plane stealth needles!
+                  const half = ph >= 3 ? 4 : (ph === 2 ? 3 : 2);
+                  const spd = 310 + ph * 26;
+                  for (let k = -half; k <= half; k++) {
+                    const a = baseAng + k * 0.14;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 5.8, color: '#f43f5e', life: 4.0 });
+                  }
+                  if (e.attackSeq % 2 === 0) {
+                    const altP = e.plane === 0 ? 1 : 0;
+                    for (let k = -1; k <= 1; k++) {
+                      const a = baseAng + k * 0.22;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 265, vy: Math.sin(a) * 265, plane: altP, r: 5.8, color: '#c084fc', life: 3.8 });
+                    }
+                  }
+                } else if (bk === 'mainstay') {
+                  // A-50 "Mainstay" AWACS: rotating radar-jamming ring sweeps!
+                  const spokes = ph >= 3 ? 14 : (ph === 2 ? 10 : 8);
+                  const spd = 205 + ph * 18;
+                  for (let k = 0; k < spokes; k++) {
+                    const a = e.phaseTimer * 1.15 + (k / spokes) * Math.PI * 2;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: k % 2 === 0 ? e.plane : (ph >= 2 ? (e.plane ? 0 : 1) : e.plane), r: 6.0, color: '#38bdf8', life: 4.4 });
+                  }
+                } else if (bk === 'backfire' || bk === 'blackjackBoss') {
+                  // Tu-22M3 Backfire / Tu-160 Blackjack-M: supersonic sweep fans + heavy rotary cruise missiles!
+                  const half = (bk === 'blackjackBoss' ? 3 : 2) + (ph >= 3 ? 2 : (ph === 2 ? 1 : 0));
+                  const spd = (bk === 'blackjackBoss' ? 245 : 215) + ph * 18;
+                  for (let k = -half; k <= half; k++) {
+                    const a = baseAng + k * 0.17;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 6.2, color: bk === 'blackjackBoss' ? '#e2e8f0' : '#fb923c', life: 4.3 });
+                  }
+                  if (ph >= 2 && e.attackSeq % 2 === 0) {
+                    for (const off of [-0.45, 0, 0.45]) {
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(baseAng + off) * 165, vy: Math.sin(baseAng + off) * 165, plane: e.plane, r: 8.2, color: '#facc15', life: 5.2 });
+                    }
+                  }
                 } else if (bk === 'foxbat') {
                   const half = ph >= 3 ? 3 : 2;
                   const spd = 315 + ph * 25;
@@ -5833,6 +6945,29 @@
                       state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 175, vy: Math.sin(a) * 175, plane: e.plane, r: 5.8, color: '#f97316', life: 4.2 });
                     }
                   }
+                }
+              } else if (e.type === 'ufo_scout' || e.type === 'ufo_heavy') {
+                // Area 51 Extraterrestrial plasma salvos (neon emerald & magenta!)
+                const isH = e.type === 'ufo_heavy';
+                const col = isH ? '#e879f9' : '#34d399';
+                const half = isH ? 1 : 0;
+                for (let k = -half; k <= half; k++) {
+                  const a = Math.atan2(dy, dx) + k * 0.19;
+                  state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * (isH ? 290 : 265), vy: Math.sin(a) * (isH ? 290 : 265), plane: isH && k === 0 ? p.plane : e.plane, r: isH ? 6.0 : 5.4, color: col, life: 4.0 });
+                }
+              } else if (e.type === 'mig144' || e.type === 'su34') {
+                // Late-zone Coronado apex raiders: cross-plane 3-way strike salvos!
+                const col = e.type === 'mig144' ? '#e879f9' : '#fbbf24';
+                const spd = e.type === 'mig144' ? 295 : 265;
+                for (let k = -1; k <= 1; k++) {
+                  const a = Math.atan2(dy, dx) + k * 0.17;
+                  state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: k === 0 ? p.plane : e.plane, r: 5.5, color: col, life: 3.8 });
+                }
+              } else if (e.type === 'ka50') {
+                // Ka-50 Black Shark: twin high-speed Vikhr anti-air/ground missiles!
+                const baseA = Math.atan2(dy, dx);
+                for (const off of [-0.14, 0.14]) {
+                  state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(baseA + off) * 265, vy: Math.sin(baseA + off) * 265, plane: p.plane, r: 5.4, color: '#f43f5e', life: 3.6 });
                 }
               } else if (e.type === 'berkut' || e.type === 'blackjack') {
                 // High-tier Soviet prototypes: focused 3-way fan (trimmed from 5-way for swarm balance!)
@@ -6204,7 +7339,7 @@
             zbp.textContent = `OBJ [${clearedTot}/8]: FLY >${zReqNM} NM (Z${nextZ})`;
             zbp.className = 'text-emerald-300 font-arcade';
           } else {
-            const bCfg = STAGE_BOSSES[threat.lvl];
+            const bCfg = getStageBossCfg(threat.lvl);
             const sCfg = getSurfaceBossCfg(threat.lvl, p.x, p.y);
             const airDone = !!state.bossDefeatedStages[threat.lvl];
             const surfDone = !!state.surfaceBossDefeatedStages[threat.lvl];
@@ -6366,10 +7501,20 @@
             ctx.restore();
           }
           if (isSuper) {
-            // Actual F-14A Belly/Underside (4x AIM-54 Phoenix tunnel!) with subtle 4G stunt wing-rock + fast golden halo
-            ctx.rotate(Math.sin(state.time * 7.0) * 0.12);
-            ctx.fillStyle = 'rgba(253, 224, 71, 0.22)';
-            ctx.beginPath(); ctx.arc(0, 0, sh * 0.56, 0, Math.PI * 2); ctx.fill();
+            if (ac.superType === 'vtolBlossom') {
+              // Glowing cyan-magenta VTOL lift-fan hover ring beneath F-35B!
+              ctx.fillStyle = 'rgba(34, 211, 238, 0.26)';
+              ctx.beginPath(); ctx.arc(0, 0, sh * 0.72, 0, Math.PI * 2); ctx.fill();
+              ctx.strokeStyle = '#e879f9'; ctx.lineWidth = 2.6;
+              ctx.setLineDash([8, 6]);
+              ctx.beginPath(); ctx.arc(0, 0, sh * 0.62, 0, Math.PI * 2); ctx.stroke();
+              ctx.setLineDash([]);
+            } else {
+              // Actual F-14A Belly/Underside (4x AIM-54 Phoenix tunnel!) with subtle 4G stunt wing-rock + fast golden halo
+              ctx.rotate(Math.sin(state.time * 7.0) * 0.12);
+              ctx.fillStyle = 'rgba(253, 224, 71, 0.22)';
+              ctx.beginPath(); ctx.arc(0, 0, sh * 0.56, 0, Math.PI * 2); ctx.fill();
+            }
           }
           ctx.drawImage(im, -sw / 2, -sh / 2, sw, sh);
 
@@ -6424,7 +7569,7 @@
         ctx.save();
         const _bossThump = (e.type === 'boss' && state.bossBeatPulse > 0.05) ? (1 + state.bossBeatPulse * 0.11) : 1;
         ctx.globalAlpha = alpha; ctx.translate(e.x, e.y); ctx.scale(scale * _bossThump, scale * _bossThump);
-        ctx.rotate(e.bossKey === 'kosmos' ? (e.spinAngle || 0) : (e.angle + Math.PI / 2));
+        ctx.rotate((e.bossKey === 'kosmos' || e.bossKey === 'zetaPrime' || e.bossKey === 'overlordCore' || e.bossKey === 'abductor01' || e.bossKey === 'greyHarvester') ? (state.time * 1.4) : (e.angle + Math.PI / 2));
 
         if (e.isNaval) {
           // Animated white V-shaped ocean bow & stern wake for Soviet Navy vessels
@@ -6467,13 +7612,13 @@
             ctx.setLineDash([]);
             ctx.restore();
           }
-        } else if ((e.type === 'bmp' || e.type === 'tank' || e.type === 'frigate' || e.type === 'flanker' || e.type === 'foxhound' || e.type === 'berkut' || e.type === 'freestyle') && spriteReady(e.type)) {
+        } else if ((e.type === 'bmp' || e.type === 'tank' || e.type === 'frigate' || e.type === 'flanker' || e.type === 'foxhound' || e.type === 'berkut' || e.type === 'freestyle' || e.type === 'ka50' || e.type === 'su34' || e.type === 'mig144' || e.type === 'blackjack' || e.type === 'ufo_scout' || e.type === 'ufo_heavy') && spriteReady(e.type)) {
           drawIm = SPRITES[e.type];
-          drawH = e.type === 'frigate' ? 96 : (e.type === 'tank' ? 68 : (e.type === 'bmp' ? 60 : (e.type === 'berkut' ? 74 : 68)));
+          drawH = e.type === 'frigate' ? 96 : (e.type === 'blackjack' ? 92 : (e.type === 'tank' ? 68 : (e.type === 'bmp' ? 60 : (e.type === 'berkut' || e.type === 'mig144' || e.type === 'su34' ? 76 : 68))));
           drawW = drawH * (drawIm.naturalWidth / Math.max(1, drawIm.naturalHeight));
-          if (e.type === 'flanker' || e.type === 'foxhound' || e.type === 'berkut' || e.type === 'freestyle') {
+          if (e.type === 'flanker' || e.type === 'foxhound' || e.type === 'berkut' || e.type === 'freestyle' || e.type === 'su34' || e.type === 'mig144' || e.type === 'blackjack') {
             const flk = 0.72 + Math.sin(state.time * 42 + e.id * 10) * 0.28;
-            const bCol = e.type === 'foxhound' ? '#c084fc' : (e.type === 'berkut' ? '#f43f5e' : (e.type === 'freestyle' ? '#f59e0b' : '#38bdf8'));
+            const bCol = (e.type === 'foxhound' || e.type === 'mig144') ? '#c084fc' : (e.type === 'berkut' ? '#f43f5e' : (e.type === 'freestyle' || e.type === 'su34' ? '#f59e0b' : '#38bdf8'));
             const nozzles = e.type === 'freestyle' ? [0] : [-5.5, 5.5];
             const ny = drawH * 0.42;
             for (const bx of nozzles) {
@@ -7794,7 +8939,8 @@
 
       function startGame() {
         AudioFX.unlock();
-        const showPreflight = !profile.skipPreflightCheck;
+        const _hasMidSave = !!(profile.missionSave && profile.missionSave.mapId === getCurrentMap().id);
+        const showPreflight = !_hasMidSave && !profile.skipPreflightCheck;
         state = createInitialState(showPreflight ? 'preflight' : 'catshot');
         if (showPreflight) {
           const pfOv = document.getElementById('preflightOverlay');
@@ -8591,13 +9737,18 @@
           profile.currentCampaignIdx = 0;
           return;
         }
-        if (selectedMapIdx > 1) selectedMapIdx = 1;
+        const l6Open = isLevel6Unlocked();
+        const l5Open = isLevel5Unlocked();
+        const l4Open = isLevel4Unlocked();
+        const l3Open = isLevel3Unlocked();
+        const maxMapCount = l6Open ? 6 : (l5Open ? 5 : (l4Open ? 4 : (l3Open ? 3 : 2)));
+        if (selectedMapIdx >= maxMapCount) selectedMapIdx = maxMapCount - 1;
         const grid = document.getElementById('mapSelectorGrid');
         const desc = document.getElementById('mapDescLine');
         if (!grid) return;
-        grid.className = 'grid grid-cols-2 gap-2';
+        grid.className = maxMapCount >= 5 ? 'grid grid-cols-3 gap-2' : (l4Open ? 'grid grid-cols-2 sm:grid-cols-4 gap-2' : (l3Open ? 'grid grid-cols-3 gap-2' : 'grid grid-cols-2 gap-2'));
         grid.innerHTML = '';
-        MAPS.slice(0, 2).forEach((m, idx) => {
+        MAPS.slice(0, maxMapCount).forEach((m, idx) => {
           const isSelected = idx === selectedMapIdx;
           const cleared = !!profile.clearedMaps[m.id];
           const btn = document.createElement('button');
