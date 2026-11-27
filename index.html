@@ -116,23 +116,6 @@
     .intro-anim-rise { animation: introElevatorRise 7.2s ease-in-out forwards; }
     .intro-anim-pan  { animation: introDeckPan 7.2s ease-in-out forwards; }
     .intro-anim-push { animation: introCatPush 7.4s ease-in-out forwards; }
-    /* Cohesive 1986 Top Gun warm golden-sepia grade across all pre-launch menus & Catapult spool-up */
-    body.prelaunch-sepia #splashOverlay,
-    body.prelaunch-sepia #pilotSelectOverlay,
-    body.prelaunch-sepia #aircraftSelectOverlay,
-    body.prelaunch-sepia #titleOverlay,
-    body.prelaunch-sepia #hangarOverlay,
-    body.prelaunch-sepia #leaderboardOverlay {
-      background: rgba(24, 14, 4, 0.78) !important;
-      filter: sepia(0.84) saturate(1.18) contrast(1.06) brightness(0.95);
-    }
-    body.prelaunch-sepia #gameCanvas {
-      filter: sepia(0.84) saturate(1.18) contrast(1.06) brightness(0.92) !important;
-      transition: filter 0.65s ease-out;
-    }
-    #gameCanvas {
-      transition: filter 0.65s ease-out;
-    }
     @keyframes catLaunchFlash {
       0%   { opacity: 0; }
       14%  { opacity: 0.92; }
@@ -147,7 +130,7 @@
     }
   </style>
 </head>
-<body class="prelaunch-sepia relative w-screen h-screen overflow-hidden bg-slate-950">
+<body class="relative w-screen h-screen overflow-hidden bg-slate-950">
   <canvas id="gameCanvas"></canvas>
   <audio id="bgmAudio" src="./assets/level1_bgm.mp3" loop preload="auto"></audio>
   <div class="scanline-overlay fixed inset-0 z-10"></div>
@@ -505,7 +488,7 @@
 
       <!-- 6-MAP THEATER SELECTOR -->
       <div class="mb-4 text-left">
-        <div class="font-arcade text-[10px] font-bold text-amber-300 tracking-widest mb-1.5">SELECT THEATER OF OPERATIONS (5 LEVELS + SECRET)</div>
+        <div class="font-arcade text-[10px] font-bold text-amber-300 tracking-widest mb-1.5">ACTIVE THEATER OF OPERATIONS (LEVEL 1 DEPLOYMENT)</div>
         <div id="mapSelectorGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5"></div>
         <div id="mapDescLine" class="text-[11px] text-sky-200/90 mt-1.5 font-medium truncate">Level 1: Indian Ocean — USS Enterprise (CVN-65)</div>
       </div>
@@ -1577,7 +1560,7 @@
           ctx.beginPath(); ctx.arc(70, -42, 4, 0, Math.PI * 2); ctx.fill();
 
           if (state.mode === 'playing' && state.trapGrace <= 0) {
-            const canTrap = p.plane === 0 && !p.superActive;
+            const canTrap = canLandAtBase(p);
             const pulse = 0.55 + Math.sin(time * 8) * 0.35;
             ctx.strokeStyle = canTrap ? `rgba(74, 222, 128, ${pulse})` : `rgba(251, 191, 36, ${pulse})`;
             ctx.lineWidth = 2.8; ctx.setLineDash([7, 5]);
@@ -1656,7 +1639,7 @@
           shortName: 'Tu-95 "BEAR"',
           sprite: 'bear',
           hp: 420, speed: 64, r: 52, drawSize: 142, fireRate: 1.35,
-          killsNeeded: 12, score: 1600, xp: 85, crDrop: 90, intelDrop: 1, partDrop: 1
+          killsNeeded: 84, score: 1600, xp: 85, crDrop: 90, intelDrop: 1, partDrop: 1
         },
         2: {
           key: 'foxbat',
@@ -1664,7 +1647,7 @@
           shortName: 'MiG-25 "FOXBAT"',
           sprite: 'foxbat',
           hp: 680, speed: 155, r: 44, drawSize: 122, fireRate: 0.95,
-          killsNeeded: 16, score: 2600, xp: 120, crDrop: 140, intelDrop: 2, partDrop: 2
+          killsNeeded: 58, score: 2600, xp: 120, crDrop: 140, intelDrop: 2, partDrop: 2
         },
         3: {
           key: 'buran',
@@ -1672,7 +1655,7 @@
           shortName: 'BURAN-X SPACE PLANE',
           sprite: 'buran',
           hp: 1050, speed: 125, r: 50, drawSize: 136, fireRate: 0.85,
-          killsNeeded: 20, score: 4200, xp: 170, crDrop: 210, intelDrop: 2, partDrop: 3
+          killsNeeded: 72, score: 4200, xp: 170, crDrop: 210, intelDrop: 2, partDrop: 3
         },
         4: {
           key: 'kosmos',
@@ -1680,7 +1663,7 @@
           shortName: 'KOSMOS-86 STATION',
           sprite: 'kosmos',
           hp: 1750, speed: 46, r: 66, drawSize: 180, fireRate: 0.72,
-          killsNeeded: 25, score: 7500, xp: 260, crDrop: 320, intelDrop: 3, partDrop: 4
+          killsNeeded: 90, score: 7500, xp: 260, crDrop: 320, intelDrop: 3, partDrop: 4
         }
       };
 
@@ -1692,7 +1675,7 @@
           sprite: 'frigate',
           isSurface: true, isNaval: true,
           hp: 460, speed: 44, r: 44, drawSize: 168, fireRate: 1.45,
-          killsNeeded: 8, score: 1750, xp: 90, crDrop: 100, intelDrop: 1, partDrop: 1
+          killsNeeded: 46, score: 1750, xp: 90, crDrop: 100, intelDrop: 1, partDrop: 1
         },
         2: {
           key: 'moskva',
@@ -1701,7 +1684,7 @@
           sprite: 'moskva',
           isSurface: true, isNaval: true,
           hp: 760, speed: 38, r: 54, drawSize: 215, fireRate: 1.15,
-          killsNeeded: 11, score: 2900, xp: 135, crDrop: 160, intelDrop: 2, partDrop: 2
+          killsNeeded: 54, score: 2900, xp: 135, crDrop: 160, intelDrop: 2, partDrop: 2
         },
         3: {
           key: 'kirov',
@@ -1710,7 +1693,7 @@
           sprite: 'moskva',
           isSurface: true, isNaval: true,
           hp: 1180, speed: 35, r: 58, drawSize: 235, fireRate: 0.98,
-          killsNeeded: 14, score: 4600, xp: 185, crDrop: 230, intelDrop: 2, partDrop: 3
+          killsNeeded: 68, score: 4600, xp: 185, crDrop: 230, intelDrop: 2, partDrop: 3
         },
         4: {
           key: 'redOctober',
@@ -1719,7 +1702,7 @@
           sprite: 'moskva',
           isSurface: true, isNaval: true,
           hp: 1850, speed: 32, r: 64, drawSize: 256, fireRate: 0.85,
-          killsNeeded: 18, score: 8200, xp: 280, crDrop: 350, intelDrop: 3, partDrop: 4
+          killsNeeded: 84, score: 8200, xp: 280, crDrop: 350, intelDrop: 3, partDrop: 4
         }
       };
 
@@ -1731,7 +1714,7 @@
           sprite: 'groundBoss',
           isSurface: true, isNaval: false,
           hp: 460, speed: 46, r: 44, drawSize: 148, fireRate: 1.4,
-          killsNeeded: 8, score: 1750, xp: 90, crDrop: 100, intelDrop: 1, partDrop: 1
+          killsNeeded: 46, score: 1750, xp: 90, crDrop: 100, intelDrop: 1, partDrop: 1
         },
         2: {
           key: 'juggernaut',
@@ -1740,7 +1723,7 @@
           sprite: 'groundBoss',
           isSurface: true, isNaval: false,
           hp: 760, speed: 42, r: 50, drawSize: 166, fireRate: 1.12,
-          killsNeeded: 11, score: 2900, xp: 135, crDrop: 160, intelDrop: 2, partDrop: 2
+          killsNeeded: 54, score: 2900, xp: 135, crDrop: 160, intelDrop: 2, partDrop: 2
         },
         3: {
           key: 'mamont',
@@ -1749,7 +1732,7 @@
           sprite: 'groundBoss',
           isSurface: true, isNaval: false,
           hp: 1180, speed: 38, r: 55, drawSize: 182, fireRate: 0.96,
-          killsNeeded: 14, score: 4600, xp: 185, crDrop: 230, intelDrop: 2, partDrop: 3
+          killsNeeded: 68, score: 4600, xp: 185, crDrop: 230, intelDrop: 2, partDrop: 3
         },
         4: {
           key: 'kremlin86',
@@ -1758,7 +1741,7 @@
           sprite: 'groundBoss',
           isSurface: true, isNaval: false,
           hp: 1850, speed: 34, r: 62, drawSize: 198, fireRate: 0.84,
-          killsNeeded: 18, score: 8200, xp: 280, crDrop: 350, intelDrop: 3, partDrop: 4
+          killsNeeded: 84, score: 8200, xp: 280, crDrop: 350, intelDrop: 3, partDrop: 4
         }
       };
 
@@ -1899,9 +1882,16 @@
         return profileStore.ownedAircraft;
       }
 
+      // Level 1 Tutorial Focus: F-14A Tomcat only visible for now (F/A-18C & A-6E stay intact for later levels!)
+      const LEVEL1_F14_ONLY = true;
+      function getVisibleAircraft() {
+        return LEVEL1_F14_ONLY ? [AIRCRAFT[0]] : AIRCRAFT;
+      }
+
       let _acCacheKey = '';
       let _acCacheVal = AIRCRAFT[0];
       function getSelectedAircraftCfg() {
+        if (LEVEL1_F14_ONLY) return AIRCRAFT[0];
         const id = (profile && profile.selectedAircraft) || 'f14';
         const owned = getOwnedAircraft();
         const k = id + '|' + owned.length;
@@ -1939,6 +1929,7 @@
           selectedAircraft: 'f14',
           carriedWeapons: null,
           carriedLevel: 1,
+          missionSave: null,
           upgrades: { engines: 0, vulcanCore: 0, titanium: 0, startSidewinder: 0, startFlares: 0, salvageRig: 0 }
         };
       }
@@ -2212,39 +2203,52 @@
       let radioCommTimer = 0;
       const radioCommQueue = [];
 
+      // Level 1 Tutorial Progression Order:
+      // Z1: HARD DECK -> Z2: STAND-OFF MISSILES -> Z3: AFTERBURNER -> Z4: SUPER MODE!
       const SESSION_MILESTONES = [
         {
-          key: 'afterburner', killsReq: 5, secReq: 35, shortLabel: 'BURNER',
+          key: 'altitude', zoneReq: 1, zoneKillsReq: 42, shortLabel: 'HARD DECK',
+          portrait: 'iceman', sender: 'UHF 305.2 • LT "ICEMAN" — FLIGHT LEAD',
+          line: () => `"Soviet destroyer and Tu-95 Bear inbound! Vertical vectoring authorized—hit Shift or tap your jet to dive down to Hard Deck and engage surface targets!"`,
+          badge: () => '★ UNLOCKED: HARD DECK / ALTITUDE SWAP (SHIFT / TAP JET)'
+        },
+        {
+          key: 'missiles', zoneReq: 2, zoneKillsReq: 45, requiresBoss1: true, shortLabel: 'MISSILES',
+          portrait: 'hollywood', sender: 'UHF 255.4 • LCDR "JESTER" — WEAPONS',
+          line: () => `"Mach-3 Foxbat and cruiser Moskva inbound—guns alone won't cut it! Master Arm ON—Stand-Off Missiles are live on your wing pylons. Lock 'em up!"`,
+          badge: () => '★ UNLOCKED: STAND-OFF MISSILES (OUTER RING LIVE)'
+        },
+        {
+          key: 'afterburner', zoneReq: 3, zoneKillsReq: 60, shortLabel: 'BURNER',
           portrait: 'viper', sender: 'UHF 243.0 • CDR "VIPER" — TOPGUN CO',
           line: () => getSelectedAircraftCfg().hasAfterburner
-            ? `"Good shooting, kid—guns are hot. You're cleared to light the cans. Hold C or the Burner button to punch through Mach."`
-            : `"Solid gunnery, pilot. Mil-Power Overdrive is cleared—hold C or the Overdrive button to surge past incoming fire."`,
+            ? `"Buran-X space plane incoming—fast and lethal! You're cleared to light the cans. Hold C or the Burner button to punch through Mach and outflank it!"`
+            : `"Buran-X space plane incoming! Mil-Power Overdrive is cleared—hold C or the Overdrive button to surge past its barrage!"`,
           badge: () => getSelectedAircraftCfg().hasAfterburner
             ? '★ UNLOCKED: AFTERBURNER (HOLD C / BURNER BTN)'
             : '★ UNLOCKED: MIL-POWER OVERDRIVE (HOLD C / BTN)'
         },
         {
-          key: 'missiles', killsReq: 12, secReq: 75, shortLabel: 'MISSILES',
-          portrait: 'hollywood', sender: 'UHF 255.4 • LCDR "JESTER" — WEAPONS',
-          line: () => `"Holding your own in the phone booth! Master Arm ON—Stand-Off Missiles are live on your pylons. Let 'em sing."`,
-          badge: () => '★ UNLOCKED: STAND-OFF MISSILES (OUTER RING LIVE)'
-        },
-        {
-          key: 'altitude', killsReq: 22, secReq: 120, shortLabel: 'ANGELS 20',
-          portrait: 'iceman', sender: 'UHF 305.2 • LT "ICEMAN" — FLIGHT LEAD',
-          line: () => `"Bandits stacking up at Angels 20. You're cleared for vertical vectoring—hit Shift or tap your jet to climb and dive."`,
-          badge: () => '★ UNLOCKED: ALTITUDE SWAP (SHIFT / TAP JET)'
-        },
-        {
-          key: 'superState', killsReq: 35, secReq: 175, shortLabel: 'SUPER MODE',
+          key: 'superState', zoneReq: 4, zoneKillsReq: 76, shortLabel: 'SUPER MODE',
           portrait: 'viper', sender: 'UHF 243.0 • CDR "VIPER" — TOPGUN CO',
           line: () => {
             const sName = (getSelectedAircraftCfg().superName || '★ INVERTED').replace(/^★\s*/, '');
-            return `"You've earned full squadron authority. Build 100% Burn and a 10× streak, then hit Space to engage ${sName}."`;
+            return `"Kosmos-86 orbital platform detected—throwing everything at us! Full squadron authority granted: build 100% Burn + 10× streak, then Space for ${sName}!"`;
           },
           badge: () => `★ UNLOCKED: ${(getSelectedAircraftCfg().superName || '★ INVERTED').replace(/^★\s*/, '')} (SPACE / SUPER BTN)`
         }
       ];
+
+      let tutorialWelcomeSent = false;
+      function queueInstructorNote(portrait, sender, lineText, badgeText) {
+        const msg = { portrait, sender, line: () => lineText, badge: () => badgeText };
+        if (radioCommTimer > 0) radioCommQueue.push(msg);
+        else showRadioComm(msg);
+      }
+
+      function canLandAtBase(p) {
+        return !p.superActive && (p.plane === 0 || !sessionUnlocks.altitude);
+      }
 
       const HUD_DOM = {
         bankSummary: document.getElementById('bankSummary'),
@@ -2263,11 +2267,12 @@
 
       function updateNextUnlockPill() {
         const nxtEl = HUD_DOM.nextUnlockHud;
-        if (!nxtEl) return;
+        if (!nxtEl || !state) return;
         const nextM = SESSION_MILESTONES.find(m => !sessionUnlocks[m.key]);
         if (nextM) {
+          const zk = (state.zoneKills && state.zoneKills[nextM.zoneReq]) || 0;
           nxtEl.classList.remove('hidden');
-          setHudText(nxtEl, `• UNLOCK ${nextM.shortLabel}: ${Math.min(sessionSplashes, nextM.killsReq)}/${nextM.killsReq}`);
+          setHudText(nxtEl, `• Z${nextM.zoneReq} ${nextM.shortLabel}: ${Math.min(zk, nextM.zoneKillsReq)}/${nextM.zoneKillsReq}`);
         } else {
           nxtEl.classList.add('hidden');
         }
@@ -2329,14 +2334,17 @@
         }
       }
 
-      function checkSessionUnlocks(forceBossUnlock = false) {
+      function checkSessionUnlocks(activeZone = 0, forceKey = null) {
         if (!state || state.mode !== 'playing') return;
         const p = state.player;
         let unlockedAny = false;
         for (const m of SESSION_MILESTONES) {
           if (sessionUnlocks[m.key]) continue;
-          const bossBoost = forceBossUnlock && m.key === 'superState';
-          if (sessionSplashes >= m.killsReq || sessionCombatSec >= m.secReq || bossBoost) {
+          const zk = (state.zoneKills && state.zoneKills[m.zoneReq]) || 0;
+          const bossGateOk = !m.requiresBoss1 || !!state.bossDefeatedStages[1];
+          const hitZonePrelude = bossGateOk && ((zk >= m.zoneKillsReq) || (forceKey === m.key));
+          const jumpedAhead = bossGateOk && activeZone > m.zoneReq && ((state.zoneKills && state.zoneKills[activeZone]) || 0) >= 14;
+          if (hitZonePrelude || jumpedAhead) {
             sessionUnlocks[m.key] = true;
             unlockedAny = true;
             if (m.key === 'missiles') {
@@ -2346,8 +2354,8 @@
             if (m.key === 'afterburner') {
               p.abFuel = 100;
             }
-            spawnRing(p.x, p.y, '#4ade80', 18, 190, p.plane);
-            addFloatingText(p.x, p.y - 42, `★ ${m.shortLabel} UNLOCKED!`, '#fde047', 13);
+            spawnRing(p.x, p.y, '#4ade80', 20, 210, p.plane);
+            addFloatingText(p.x, p.y - 44, `★ ${m.shortLabel} AUTHORIZED!`, '#fde047', 13);
             if (radioCommTimer > 0) radioCommQueue.push(m);
             else showRadioComm(m);
             break;
@@ -2376,7 +2384,16 @@
         const acCfg = getSelectedAircraftCfg();
         const syn = getPilotAircraftSynergy(pCfg, acCfg);
         const baseMaxHp = 100 + up.titanium * 20 + (pCfg.hullBonus || 0) + (acCfg.hullBonus || 0) + (syn ? syn.hull : 0) + careerLvlBonus * 5;
-        return {
+        const _curMap = getCurrentMap();
+        const _ms = (mode === 'playing' || mode === 'catshot') && profile.missionSave && profile.missionSave.mapId === _curMap.id
+          ? profile.missionSave
+          : null;
+        if (_ms && _ms.sessionUnlocks) {
+          Object.assign(sessionUnlocks, _ms.sessionUnlocks);
+          if (typeof _ms.sessionSplashes === 'number') sessionSplashes = Math.max(sessionSplashes, _ms.sessionSplashes);
+          if (typeof _ms.sessionCombatSec === 'number') sessionCombatSec = Math.max(sessionCombatSec, _ms.sessionCombatSec);
+        }
+        const _initState = {
           mode,
           time: 0,
           score: 0,
@@ -2418,12 +2435,12 @@
             x: 0, y: -10, // Starts right on USS Enterprise Catapult 1!
             heading: -Math.PI / 2, // Pointing North (up) off the bow!
             bank: 0,
-            plane: 0,
-            visualPlane: 0,
-            savedPlane: 0,
+            plane: 1,
+            visualPlane: 1,
+            savedPlane: 1,
             wingSweep: 0.25,
             hp: baseMaxHp, maxHp: baseMaxHp,
-            level: Math.max(1, profile.carriedLevel || 1), xp: 0, xpNext: Math.round(38 * Math.pow(1.42, Math.max(0, (profile.carriedLevel || 1) - 1))),
+            level: Math.max(1, profile.carriedLevel || 1), xp: 0, xpNext: Math.round(58 * Math.pow(1.45, Math.max(0, (profile.carriedLevel || 1) - 1))),
             fuel: acCfg.fuelMax || 100, maxFuel: acCfg.fuelMax || 100, bingoBeepTimer: 0,
             invuln: 2.0,
             rollTimer: 0, rollDir: 1, swapCooldown: 0,
@@ -2453,8 +2470,38 @@
 
           enemies: [], bullets: [], tracers: [], enemyBullets: [], pickups: [],
           particles: [], shockwaves: [], floatingTexts: [],
-          spawnTimer: 1.0
+          spawnTimer: 1.0,
+          resumedCheckpoint: false
         };
+        if (_ms) {
+          _initState.resumedCheckpoint = true;
+          _initState.time = _ms.time || 0;
+          _initState.score = _ms.score || 0;
+          _initState.kills = _ms.kills || 0;
+          _initState.maxDistNM = _ms.maxDistNM || 0;
+          _initState.superCount = _ms.superCount || 0;
+          _initState.zoneKills = { 1: 0, 2: 0, 3: 0, 4: 0, ...(_ms.zoneKills || {}) };
+          _initState.bossDefeatedStages = { ...(_ms.bossDefeatedStages || {}) };
+          _initState.surfaceBossDefeatedStages = { ...(_ms.surfaceBossDefeatedStages || {}) };
+          _initState.bossSpawnedStages = { ...(_ms.bossDefeatedStages || {}) };
+          _initState.surfaceBossSpawnedStages = { ...(_ms.surfaceBossDefeatedStages || {}) };
+          _initState.player.level = Math.max(1, _ms.level || _initState.player.level);
+          _initState.player.xp = _ms.xp || 0;
+          _initState.player.xpNext = _ms.xpNext || Math.round(38 * Math.pow(1.42, _initState.player.level - 1));
+          if (_ms.weapons) {
+            _initState.player.weapons = {
+              vulcan: Math.max(1, _ms.weapons.vulcan || 1),
+              sidewinder: Math.max(sessionUnlocks.missiles ? (1 + (up.startSidewinder || 0)) : 0, _ms.weapons.sidewinder || 0),
+              sparrow: _ms.weapons.sparrow || 0,
+              phoenix: _ms.weapons.phoenix || 0,
+              wingman: _ms.weapons.wingman || 0,
+              flares: Math.max(up.startFlares || 0, _ms.weapons.flares || 0),
+              afterburner: _ms.weapons.afterburner || 0,
+              sweep: _ms.weapons.sweep || 0
+            };
+          }
+        }
+        return _initState;
       }
 
       // ============================================================
@@ -2519,7 +2566,12 @@
       }
 
       function refreshRecordLine() {
-        highScoreLine.textContent = `BANKED VAULT: ${profile.credits} CR • ${profile.intel} INTEL • ${profile.parts} PARTS  |  BEST: ${profile.highScore.toLocaleString()} PTS`;
+        const _hasCkpt = !!(profile.missionSave && profile.missionSave.mapId === getCurrentMap().id);
+        const _startBtn = document.getElementById('startBtn');
+        const _hangarLaunchBtn = document.getElementById('launchFromHangarBtn');
+        if (_startBtn) _startBtn.textContent = _hasCkpt ? 'RESUME MISSION ▶' : 'LAUNCH SORTIE ▶';
+        if (_hangarLaunchBtn) _hangarLaunchBtn.textContent = _hasCkpt ? 'RESUME SAVED MISSION — CATAPULT 1 ▶' : 'LAUNCH NEXT SORTIE — CATAPULT 1 ▶';
+        highScoreLine.textContent = `BANKED VAULT: ${profile.credits} CR • ${profile.intel} INTEL • ${profile.parts} PARTS${_hasCkpt ? '  |  ★ MISSION SAVED' : ''}  |  BEST: ${profile.highScore.toLocaleString()} PTS`;
       }
 
       // ============================================================
@@ -2552,12 +2604,13 @@
         pd.clears = (pd.clears || 0) + 1;
         addCareerXP(250);
 
-        // Carry over extracted ordnance & sortie rank into the next theater!
+        // Theater cleared — clear mid-mission checkpoint & carry over ordnance into the next theater!
+        profile.missionSave = null;
         profile.carriedWeapons = { ...state.player.weapons };
         profile.carriedLevel = state.player.level || 1;
-        // Advance campaign to the next theater automatically!
-        selectedMapIdx = (selectedMapIdx + 1) % MAPS.length;
-        profile.currentCampaignIdx = selectedMapIdx;
+        // Stay locked on Level 1 while dialing in the Indian Ocean theater!
+        selectedMapIdx = 0;
+        profile.currentCampaignIdx = 0;
         if (state.score > profile.highScore) profile.highScore = state.score;
         saveProfile();
         recordLeaderboardRun('BUZZED');
@@ -2593,20 +2646,44 @@
         refreshRecordLine();
         renderPilotSelector();
 
+        let savedMidMission = false;
         if (state.allBossesCleared) {
+          profile.missionSave = null;
           profile.clearedMaps[getCurrentMap().id] = true;
           selectedMapIdx = (selectedMapIdx + 1) % MAPS.length;
           profile.currentCampaignIdx = selectedMapIdx;
           saveProfile();
           renderMapSelector();
+        } else {
+          // Save full mid-mission state at base so landing lets you refit or return later right where you left off!
+          savedMidMission = true;
+          profile.missionSave = {
+            mapId: getCurrentMap().id,
+            time: state.time || 0,
+            score: Math.round(state.score || 0),
+            kills: state.kills || 0,
+            maxDistNM: state.maxDistNM || 0,
+            superCount: state.superCount || 0,
+            zoneKills: { ...(state.zoneKills || { 1: 0, 2: 0, 3: 0, 4: 0 }) },
+            bossDefeatedStages: { ...(state.bossDefeatedStages || {}) },
+            surfaceBossDefeatedStages: { ...(state.surfaceBossDefeatedStages || {}) },
+            weapons: { ...state.player.weapons },
+            level: state.player.level || 1,
+            xp: state.player.xp || 0,
+            xpNext: state.player.xpNext || 38,
+            sessionUnlocks: { ...sessionUnlocks },
+            sessionSplashes,
+            sessionCombatSec,
+            savedAt: Date.now()
+          };
+          saveProfile();
         }
         AudioFX.carrierTrap();
         AudioFX.playTrack('menu', false);
-        openHangar({ credits: totalCr, intel: c.intel, parts: c.parts, maxNM: state.maxDistNM });
+        openHangar({ credits: totalCr, intel: c.intel, parts: c.parts, maxNM: state.maxDistNM, checkpointSaved: savedMidMission });
       }
 
       function openHangar(haul = null) {
-        document.body.classList.add('prelaunch-sepia');
         if (state) state.mode = 'hangar';
         titleOverlay.classList.add('hidden');
         gameOverOverlay.classList.add('hidden'); gameOverOverlay.classList.remove('flex');
@@ -2617,7 +2694,7 @@
           haulBox.classList.remove('hidden');
           document.getElementById('haulText').textContent = haul.buzzCleared
             ? `☕ TOWER BUZZED! +${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS → NEXT: ${haul.nextMapName}`
-            : `+${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS (Peak ${haul.maxNM.toFixed(1)} NM) — CARRIED OVER TO NEXT SORTIE!`;
+            : `+${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS (Peak ${haul.maxNM.toFixed(1)} NM)${haul.checkpointSaved ? ' • ✓ MISSION STATE SAVED AT BASE!' : ''}`;
         } else {
           haulBox.classList.add('hidden');
         }
@@ -2637,7 +2714,7 @@
         renderAircraftBayUI();
         const grid = document.getElementById('hangarUpgradesGrid');
         grid.innerHTML = '';
-        HANGAR_UPGRADES.forEach((u) => {
+        HANGAR_UPGRADES.filter(u => u.id !== 'startSidewinder' || sessionUnlocks.missiles).forEach((u) => {
           const lvl = profile.upgrades[u.id] || 0;
           const maxed = lvl >= u.maxLvl;
           const crNeed = u.crCost * (lvl + 1);
@@ -2866,7 +2943,7 @@
         const p = state.player;
         const distNM = Math.hypot(p.x, p.y) / 140;
         const threat = getThreatInfo(distNM);
-        const plane = planeOverride !== null ? planeOverride : (sessionUnlocks.altitude ? (Math.random() < 0.5 ? 0 : 1) : 0);
+        const plane = planeOverride !== null ? planeOverride : (sessionUnlocks.altitude ? (Math.random() < 0.5 ? 0 : 1) : 1);
 
         // Spawn ahead/around the player's perimeter off-screen
         const ang = p.heading + (Math.random() - 0.5) * Math.PI * 1.4;
@@ -3341,20 +3418,23 @@
         const p = state.player;
         const mult = (p.superActive ? 2 : 1) * (e.lootMult || 1);
         state.score += Math.round(e.score * mult);
-        state.kills++; sessionSplashes++; checkSessionUnlocks(e.type === 'boss');
+        state.kills++; sessionSplashes++;
 
         const isBig = e.type === 'bomber' || e.type === 'boss' || e.type === 'tank' || e.type === 'frigate';
         if (e.type !== 'boss') {
           const zLvl = getThreatInfo(Math.hypot(p.x, p.y) / 140).lvl;
           if (zLvl >= 1) {
             state.zoneKills[zLvl] = (state.zoneKills[zLvl] || 0) + 1;
+            checkSessionUnlocks(zLvl, null);
             const sCfg = getSurfaceBossCfg(zLvl, p.x, p.y);
-            if (sCfg && !state.surfaceBossSpawnedStages[zLvl] && state.zoneKills[zLvl] >= sCfg.killsNeeded && !state.enemies.some(en => en.type === 'boss' && en.isSurface)) {
+            if (sessionUnlocks.altitude && sCfg && !state.surfaceBossSpawnedStages[zLvl] && state.zoneKills[zLvl] >= sCfg.killsNeeded && !state.enemies.some(en => en.type === 'boss' && en.isSurface)) {
               state.surfaceBossSpawnedStages[zLvl] = true;
               spawnSurfaceBoss(zLvl);
             }
             const bCfg = STAGE_BOSSES[zLvl];
             if (bCfg && !state.bossSpawnedStages[zLvl] && state.zoneKills[zLvl] >= bCfg.killsNeeded && !state.enemies.some(en => en.type === 'boss' && !en.isSurface)) {
+              const zoneKey = [null, 'altitude', 'missiles', 'afterburner', 'superState'][zLvl];
+              if (zoneKey) checkSessionUnlocks(zLvl, zoneKey);
               state.bossSpawnedStages[zLvl] = true;
               spawnStageBoss(zLvl);
             }
@@ -3362,6 +3442,13 @@
         } else if (e.bossStageLvl) {
           if (e.isSurface) state.surfaceBossDefeatedStages[e.bossStageLvl] = true;
           else state.bossDefeatedStages[e.bossStageLvl] = true;
+          if (!e.isSurface && e.bossStageLvl === 1) {
+            queueInstructorNote('viper', 'UHF 243.0 • CDR "VIPER" — TOPGUN CO', `"Splash one Bear! Nice flying, pilot. Push outward past 16 NM into Contested Waters—faster bogeys waiting out there."`, 'NEXT SECTOR: ZONE 2 CONTESTED WATERS (16+ NM)');
+          } else if (!e.isSurface && e.bossStageLvl === 2) {
+            queueInstructorNote('hollywood', 'UHF 255.4 • LCDR "JESTER" — WEAPONS', `"Foxbat's down! Good tone with those missiles. Push past 36 NM into the Danger Zone—stay sharp."`, 'NEXT SECTOR: ZONE 3 DANGER ZONE (36+ NM)');
+          } else if (!e.isSurface && e.bossStageLvl === 3) {
+            queueInstructorNote('iceman', 'UHF 305.2 • LT "ICEMAN" — FLIGHT LEAD', `"Buran-X neutralized. One last sector—push past 76 NM into Black-Ops airspace for the final orbital threat."`, 'FINAL SECTOR: ZONE 4 BLACK-OPS (76+ NM)');
+          }
           // Check if ALL 8 theater bosses (Zones 1-4 Surface + Air) are now cleared!
           const clearedCount = [1,2,3,4].reduce((acc, z) => acc + (state.surfaceBossDefeatedStages[z] ? 1 : 0) + (state.bossDefeatedStages[z] ? 1 : 0), 0);
           if (clearedCount >= 8 && !state.allBossesCleared) {
@@ -3442,7 +3529,7 @@
         AudioFX.pickup(state.xpCombo);
         while (p.xp >= p.xpNext) {
           p.xp -= p.xpNext; p.level++;
-          p.xpNext = Math.round(38 * Math.pow(1.42, p.level - 1));
+          p.xpNext = Math.round(58 * Math.pow(1.45, p.level - 1));
           state.pendingLevelUps++;
           if (state.levelUpDelay <= 0) {
             state.levelUpDelay = 0.55;
@@ -3479,14 +3566,18 @@
           return u;
         });
         const available = mappedPool.filter(u => {
-          if (u.id === 'sidewinder' || u.id === 'sparrow' || u.id === 'phoenix') {
-            if (!sessionUnlocks.missiles) return false;
+          // Strict early progression: ONLY Close-In Guns (+ Airframe Repair) until Stand-Off Missiles unlock!
+          if (!sessionUnlocks.missiles) {
+            if (u.id !== 'vulcan' && u.id !== 'hull') return false;
           }
           if (u.id === 'sparrow' && !sessionUnlocks.altitude) return false;
           if (u.id === 'afterburner' && !sessionUnlocks.superState) return false;
           return u.id === 'hull' || (p.weapons[u.id] || 0) < u.maxLvl;
         });
         const picks = [...available].sort(() => Math.random() - 0.5).slice(0, 3);
+        upgradeCards.className = picks.length <= 2
+          ? 'grid grid-cols-1 sm:grid-cols-2 max-w-lg mx-auto gap-3'
+          : 'grid grid-cols-1 sm:grid-cols-3 gap-3';
         upgradeCards.innerHTML = '';
         picks.forEach(u => {
           const curLvl = u.id === 'hull' ? 0 : (p.weapons[u.id] || 0);
@@ -3561,6 +3652,7 @@
 
       function triggerGameOver() {
         state.mode = 'gameover';
+        profile.missionSave = null;
         profile.carriedWeapons = null;
         profile.carriedLevel = 1;
         if (state.score > profile.highScore) profile.highScore = state.score;
@@ -3608,10 +3700,22 @@
           void fl.offsetWidth;
           fl.classList.add('launch-flash-active');
         }
-        document.body.classList.remove('prelaunch-sepia');
         AudioFX.catapult();
         AudioFX.playTrack(getCurrentMap().theme, true);
         state.mode = 'playing';
+        if (!tutorialWelcomeSent && !sessionUnlocks.altitude) {
+          tutorialWelcomeSent = true;
+          setTimeout(() => {
+            if (state && state.mode === 'playing') {
+              queueInstructorNote(
+                'viper',
+                'UHF 243.0 • CDR "VIPER" — TOPGUN CO',
+                `"Good shot off Catapult 1, kid. You're at Angels 20 on Close-In Guns—fly past the 5.5 NM perimeter and splash bogeys. Land over Enterprise anytime to bank and save!"`,
+                'OBJECTIVE: CLEAR ZONE 1 BOGEYS (5.5+ NM)'
+              );
+            }
+          }, 2200);
+        }
         state.launchTimer = 1.25;
         state.trapGrace = 4.6;
         if (r >= 0.76 && r <= 0.94) {
@@ -3868,7 +3972,6 @@
         tickRadioComm(dt);
         if (threat.lvl > 0 || state.enemies.length > 0) {
           sessionCombatSec += dt;
-          checkSessionUnlocks(false);
         }
 
         // Top Gun 90s MIDI Score (tempos up slightly in deeper Threat Zones!)
@@ -4119,7 +4222,7 @@
 
         // USS ENTERPRISE / AIRBASE (0, 0) EXTRACTION TRAP CHECK!
         const onDeck = Math.abs(p.x) < 86 && Math.abs(p.y) < 156;
-        if (state.trapGrace <= 0 && onDeck && p.plane === 0 && !p.superActive) {
+        if (state.trapGrace <= 0 && onDeck && canLandAtBase(p)) {
           state.trapProgress += dt / 0.72;
           if (state.trapProgress >= 1.0) {
             completeExtraction();
@@ -4619,12 +4722,17 @@
             } else if (airAct) {
               zbp.textContent = `⚠ AIR: ${bCfg.shortName} (${clearedTot}/8)`;
               zbp.className = 'text-rose-400 font-arcade';
-            } else if (!state.surfaceBossSpawnedStages[threat.lvl]) {
-              zbp.textContent = `Z${threat.lvl} DECK BOSS: ${k}/${sCfg.killsNeeded} (${clearedTot}/8)`;
-              zbp.className = 'text-amber-300 font-arcade';
+            } else if (sessionUnlocks.altitude && !state.surfaceBossSpawnedStages[threat.lvl]) {
+              setHudText(zbp, `Z${threat.lvl} DECK BOSS: ${k}/${sCfg.killsNeeded} (${clearedTot}/8)`);
+              setHudClass(zbp, 'text-amber-300 font-arcade');
+            } else if (!airDone) {
+              setHudText(zbp, `Z${threat.lvl} AIR BOSS: ${k}/${bCfg.killsNeeded}`);
+              setHudClass(zbp, 'text-sky-300 font-arcade');
             } else {
-              zbp.textContent = `Z${threat.lvl} AIR BOSS: ${k}/${bCfg.killsNeeded} (${clearedTot}/8)`;
-              zbp.className = 'text-sky-300 font-arcade';
+              const nextZ = threat.lvl < 4 ? threat.lvl + 1 : 4;
+              const nextNM = [0, 5.5, 16, 36, 76][nextZ];
+              setHudText(zbp, `✓ Z${threat.lvl} AIR CLEAR • PUSH TO Z${nextZ} (${nextNM}+ NM)`);
+              setHudClass(zbp, 'text-emerald-300 font-arcade');
             }
           }
         }
@@ -5076,7 +5184,7 @@
           }
 
           if (state.mode === 'playing' && state.trapGrace <= 0) {
-            const canTrap = p.plane === 0 && !p.superActive;
+            const canTrap = canLandAtBase(p);
             const pulse = 0.55 + Math.sin(state.time * 8) * 0.35;
             ctx.strokeStyle = canTrap ? `rgba(74, 222, 128, ${pulse})` : `rgba(251, 191, 36, ${pulse})`;
             ctx.lineWidth = 2.8; ctx.setLineDash([7, 5]);
@@ -5116,7 +5224,7 @@
             ctx.drawImage(im, -cw / 2, -ch / 2, cw, ch);
           }
           if (state.mode === 'playing' && state.trapGrace <= 0) {
-            const canTrap = p.plane === 0 && !p.superActive;
+            const canTrap = canLandAtBase(p);
             const pulse = 0.55 + Math.sin(state.time * 8) * 0.35;
             ctx.strokeStyle = canTrap ? `rgba(74, 222, 128, ${pulse})` : `rgba(251, 191, 36, ${pulse})`;
             ctx.lineWidth = 2.8; ctx.setLineDash([7, 4]);
@@ -5346,7 +5454,7 @@
           bg = 'rgba(120, 53, 15, 0.90)';
           border = '#fbbf24';
           fg = '#fef08a';
-        } else if (p.plane !== 0) {
+        } else if (p.plane !== 0 && sessionUnlocks.altitude) {
           text = '▼ DROP TO HARD DECK (SHIFT / TAP JET) TO TRAP';
           bg = 'rgba(120, 53, 15, 0.88)';
           border = '#f59e0b';
@@ -5837,8 +5945,6 @@
       // ============================================================
       function startGame() {
         AudioFX.unlock();
-        // Keep sepia dawn grade & intro/menu music rolling through Catapult 1 spool-up!
-        document.body.classList.add('prelaunch-sepia');
         state = createInitialState('catshot');
         titleOverlay.classList.add('hidden');
         hangarOverlay.classList.add('hidden'); hangarOverlay.classList.remove('flex');
@@ -5853,7 +5959,13 @@
         if (abLabelEl) abLabelEl.innerHTML = `${UI_ICONS.burnerSm}<span>${getSelectedAircraftCfg().hasAfterburner ? 'BURNER' : 'OVERDRIVE'}</span>`;
         updateWeaponsHud();
         updateHud(0, getThreatInfo(0));
-        const cm = getCurrentMap(); showBanner(cm.baseType === 'airbase' ? `${cm.baseCall} RUNWAY — SPOOL TURBINES & TAP IN GOLD ZONE!` : 'CATAPULT 1 ARMED — SPOOL UP & TAP IN GOLD ZONE TO SALUTE!', 'border-amber-400 text-amber-300');
+        const cm = getCurrentMap();
+        if (state.resumedCheckpoint) {
+          const clearedTot = [1,2,3,4].reduce((a,z)=>a+(state.surfaceBossDefeatedStages[z]?1:0)+(state.bossDefeatedStages[z]?1:0),0);
+          showBanner(`★ MISSION CHECKPOINT RESUMED (${clearedTot}/8 BOSSES) — SPOOL UP & LAUNCH! ★`, 'border-emerald-400 text-emerald-200');
+        } else {
+          showBanner(cm.baseType === 'airbase' ? `${cm.baseCall} RUNWAY — SPOOL TURBINES & TAP IN GOLD ZONE!` : 'CATAPULT 1 ARMED — SPOOL UP & TAP IN GOLD ZONE TO SALUTE!', 'border-amber-400 text-amber-300');
+        }
       }
 
       function togglePause() {
@@ -5989,7 +6101,6 @@
       if (_lbAll) _lbAll.addEventListener('click', () => { lbActiveTab = 'all'; renderLeaderboardUI(); });
       if (_lbMine) _lbMine.addEventListener('click', () => { lbActiveTab = 'mine'; renderLeaderboardUI(); });
       document.getElementById('closeHangarBtn').addEventListener('click', () => {
-        document.body.classList.add('prelaunch-sepia');
         hangarOverlay.classList.add('hidden'); hangarOverlay.classList.remove('flex');
         state = createInitialState('title'); titleOverlay.classList.remove('hidden'); titleOverlay.classList.add('flex');
         AudioFX.playTrack('menu', false);
@@ -6083,7 +6194,7 @@
         });
         if (summary) summary.textContent = `ACTIVE: ${cur.callsign} (LV.${curData.level}) • ${cur.perk}`;
         const cpb = document.getElementById('confirmPilotBtn');
-        if (cpb) cpb.textContent = getOwnedAircraft().length > 1 ? 'CHOOSE AIRFRAME ▶' : 'REPORT TO CATAPULT 1 ▶';
+        if (cpb) cpb.textContent = (!LEVEL1_F14_ONLY && getOwnedAircraft().length > 1) ? 'CHOOSE AIRFRAME ▶' : 'REPORT TO CATAPULT 1 ▶';
       }
 
       // ============================================================
@@ -6262,7 +6373,7 @@
           AudioFX.unlock();
           pilotSelectOverlay.classList.add('hidden');
           pilotSelectOverlay.classList.remove('flex');
-          if (getOwnedAircraft().length > 1) {
+          if (!LEVEL1_F14_ONLY && getOwnedAircraft().length > 1) {
             AudioFX.playTrack('menu', false);
             aircraftSelectOverlay.classList.remove('hidden');
             aircraftSelectOverlay.classList.add('flex');
@@ -6359,9 +6470,10 @@
         if (acPilotLabel) acPilotLabel.textContent = `${curPl.callsign} • ${profile.credits} CR`;
         if (synStatus) synStatus.textContent = activeSyn ? `${activeSyn.name}: ${activeSyn.desc}` : `${curAc.name} READY FOR LAUNCH`;
 
+        const visibleAcs = getVisibleAircraft();
         if (splashCards) {
           splashCards.innerHTML = '';
-          AIRCRAFT.forEach(ac => {
+          visibleAcs.forEach(ac => {
             const isOwned = owned.includes(ac.id);
             const active = ac.id === curAc.id;
             const canBuy = !isOwned && profile.credits >= ac.cost;
@@ -6417,8 +6529,9 @@
         // 1. Compact Title Screen Aircraft Bar
         const titleGrid = document.getElementById('titleAircraftGrid');
         if (titleGrid) {
+          titleGrid.className = visibleAcs.length === 1 ? 'grid grid-cols-1 gap-1.5' : 'grid grid-cols-3 gap-1.5';
           titleGrid.innerHTML = '';
-          AIRCRAFT.forEach(ac => {
+          visibleAcs.forEach(ac => {
             const isOwned = owned.includes(ac.id);
             const active = ac.id === curAc.id;
             const btn = document.createElement('button');
@@ -6452,8 +6565,9 @@
         // 2. Full Hangar Aircraft Bay Cards (Buy / Equip!)
         const hangarGrid = document.getElementById('hangarAircraftGrid');
         if (hangarGrid) {
+          hangarGrid.className = visibleAcs.length === 1 ? 'grid grid-cols-1 sm:max-w-xs gap-2' : 'grid grid-cols-1 sm:grid-cols-3 gap-2';
           hangarGrid.innerHTML = '';
-          AIRCRAFT.forEach(ac => {
+          visibleAcs.forEach(ac => {
             const isOwned = owned.includes(ac.id);
             const active = ac.id === curAc.id;
             const canBuy = !isOwned && profile.credits >= ac.cost;
@@ -6503,30 +6617,29 @@
       }
 
       function renderMapSelector() {
+        // Focus solely on Level 1 (Indian Ocean Tutorial Theater) while dialing in core progression!
+        selectedMapIdx = 0;
+        profile.currentCampaignIdx = 0;
         const grid = document.getElementById('mapSelectorGrid');
         const desc = document.getElementById('mapDescLine');
         if (!grid) return;
         grid.innerHTML = '';
         MAPS.forEach((m, idx) => {
-          const active = idx === selectedMapIdx;
+          const isLvl1 = idx === 0;
           const cleared = !!profile.clearedMaps[m.id];
           const btn = document.createElement('button');
-          btn.className = `rounded-lg py-1.5 px-1 text-center border font-arcade text-[9px] font-black transition cursor-pointer ${
-            active
-              ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md'
-              : (cleared ? 'bg-emerald-950/80 text-emerald-200 border-emerald-500/60 hover:border-amber-300' : 'bg-slate-950/80 text-slate-300 border-slate-700 hover:border-sky-400')
+          btn.disabled = !isLvl1;
+          btn.className = `rounded-lg py-1.5 px-1 text-center border font-arcade text-[9px] font-black transition ${
+            isLvl1
+              ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md cursor-pointer'
+              : 'bg-slate-950/60 text-slate-500 border-slate-800/80 opacity-60 cursor-not-allowed'
           }`;
-          btn.innerHTML = `<div>${cleared ? '✓ ' : ''}M${m.num}</div><div class="text-[8px] opacity-85 truncate">${m.short}</div>`;
-          btn.addEventListener('click', () => {
-            selectedMapIdx = idx;
-            profile.currentCampaignIdx = idx;
-            saveProfile();
-            renderMapSelector();
-            if (state && state.mode === 'title') render();
-          });
+          btn.innerHTML = isLvl1
+            ? `<div>${cleared ? '✓ ' : ''}M1</div><div class="text-[8px] opacity-90 truncate">${m.short}</div>`
+            : `<div>M${m.num}</div><div class="text-[7px] opacity-75 truncate">SOON</div>`;
           grid.appendChild(btn);
         });
-        if (desc) desc.textContent = getCurrentMap().name;
+        if (desc) desc.textContent = 'Level 1: Indian Ocean — USS Enterprise (CVN-65) • Active Deployment';
       }
 
       window.onload = () => {
