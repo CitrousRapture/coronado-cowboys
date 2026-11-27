@@ -12,14 +12,24 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Orbitron:wght@600;800;900&family=Black+Ops+One&display=swap');
 
-    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; touch-action: none; }
+    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+    input, textarea, select { user-select: text; -webkit-user-select: text; touch-action: manipulation; }
     html, body {
-      margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+      margin: 0; padding: 0; width: 100%; height: 100%; height: 100dvh; overflow: hidden;
       background: #041326; font-family: 'Inter', system-ui, -apple-system, sans-serif; color: #f8fafc;
     }
     .font-arcade { font-family: 'Orbitron', 'Inter', sans-serif; }
     .font-stencil { font-family: 'Black Ops One', 'Orbitron', sans-serif; }
-    #gameCanvas { display: block; width: 100%; height: 100%; }
+    #gameCanvas { display: block; width: 100%; height: 100%; touch-action: none; }
+    #hudLayer button { touch-action: manipulation; }
+    .menu-scroll-overlay {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+      padding-top: max(1rem, env(safe-area-inset-top));
+      padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    }
 
     .topgun-chrome {
       background: linear-gradient(180deg, #fff7ed 0%, #fde047 28%, #f97316 55%, #dc2626 82%, #fef08a 100%);
@@ -32,9 +42,56 @@
       to { box-shadow: 0 0 26px rgba(56, 189, 248, 0.95), 0 0 42px rgba(251, 191, 36, 0.95); transform: scale(1.04); }
     }
     .cockpit-panel {
-      background: rgba(8, 17, 34, 0.85);
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(251, 146, 60, 0.34);
+      position: relative;
+      background: linear-gradient(180deg, rgba(8, 21, 43, 0.92) 0%, rgba(4, 11, 25, 0.95) 100%);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(251, 191, 36, 0.32);
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.72), inset 0 1px 0 rgba(253, 224, 71, 0.14), inset 0 0 0 1px rgba(56, 189, 248, 0.08);
+    }
+    .deck-modal {
+      overflow: hidden;
+      border-top-color: rgba(251, 191, 36, 0.55);
+    }
+    .deck-modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: repeating-linear-gradient(-45deg, #f59e0b 0px, #f59e0b 10px, #0f172a 10px, #0f172a 20px);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .mfd-card {
+      background: linear-gradient(180deg, rgba(10, 23, 46, 0.92) 0%, rgba(5, 12, 26, 0.96) 100%);
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .mfd-card:hover {
+      border-color: rgba(251, 191, 36, 0.65);
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.16), inset 0 1px 0 rgba(253, 224, 71, 0.16);
+    }
+    .mfd-icon-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2.1rem; height: 2.1rem; border-radius: 0.55rem;
+      background: linear-gradient(180deg, rgba(15, 31, 61, 0.95), rgba(7, 16, 34, 0.98));
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.12);
+    }
+    .btn-catapult {
+      background: linear-gradient(180deg, #fde047 0%, #f59e0b 48%, #ea580c 100%);
+      color: #091224;
+      border: 1px solid rgba(254, 240, 138, 0.75);
+      box-shadow: 0 6px 20px rgba(234, 88, 12, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    }
+    .btn-catapult:hover { filter: brightness(1.08); }
+    .btn-navy {
+      background: linear-gradient(180deg, rgba(20, 39, 71, 0.95) 0%, rgba(10, 21, 42, 0.98) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      box-shadow: inset 0 1px 0 rgba(186, 230, 253, 0.15);
+    }
+    .btn-navy:hover { background: linear-gradient(180deg, rgba(28, 54, 96, 0.96) 0%, rgba(12, 27, 54, 0.98) 100%); border-color: rgba(125, 211, 252, 0.7); }
+    .hud-ico {
+      display: inline-flex; align-items: center; justify-content: center;
+      vertical-align: -0.15em; flex-shrink: 0;
     }
     .scanline-overlay {
       pointer-events: none;
@@ -75,7 +132,7 @@
         </div>
 
         <div class="flex items-center justify-between text-[8px] font-bold tracking-wider mb-0.5">
-          <span class="text-sky-300 font-arcade">⛽</span>
+          <span class="text-sky-300 font-arcade inline-flex items-center gap-1"><svg class="w-2.5 h-2.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 14V4a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v10M2 14h9M10 6h1.5a1.5 1.5 0 0 1 1.5 1.5V11a1 1 0 0 0 2 0V6.5L13 4.5"/><rect x="4.8" y="4.8" width="3.4" height="2.6" fill="currentColor" stroke="none"/></svg>JP-5</span>
           <span id="fuelText" class="text-sky-200 tabular-nums font-arcade">100%</span>
         </div>
         <div class="w-full h-1 bg-slate-950/90 rounded-full overflow-hidden border border-sky-500/35 mb-1">
@@ -92,7 +149,7 @@
 
         <div class="flex items-center justify-between text-[8px] sm:text-[9px] font-arcade pt-0.5 border-t border-slate-700/60">
           <span class="text-emerald-300 font-bold hidden sm:inline">HOLD</span>
-          <span id="cargoSummary" class="text-amber-200 font-black tabular-nums">🪙0 📦0 ⚙️0</span>
+          <span id="cargoSummary" class="text-amber-200 font-black tabular-nums inline-flex items-center gap-1.5">0 CR • 0 INT • 0 PRT</span>
         </div>
       </div>
 
@@ -130,11 +187,11 @@
           <div id="distBadgeMobile" class="font-arcade text-[9px] font-black text-emerald-300 tabular-nums leading-tight">⚓ 0.0 NM</div>
           <div id="scoreTextMobile" class="text-[8px] font-bold text-amber-300 tabular-nums leading-tight">0 PTS</div>
         </div>
-        <button id="muteBtn" title="Toggle Audio (M)" class="cockpit-panel hover:bg-amber-900/40 active:scale-95 transition rounded-lg p-1.5 sm:px-2 sm:py-1.5 text-[11px] font-bold text-amber-200 flex items-center gap-1 cursor-pointer">
-          <span id="muteIcon">🔊</span>
+        <button id="muteBtn" title="Toggle Comms Audio (M)" class="cockpit-panel hover:border-amber-300/70 active:scale-95 transition rounded-lg p-1.5 sm:px-2 sm:py-1.5 text-[11px] font-bold text-amber-200 flex items-center justify-center cursor-pointer">
+          <span id="muteIcon" class="hud-ico"><svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h3l3.5 3V3L5.5 6h-3z" fill="currentColor" fill-opacity="0.2"/><path d="M11.5 5.2a3.8 3.8 0 0 1 0 5.6M13.5 3.4a6.4 6.4 0 0 1 0 9.2"/></svg></span>
         </button>
-        <button id="pauseBtn" title="Pause (P / Esc)" class="cockpit-panel hover:bg-amber-900/40 active:scale-95 transition rounded-lg p-1.5 sm:px-2 sm:py-1.5 text-[11px] font-bold text-amber-200 flex items-center gap-1 cursor-pointer">
-          <span>⏸</span>
+        <button id="pauseBtn" title="Holding Pattern / Pause (P / Esc)" class="cockpit-panel hover:border-amber-300/70 active:scale-95 transition rounded-lg p-1.5 sm:px-2 sm:py-1.5 text-[11px] font-bold text-amber-200 flex items-center justify-center cursor-pointer">
+          <span class="hud-ico"><svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor"><rect x="3.5" y="2.8" width="3.2" height="10.4" rx="0.8"/><rect x="9.3" y="2.8" width="3.2" height="10.4" rx="0.8"/></svg></span>
         </button>
       </div>
     </div>
@@ -156,7 +213,7 @@
           <div id="abFill" class="absolute inset-y-0 left-0 bg-gradient-to-r from-sky-500 via-cyan-400 to-amber-300 opacity-80 transition-all duration-75" style="width: 100%"></div>
           <div class="relative z-10 flex items-center justify-between gap-1">
             <div>
-              <div class="font-arcade text-[8px] sm:text-[9px] font-black tracking-wider text-white drop-shadow leading-tight">🔥 BURNER</div>
+              <div id="abLabelText" class="font-arcade text-[8px] sm:text-[9px] font-black tracking-wider text-white drop-shadow leading-tight inline-flex items-center gap-1"><svg class="w-2.5 h-2.5 text-amber-300" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L13.5 7.5H10L12.5 14.5L8 11.2L3.5 14.5L6 7.5H2.5L8 1Z"/></svg><span>BURNER</span></div>
               <div id="abPct" class="font-arcade text-[7px] sm:text-[8px] font-bold text-sky-100 tabular-nums drop-shadow">100%</div>
             </div>
             <span class="hidden sm:inline-block font-arcade text-[8px] font-black px-1 py-0.5 rounded bg-slate-900/80 text-cyan-300 border border-cyan-400/40">C</span>
@@ -185,28 +242,19 @@
 
   <!-- SPLASH SCREEN 1: CLICK TO CONTINUE -->
   <div id="splashOverlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-[4px] cursor-pointer select-none">
-    <div class="cockpit-panel rounded-2xl max-w-md w-full p-7 sm:p-9 text-center shadow-2xl border-amber-400/60">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-300 text-[11px] font-arcade font-bold tracking-widest mb-3">
-        ★ U.S. NAVY • FIGHTERTOWN USA • 1986 ★
-      </div>
-      <h1 class="font-stencil text-4xl sm:text-5xl tracking-wider topgun-chrome leading-none">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-md w-full px-7 py-9 sm:px-9 sm:py-11 text-center shadow-2xl border-amber-400/60">
+      <h1 class="font-stencil text-4xl sm:text-5xl tracking-wider topgun-chrome leading-none mb-7">
         CORONADO<br/>COWBOYS
       </h1>
-      <p class="font-arcade text-[11px] tracking-[0.22em] text-sky-300 font-bold mt-2 mb-6">
-        5 THEATERS + SECRET • F-14A EXTRACTION SURVIVOR
-      </p>
-      <div class="inline-block px-6 py-3 rounded-xl font-arcade text-xs sm:text-sm font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 shadow-lg shadow-orange-600/40 animate-pulse">
-        ▶ CLICK OR PRESS ANY KEY TO CONTINUE ▶
-      </div>
-      <div class="text-[10px] font-arcade text-slate-400 mt-4 tracking-widest">
-        SOUNDTRACK &amp; COCKPIT SYSTEMS READY
+      <div class="btn-catapult inline-block px-7 py-3 rounded-xl font-arcade text-xs sm:text-sm font-black tracking-widest animate-pulse">
+        ▶ CONTINUE ▶
       </div>
     </div>
   </div>
 
   <!-- SPLASH SCREEN 2: PILOT SELECT / CREATE CUSTOM PILOT PROFILE -->
-  <div id="pilotSelectOverlay" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-[4px] overflow-y-auto">
-    <div class="cockpit-panel rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-sky-400/55 my-auto">
+  <div id="pilotSelectOverlay" class="menu-scroll-overlay fixed inset-0 z-40 hidden items-start justify-center p-4 bg-slate-950/75 backdrop-blur-[4px]">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-sky-400/55 my-auto">
       <div class="flex items-center justify-between gap-2 mb-3">
         <div>
           <div class="font-arcade text-[10px] text-amber-300 tracking-widest font-bold">VF-1 WOLFPACK • READY ROOM</div>
@@ -219,7 +267,7 @@
       <p class="text-xs text-slate-300 mb-3">Each pilot saves their own Career Level, Credits, Hangar upgrades, and Theater progress independently.</p>
 
       <!-- Pilot Cards Grid (4 Built-in + Any Custom User Profiles) -->
-      <div id="pilotRosterCards" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4 max-h-64 overflow-y-auto pr-1"></div>
+      <div id="pilotRosterCards" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4"></div>
 
       <!-- Custom Pilot Creator Form (Hidden until "+ CREATE PILOT" clicked) -->
       <div id="createPilotBox" class="hidden rounded-xl bg-slate-950/90 border border-emerald-400/45 p-3.5 mb-4">
@@ -251,7 +299,7 @@
 
       <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-700/70">
         <div id="selectedPilotSummary" class="text-[11px] font-arcade text-amber-200 truncate"></div>
-        <button id="confirmPilotBtn" class="px-5 py-2.5 rounded-xl font-arcade text-xs font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 hover:brightness-110 transition cursor-pointer shrink-0">
+        <button id="confirmPilotBtn" class="btn-catapult px-5 py-2.5 rounded-xl font-arcade text-xs font-black tracking-widest transition cursor-pointer shrink-0">
           CHOOSE AIRFRAME ▶
         </button>
       </div>
@@ -259,8 +307,8 @@
   </div>
 
   <!-- SPLASH SCREEN 3: SELECT AIRCRAFT & PILOT SYNERGIES -->
-  <div id="aircraftSelectOverlay" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-[4px] overflow-y-auto">
-    <div class="cockpit-panel rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-amber-400/55 my-auto">
+  <div id="aircraftSelectOverlay" class="menu-scroll-overlay fixed inset-0 z-40 hidden items-start justify-center p-4 bg-slate-950/75 backdrop-blur-[4px]">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-amber-400/55 my-auto">
       <div class="flex items-center justify-between gap-2 mb-3">
         <div>
           <div class="font-arcade text-[10px] text-sky-300 tracking-widest font-bold">CARRIER AIR WING • HANGAR DECK</div>
@@ -280,7 +328,7 @@
           ◀ PILOTS
         </button>
         <div id="splashSynergyStatus" class="text-[10px] font-arcade text-amber-300 truncate text-center flex-1"></div>
-        <button id="confirmAircraftBtn" class="px-5 py-2.5 rounded-xl font-arcade text-xs font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 hover:brightness-110 transition cursor-pointer shrink-0">
+        <button id="confirmAircraftBtn" class="btn-catapult px-5 py-2.5 rounded-xl font-arcade text-xs font-black tracking-widest transition cursor-pointer shrink-0">
           TO FLIGHT DECK ▶
         </button>
       </div>
@@ -288,8 +336,8 @@
   </div>
 
   <!-- TITLE OVERLAY -->
-  <div id="titleOverlay" class="fixed inset-0 z-30 hidden items-center justify-center p-4 bg-slate-950/55 backdrop-blur-[3px]">
-    <div class="cockpit-panel rounded-2xl max-w-lg w-full p-6 sm:p-8 text-center shadow-2xl border-amber-400/50">
+  <div id="titleOverlay" class="menu-scroll-overlay fixed inset-0 z-30 hidden items-start justify-center p-4 bg-slate-950/55 backdrop-blur-[3px]">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-lg w-full p-6 sm:p-8 text-center shadow-2xl border-amber-400/50 my-auto">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-300 text-[11px] font-arcade font-bold tracking-widest mb-2">
         ★ U.S. NAVY • NAS NORTH ISLAND &amp; PACIFIC FLEET ★
       </div>
@@ -356,11 +404,11 @@
       </div>
 
       <div class="flex flex-col sm:flex-row gap-2.5">
-        <button id="startBtn" class="flex-1 py-3.5 px-5 rounded-xl font-arcade text-sm sm:text-base font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 hover:brightness-110 active:scale-[0.98] transition shadow-lg shadow-orange-600/35 cursor-pointer">
+        <button id="startBtn" class="btn-catapult flex-1 py-3.5 px-5 rounded-xl font-arcade text-sm sm:text-base font-black tracking-widest active:scale-[0.98] transition cursor-pointer">
           LAUNCH SORTIE ▶
         </button>
-        <button id="openHangarTitleBtn" class="py-3.5 px-4 rounded-xl font-arcade text-xs sm:text-sm font-black tracking-wider text-sky-200 bg-slate-900/90 hover:bg-sky-950 border border-sky-400/50 transition cursor-pointer">
-          ⚓ HANGAR &amp; VAULT
+        <button id="openHangarTitleBtn" class="btn-navy py-3.5 px-4 rounded-xl font-arcade text-xs sm:text-sm font-black tracking-wider text-sky-200 transition cursor-pointer inline-flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4 text-amber-300" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="3.5" r="1.5"/><path d="M8 5v8.5M5 7h6M3.2 10.2A4.8 4.8 0 0 0 8 13.5a4.8 4.8 0 0 0 4.8-3.3"/></svg><span>HANGAR &amp; VAULT</span>
         </button>
       </div>
 
@@ -371,8 +419,8 @@
   </div>
 
   <!-- CARRIER HANGAR & PERSISTENT INVENTORY MODAL -->
-  <div id="hangarOverlay" class="fixed inset-0 z-40 hidden items-center justify-center p-3 sm:p-5 bg-slate-950/85 backdrop-blur-md">
-    <div class="cockpit-panel rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto p-5 sm:p-6 shadow-2xl border-emerald-400/55">
+  <div id="hangarOverlay" class="menu-scroll-overlay fixed inset-0 z-40 hidden items-start justify-center p-3 sm:p-5 bg-slate-950/85 backdrop-blur-md">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-3xl w-full p-5 sm:p-6 shadow-2xl border-emerald-400/55 my-auto">
       <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-700/80">
         <div>
           <div class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-arcade text-[10px] font-bold tracking-widest mb-1">
@@ -403,16 +451,15 @@
         </button>
       </div>
 
-      <div class="font-arcade text-[11px] font-bold text-amber-300 tracking-widest mb-2">PERMANENT F-14A AIRFRAME UPGRADES</div>
       <div class="mb-4">
-        <div class="font-arcade text-[10px] font-black text-sky-300 tracking-widest mb-1.5">✈ CARRIER AIR WING — AIRCRAFT INVENTORY</div>
+        <div class="font-arcade text-[10px] font-black text-sky-300 tracking-widest mb-1.5 inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.2L9.4 5.5L14.5 9L14.5 10.6L9.4 9.2L9.2 12.6L11.5 14V15L8 14L4.5 15V14L6.8 12.6L6.6 9.2L1.5 10.6V9L6.6 5.5L8 1.2Z"/></svg>CARRIER AIR WING — AIRCRAFT INVENTORY</div>
         <div id="hangarAircraftGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
       </div>
-      <div class="font-arcade text-[10px] font-black text-amber-300 tracking-widest mb-1.5">🔧 PERMANENT AIRFRAME &amp; ORDNANCE UPGRADES</div>
+      <div class="font-arcade text-[10px] font-black text-amber-300 tracking-widest mb-1.5 inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.8 2.2a3.5 3.5 0 0 0-4.4 4.4L2.5 10.5a1.5 1.5 0 0 0 2.1 2.1l3.9-3.9a3.5 3.5 0 0 0 4.4-4.4l-2 2-1.8-1.8 1.7-2.3z"/></svg>PERMANENT AIRFRAME &amp; ORDNANCE UPGRADES</div>
       <div id="hangarUpgradesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mb-5"></div>
 
       <div class="flex flex-col sm:flex-row gap-2.5 pt-2 border-t border-slate-800">
-        <button id="launchFromHangarBtn" class="flex-1 py-3 rounded-xl font-arcade text-sm sm:text-base font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 hover:brightness-110 transition cursor-pointer">
+        <button id="launchFromHangarBtn" class="btn-catapult flex-1 py-3 rounded-xl font-arcade text-sm sm:text-base font-black tracking-widest transition cursor-pointer">
           LAUNCH NEXT SORTIE — CATAPULT 1 ▶
         </button>
         <button id="closeHangarBtn" class="py-3 px-5 rounded-xl font-arcade text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 transition cursor-pointer">
@@ -423,25 +470,25 @@
   </div>
 
   <!-- LEVEL-UP ORDNANCE MODAL -->
-  <div id="upgradeOverlay" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
-    <div class="cockpit-panel rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-amber-400/55">
+  <div id="upgradeOverlay" class="menu-scroll-overlay fixed inset-0 z-40 hidden items-start justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border-amber-400/55 my-auto">
       <div class="text-center mb-4">
         <div class="inline-block px-3 py-0.5 rounded-full bg-amber-400/20 border border-amber-400/50 text-amber-300 font-arcade text-[11px] font-bold tracking-widest mb-1">
           U.S. NAVY PROMOTION • IN-FLIGHT ORDNANCE
         </div>
-        <h2 class="font-arcade text-xl sm:text-2xl font-black text-white tracking-wide">ARM F-14A TOMCAT LOADOUT</h2>
+        <h2 id="upgradeModalTitle" class="font-arcade text-xl sm:text-2xl font-black text-white tracking-wide">ARM F-14A TOMCAT LOADOUT</h2>
       </div>
       <div id="upgradeCards" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
     </div>
   </div>
 
   <!-- PAUSE MODAL -->
-  <div id="pauseOverlay" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
-    <div class="cockpit-panel rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
+  <div id="pauseOverlay" class="menu-scroll-overlay fixed inset-0 z-40 hidden items-start justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl my-auto">
       <h2 class="font-arcade text-2xl font-black text-amber-300 tracking-widest mb-2">HOLDING PATTERN</h2>
       <p class="text-xs text-slate-300 mb-5">USS Enterprise Air Boss has you in the Marshal Stack over the Pacific.</p>
       <div class="flex flex-col gap-2.5">
-        <button id="resumeBtn" class="w-full py-2.5 rounded-xl font-arcade text-sm font-black bg-amber-400 text-slate-950 hover:bg-amber-300 transition cursor-pointer">
+        <button id="resumeBtn" class="btn-catapult w-full py-2.5 rounded-xl font-arcade text-sm font-black transition cursor-pointer">
           RESUME SORTIE
         </button>
         <button id="restartFromPauseBtn" class="w-full py-2.5 rounded-xl font-arcade text-sm font-bold bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-600 transition cursor-pointer">
@@ -452,8 +499,8 @@
   </div>
 
   <!-- GAME OVER MODAL -->
-  <div id="gameOverOverlay" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-    <div class="cockpit-panel rounded-2xl max-w-md w-full p-6 sm:p-7 text-center shadow-2xl border-rose-500/50">
+  <div id="gameOverOverlay" class="menu-scroll-overlay fixed inset-0 z-40 hidden items-start justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-md w-full p-6 sm:p-7 text-center shadow-2xl border-rose-500/50 my-auto">
       <div class="font-arcade text-xs font-bold tracking-[0.25em] text-rose-400 mb-1">EJECT! EJECT! EJECT!</div>
       <h2 class="font-arcade text-3xl font-black text-white tracking-wide mb-2">U.S. NAVY DEBRIEF</h2>
       <p id="lostCargoNote" class="text-xs text-rose-300/90 mb-4">Unbanked sortie cargo was lost at sea! Fly back to CVN-65 and land on Hard Deck to extract.</p>
@@ -478,7 +525,7 @@
       </div>
 
       <div class="flex flex-col sm:flex-row gap-2.5">
-        <button id="restartBtn" class="flex-1 py-3 rounded-xl font-arcade text-sm font-black tracking-widest text-slate-950 bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 hover:brightness-110 transition cursor-pointer">
+        <button id="restartBtn" class="btn-catapult flex-1 py-3 rounded-xl font-arcade text-sm font-black tracking-widest transition cursor-pointer">
           LAUNCH AGAIN ▶
         </button>
         <button id="openHangarGoBtn" class="py-3 px-4 rounded-xl font-arcade text-xs font-black text-sky-200 bg-slate-900 hover:bg-sky-950 border border-sky-400/50 transition cursor-pointer">
@@ -504,6 +551,11 @@
       // ============================================================
       const ENGINE_CFG = {
         maxDpr: 1.5,
+        renderScales: [1, 0.75, 0.5],
+        slowFrameMs: 22,
+        fastFrameMs: 14,
+        stepDownFrames: 45,
+        stepUpFrames: 180,
         maxParticles: 150,
         maxShockwaves: 24,
         maxFloatingTexts: 22,
@@ -529,17 +581,226 @@
         };
       })();
 
+      // Subdued 80s/90s Arcade Hardware Palette-Register Shifts (Level 1 classic Pacific -> Level 6 eerie nocturnal)
+      const THEATER_PALETTES = {
+        ocean: {
+          seaTop: '#0a3366', seaBot: '#041d3d',
+          sunInner: 'rgba(253, 224, 71, 0.32)', sunMid: 'rgba(249, 115, 22, 0.16)',
+          disc0: 'rgba(254, 240, 138, 0.34)', disc1: 'rgba(249, 115, 22, 0.26)', disc2: 'rgba(225, 29, 72, 0.20)',
+          stripe: 'rgba(10, 45, 94, 0.42)',
+          swell: 'rgba(56, 189, 248, 0.15)', foam: 'rgba(224, 242, 254, 0.24)', glint: 'rgba(254, 240, 138, 0.17)',
+          wash: null, baseHue: 0
+        },
+        miramar: {
+          seaTop: '#182444', seaBot: '#0b1326',
+          sunInner: 'rgba(245, 186, 110, 0.30)', sunMid: 'rgba(194, 92, 82, 0.16)',
+          disc0: 'rgba(253, 224, 178, 0.32)', disc1: 'rgba(217, 119, 87, 0.26)', disc2: 'rgba(159, 64, 92, 0.20)',
+          stripe: 'rgba(24, 36, 68, 0.44)',
+          swell: 'rgba(165, 152, 212, 0.14)', foam: 'rgba(235, 220, 206, 0.22)', glint: 'rgba(245, 208, 148, 0.16)',
+          wash: 'rgba(120, 74, 110, 0.035)', baseHue: 6
+        },
+        pax: {
+          seaTop: '#0d2f3a', seaBot: '#05171f',
+          sunInner: 'rgba(214, 228, 138, 0.28)', sunMid: 'rgba(58, 148, 144, 0.15)',
+          disc0: 'rgba(224, 236, 172, 0.30)', disc1: 'rgba(94, 176, 164, 0.24)', disc2: 'rgba(72, 108, 142, 0.20)',
+          stripe: 'rgba(12, 42, 52, 0.46)',
+          swell: 'rgba(94, 184, 176, 0.15)', foam: 'rgba(206, 232, 222, 0.22)', glint: 'rgba(204, 226, 156, 0.16)',
+          wash: 'rgba(32, 112, 108, 0.04)', baseHue: -10
+        },
+        chinalake: {
+          seaTop: '#241c3c', seaBot: '#0f0c20',
+          sunInner: 'rgba(232, 158, 168, 0.30)', sunMid: 'rgba(132, 92, 154, 0.16)',
+          disc0: 'rgba(238, 198, 186, 0.30)', disc1: 'rgba(196, 114, 146, 0.24)', disc2: 'rgba(116, 78, 148, 0.20)',
+          stripe: 'rgba(34, 24, 58, 0.48)',
+          swell: 'rgba(164, 134, 196, 0.15)', foam: 'rgba(226, 212, 234, 0.22)', glint: 'rgba(236, 178, 176, 0.17)',
+          wash: 'rgba(126, 72, 132, 0.045)', baseHue: 14
+        },
+        coronado: {
+          seaTop: '#191a3d', seaBot: '#08091f',
+          sunInner: 'rgba(236, 164, 146, 0.32)', sunMid: 'rgba(148, 112, 164, 0.16)',
+          disc0: 'rgba(246, 216, 168, 0.32)', disc1: 'rgba(214, 122, 134, 0.26)', disc2: 'rgba(104, 92, 168, 0.22)',
+          stripe: 'rgba(22, 26, 58, 0.48)',
+          swell: 'rgba(108, 178, 184, 0.16)', foam: 'rgba(232, 214, 222, 0.22)', glint: 'rgba(242, 198, 150, 0.18)',
+          wash: 'rgba(98, 76, 146, 0.045)', baseHue: -14
+        },
+        area51: {
+          seaTop: '#131826', seaBot: '#060810',
+          sunInner: 'rgba(148, 210, 168, 0.28)', sunMid: 'rgba(116, 94, 152, 0.16)',
+          disc0: 'rgba(176, 224, 188, 0.30)', disc1: 'rgba(104, 172, 176, 0.24)', disc2: 'rgba(122, 86, 150, 0.20)',
+          stripe: 'rgba(16, 20, 32, 0.54)',
+          swell: 'rgba(128, 158, 176, 0.15)', foam: 'rgba(176, 212, 194, 0.22)', glint: 'rgba(166, 206, 178, 0.17)',
+          wash: 'rgba(64, 118, 96, 0.045)', baseHue: 18
+        }
+      };
+
+      function getActivePalette() {
+        const cm = (typeof getCurrentMap === 'function') ? getCurrentMap() : { theme: 'ocean' };
+        return THEATER_PALETTES[cm.theme] || THEATER_PALETTES.ocean;
+      }
+
+      function getSortieWeirdness() {
+        const cm = (typeof getCurrentMap === 'function') ? getCurrentMap() : { num: 1 };
+        const pLvl = (state && state.player) ? (state.player.level || 1) : 1;
+        return Math.min(1, ((cm.num - 1) * 0.16) + Math.max(0, pLvl - 1) * 0.065);
+      }
+
+      // Offscreen backdrop cache: rebuilds ocean, sunset glow/disc, and super vignette only on resize, theater, level, or zone change
+      const BgCache = (() => {
+        const oceanC = document.createElement('canvas');
+        const sunC = document.createElement('canvas');
+        const vigC = document.createElement('canvas');
+        let oceanKey = '';
+        let sunKey = '';
+        let vigKey = '';
+
+        function invalidate() { oceanKey = ''; sunKey = ''; vigKey = ''; }
+
+        function ensureOcean(w, h, topCol, botCol, weirdHueDeg) {
+          const k = `${w}x${h}|${topCol}|${botCol}|${weirdHueDeg}`;
+          if (oceanKey === k) return oceanC;
+          oceanC.width = Math.max(1, w);
+          oceanC.height = Math.max(1, h);
+          const g = oceanC.getContext('2d');
+          g.save();
+          if (weirdHueDeg !== 0) g.filter = `hue-rotate(${weirdHueDeg}deg) saturate(${(1 + Math.abs(weirdHueDeg) / 420).toFixed(2)})`;
+          const grad = g.createLinearGradient(0, 0, 0, h);
+          grad.addColorStop(0, topCol);
+          grad.addColorStop(1, botCol);
+          g.fillStyle = grad;
+          g.fillRect(0, 0, w, h);
+          g.restore();
+          oceanKey = k;
+          return oceanC;
+        }
+
+        function ensureSun(w, h, pal, weirdHueDeg) {
+          const sh = Math.max(1, Math.ceil(h * 0.55));
+          const k = `${w}x${sh}|${pal.sunInner}|${pal.disc0}|${weirdHueDeg}`;
+          if (sunKey === k) return sunC;
+          sunC.width = Math.max(1, w);
+          sunC.height = sh;
+          const g = sunC.getContext('2d');
+          g.clearRect(0, 0, w, sh);
+          g.save();
+          if (weirdHueDeg !== 0) g.filter = `hue-rotate(${Math.round(weirdHueDeg * 1.15)}deg) saturate(${(1 + Math.abs(weirdHueDeg) / 360).toFixed(2)})`;
+          const sunX = w * 0.5;
+          const sunR = Math.min(w, h) * 0.21;
+          const sunGlow = g.createRadialGradient(sunX, -10, sunR * 0.15, sunX, -10, sunR * 2.1);
+          sunGlow.addColorStop(0, pal.sunInner);
+          sunGlow.addColorStop(0.45, pal.sunMid);
+          sunGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          g.fillStyle = sunGlow;
+          g.fillRect(0, 0, w, sh);
+
+          g.save();
+          g.beginPath(); g.arc(sunX, 12, sunR * 0.5, 0, Math.PI * 2); g.clip();
+          const discGrad = g.createLinearGradient(0, 0, 0, sunR * 0.7);
+          discGrad.addColorStop(0, pal.disc0);
+          discGrad.addColorStop(0.6, pal.disc1);
+          discGrad.addColorStop(1, pal.disc2);
+          g.fillStyle = discGrad;
+          g.fillRect(sunX - sunR, 0, sunR * 2, sunR);
+          g.fillStyle = pal.stripe;
+          for (let sy = 16; sy < sunR * 0.65; sy += 10) g.fillRect(sunX - sunR, sy, sunR * 2, 2.8);
+          g.restore();
+          g.restore();
+          sunKey = k;
+          return sunC;
+        }
+
+        function ensureVig(w, h) {
+          const k = `${w}x${h}`;
+          if (vigKey === k) return vigC;
+          vigC.width = Math.max(1, w);
+          vigC.height = Math.max(1, h);
+          const g = vigC.getContext('2d');
+          g.clearRect(0, 0, w, h);
+          const vig = g.createRadialGradient(w * 0.5, h * 0.5, 40, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
+          vig.addColorStop(0, 'rgba(253, 224, 71, 0.1)');
+          vig.addColorStop(0.55, 'rgba(239, 68, 68, 0.08)');
+          vig.addColorStop(1, 'rgba(15, 23, 42, 0.32)');
+          g.fillStyle = vig;
+          g.fillRect(0, 0, w, h);
+          vigKey = k;
+          return vigC;
+        }
+
+        return {
+          invalidate,
+          blitBackdrop(threat, isSuper) {
+            const pal = getActivePalette();
+            const pLvl = (state && state.player) ? (state.player.level || 1) : 1;
+            const weirdHueDeg = Math.min(32, Math.max(0, Math.round((pLvl - 1) * 4.5)));
+            const topCol = isSuper ? '#1e1038' : (threat.lvl >= 3 ? threat.seaTop : pal.seaTop);
+            const botCol = isSuper ? '#091632' : (threat.lvl >= 3 ? threat.seaBot : pal.seaBot);
+            ctx.drawImage(ensureOcean(W, H, topCol, botCol, weirdHueDeg), 0, 0, W, H);
+            ctx.drawImage(ensureSun(W, H, pal, weirdHueDeg), 0, 0, W, Math.ceil(H * 0.55));
+          },
+          blitSuperVignette() {
+            ctx.drawImage(ensureVig(W, H), 0, 0, W, H);
+          }
+        };
+      })();
+
+      // Fast outlined canvas text (replaces expensive shadowBlur!)
+      function fillOutlinedText(text, x, y, fill, stroke = '#000000', lineWidth = 3.2) {
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2;
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = stroke;
+        ctx.strokeText(text, x, y);
+        ctx.fillStyle = fill;
+        ctx.fillText(text, x, y);
+      }
+
+      let renderScaleIdx = 0;
+      let frameTimeEma = 16.67;
+      let slowFrameStreak = 0;
+      let fastFrameStreak = 0;
       let DPR = Math.min(window.devicePixelRatio || 1, ENGINE_CFG.maxDpr);
+
+      function applyCanvasScale() {
+        const baseDpr = Math.min(window.devicePixelRatio || 1, ENGINE_CFG.maxDpr);
+        DPR = Math.max(0.5, baseDpr * ENGINE_CFG.renderScales[renderScaleIdx]);
+        canvas.width = Math.max(1, Math.floor(W * DPR));
+        canvas.height = Math.max(1, Math.floor(H * DPR));
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+
+      function noteFrameTime(frameDt) {
+        if (!state || state.mode !== 'playing') return;
+        const ms = frameDt * 1000;
+        if (ms > 120) return; // ignore tab-switch spikes
+        frameTimeEma = frameTimeEma * 0.9 + ms * 0.1;
+        if (frameTimeEma > ENGINE_CFG.slowFrameMs) {
+          slowFrameStreak++;
+          fastFrameStreak = 0;
+          if (slowFrameStreak >= ENGINE_CFG.stepDownFrames && renderScaleIdx < ENGINE_CFG.renderScales.length - 1) {
+            renderScaleIdx++;
+            slowFrameStreak = 0;
+            applyCanvasScale();
+          }
+        } else if (frameTimeEma < ENGINE_CFG.fastFrameMs) {
+          fastFrameStreak++;
+          slowFrameStreak = 0;
+          if (fastFrameStreak >= ENGINE_CFG.stepUpFrames && renderScaleIdx > 0) {
+            renderScaleIdx--;
+            fastFrameStreak = 0;
+            applyCanvasScale();
+          }
+        } else {
+          slowFrameStreak = Math.max(0, slowFrameStreak - 1);
+          fastFrameStreak = Math.max(0, fastFrameStreak - 1);
+        }
+      }
 
       function resizeCanvas() {
         W = window.innerWidth;
         H = window.innerHeight;
-        DPR = Math.min(window.devicePixelRatio || 1, ENGINE_CFG.maxDpr);
-        canvas.width = Math.floor(W * DPR);
-        canvas.height = Math.floor(H * DPR);
-        canvas.style.width = W + 'px';
-        canvas.style.height = H + 'px';
-        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        applyCanvasScale();
+        BgCache.invalidate();
         if (state && state.mode === 'title') render();
       }
 
@@ -711,6 +972,11 @@
             // M61A1 20mm Vulcan rotary cannon punch: low mechanical thump + crisp muzzle crack!
             playNoise(0.042, 0.095, 2350);
             playTone(165, 68, 0.04, 'sawtooth', 0.075);
+          },
+          sparrow() {
+            // Crisp active-radar AMRAAM / Sparrow lock chirp + booster whoosh
+            playTone(1320, 1760, 0.055, 'sine', 0.09);
+            playNoise(0.22, 0.12, 1650);
           },
           foxTwo() {
             // Sidewinder IR Growl lock chirp + solid-rocket motor FWOOSH!
@@ -942,7 +1208,14 @@
 
           const sLat = ty * TILE_DEG, nLat = (ty + 1) * TILE_DEG;
           const wLng = tx * TILE_DEG, eLng = (tx + 1) * TILE_DEG;
-          const entry = { status: 'loading', roads: [], runways: [], parks: [], water: [], urban: [] };
+          const [bx1, by1] = latLngToWorld(sLat, wLng);
+          const [bx2, by2] = latLngToWorld(nLat, eLng);
+          const entry = {
+            status: 'loading',
+            minX: Math.min(bx1, bx2) - 240, maxX: Math.max(bx1, bx2) + 240,
+            minY: Math.min(by1, by2) - 240, maxY: Math.max(by1, by2) + 240,
+            roads: [], runways: [], parks: [], water: [], urban: []
+          };
           tileCache.set(key, entry);
 
           const q = `[out:json][timeout:8];(` +
@@ -1047,9 +1320,12 @@
             }
           }
 
-          // Render Live-Streamed OpenStreetMap Real-World Features in 90s Arcade Style!
+          // Render Live-Streamed OpenStreetMap Real-World Features in 90s Arcade Style (viewport-culled!)
+          const viewMinX = camX - W * 0.65 - 200, viewMaxX = camX + W * 0.65 + 200;
+          const viewMinY = camY - H * 0.65 - 200, viewMaxY = camY + H * 0.65 + 200;
           tileCache.forEach((tile) => {
             if (tile.status !== 'ready') return;
+            if (tile.maxX < viewMinX || tile.minX > viewMaxX || tile.maxY < viewMinY || tile.minY > viewMaxY) return;
             // Real Parks & Golf Courses
             ctx.fillStyle = 'rgba(22, 101, 52, 0.55)';
             for (const poly of tile.parks) { tracePoly(poly); ctx.fill(); }
@@ -1148,12 +1424,10 @@
               ctx.beginPath(); ctx.arc(0, 0, 62, -Math.PI / 2, -Math.PI / 2 + state.trapProgress * Math.PI * 2); ctx.stroke();
             }
             ctx.font = '800 10px Orbitron, sans-serif'; ctx.textAlign = 'center';
-            ctx.fillStyle = canTrap ? '#4ade80' : '#fde047';
-            ctx.shadowBlur = 8; ctx.shadowColor = '#000';
             const msg = state.trapProgress > 0
               ? `TOUCHDOWN NAS NORTH ISLAND... ${Math.round(state.trapProgress * 100)}%`
               : (canTrap ? '★ LAND ON RUNWAY 18/36 TO BANK CARGO' : '▼ SWAP TO HARD DECK TO LAND');
-            ctx.fillText(msg, 0, -166);
+            fillOutlinedText(msg, 0, -166, canTrap ? '#4ade80' : '#fde047', '#000000', 3.4);
           }
           ctx.restore();
         }
@@ -1345,13 +1619,40 @@
       // ============================================================
       // PERSISTENT CARRIER VAULT & HANGAR INVENTORY
       // ============================================================
+      // ============================================================
+      // 1986 U.S. NAVY AVIONICS VECTOR ICON LIBRARY (ZERO EMOJI CLUTTER)
+      // ============================================================
+      const UI_ICONS = {
+        vulcan:      '<svg class="w-4 h-4 text-amber-300" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6.5"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/><path d="M10 1.8V5M10 15v3.2M1.8 10H5M15 10h3.2" stroke-linecap="round"/></svg>',
+        sidewinder:  '<svg class="w-4 h-4 text-sky-300" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M15.8 4.2L11.5 11.2L8.8 8.5L15.8 4.2Z" fill="currentColor" fill-opacity="0.25"/><path d="M15.8 4.2L6.2 13.8M8.5 8.2L5 7.5L3.5 9L6.8 10.6M11.8 11.5L12.5 15L11 16.5L9.4 13.2" stroke-linecap="round"/></svg>',
+        sparrow:     '<svg class="w-4 h-4 text-cyan-300" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4.5 15.5A7.8 7.8 0 0 1 15.5 4.5"/><path d="M7.5 15.5A4.8 4.8 0 0 1 15.5 7.5"/><circle cx="13.5" cy="13.5" r="1.8" fill="currentColor"/><path d="M10 10L13.5 13.5"/></svg>',
+        phoenix:     '<svg class="w-4 h-4 text-orange-300" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L12.8 7.5L10 17.5L7.2 7.5L10 2Z" fill="currentColor" fill-opacity="0.22"/><path d="M7.5 9.5L3.5 12.5L7.8 12.5M12.5 9.5L16.5 12.5L12.2 12.5"/></svg>',
+        wingman:     '<svg class="w-4 h-4 text-sky-200" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L11.8 7L17.5 11.5V13.2L11.8 11.5L11.5 15.2L14 16.8V18L10 16.8L6 18V16.8L8.5 15.2L8.2 11.5L2.5 13.2V11.5L8.2 7L10 2Z"/></svg>',
+        flares:      '<svg class="w-4 h-4 text-amber-300" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M10 2.5V6M10 14v3.5M2.5 10H6M14 10h3.5M4.7 4.7l2.5 2.5M12.8 12.8l2.5 2.5M15.3 4.7l-2.5 2.5M7.2 12.8l-2.5 2.5"/><circle cx="10" cy="10" r="2.2" fill="currentColor"/></svg>',
+        afterburner: '<svg class="w-4 h-4 text-orange-400" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.8L16.2 9H12.2L14.8 17.5L10 13.8L5.2 17.5L7.8 9H3.8L10 1.8Z"/></svg>',
+        sweep:       '<svg class="w-4 h-4 text-emerald-300" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13.5L10 5L17 13.5"/><path d="M6 16.2L10 11L14 16.2"/></svg>',
+        hull:        '<svg class="w-4 h-4 text-emerald-300" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M10 2.2L16.5 4.8V9.8C16.5 13.8 13.7 16.7 10 18C6.3 16.7 3.5 13.8 3.5 9.8V4.8L10 2.2Z" fill="currentColor" fill-opacity="0.18"/><path d="M10 6.5V13.5M6.8 10H13.2" stroke-linecap="round"/></svg>',
+        scanner:     '<svg class="w-4 h-4 text-purple-300" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7.2"/><circle cx="10" cy="10" r="3.8" stroke-dasharray="2.5 2"/><path d="M10 10L15 5" stroke-linecap="round"/><circle cx="10" cy="10" r="1.4" fill="currentColor"/></svg>',
+        credits:     '<svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6" fill="currentColor" fill-opacity="0.18"/><path d="M8 4.4l1.1 2.2 2.4.35-1.75 1.7.42 2.4L8 9.9 5.83 11.05l.42-2.4L4.5 6.95l2.4-.35L8 4.4z" fill="currentColor" stroke="none"/></svg>',
+        intel:       '<svg class="w-3.5 h-3.5 text-sky-300" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3h3l1.3 1.5h4.7A1.5 1.5 0 0 1 14 6v6a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12V4.5z" fill="currentColor" fill-opacity="0.18"/><path d="M5 8.5h6M5 10.8h4" stroke-linecap="round"/></svg>',
+        parts:       '<svg class="w-3.5 h-3.5 text-purple-300" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.8 2.2a3.5 3.5 0 0 0-4.4 4.4L2.5 10.5a1.5 1.5 0 0 0 2.1 2.1l3.9-3.9a3.5 3.5 0 0 0 4.4-4.4l-2 2-1.8-1.8 1.7-2.3z"/></svg>',
+        audioOn:     '<svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h3l3.5 3V3L5.5 6h-3z" fill="currentColor" fill-opacity="0.2"/><path d="M11.5 5.2a3.8 3.8 0 0 1 0 5.6M13.5 3.4a6.4 6.4 0 0 1 0 9.2"/></svg>',
+        audioOff:    '<svg class="w-3.5 h-3.5 text-rose-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6v4h3l3.5 3V3L5.5 6h-3z" fill="currentColor" fill-opacity="0.18"/><path d="M11.2 5.8l3.6 4.4M14.8 5.8l-3.6 4.4"/></svg>',
+        anchor:      '<svg class="w-3 h-3 text-emerald-300" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="3.5" r="1.5"/><path d="M8 5v8.5M5 7h6M3.2 10.2A4.8 4.8 0 0 0 8 13.5a4.8 4.8 0 0 0 4.8-3.3"/></svg>',
+        burnerSm:    '<svg class="w-2.5 h-2.5 text-amber-300" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L13.5 7.5H10L12.5 14.5L8 11.2L3.5 14.5L6 7.5H2.5L8 1Z"/></svg>'
+      };
+      function getUiIcon(key) { return UI_ICONS[key] || UI_ICONS.vulcan; }
+      function setMuteIcon(muted) {
+        if (muteIcon) muteIcon.innerHTML = muted ? UI_ICONS.audioOff : UI_ICONS.audioOn;
+      }
+
       const HANGAR_UPGRADES = [
-        { id: 'engines', name: 'F110-GE-400 Engines', icon: '🔥', maxLvl: 5, crCost: 90, partCost: 1, desc: '+10% Airspeed & +15% faster Super State charge per rank.' },
-        { id: 'vulcanCore', name: 'M61A1 Overclock', icon: '🔫', maxLvl: 5, crCost: 100, partCost: 1, desc: '+18% base Vulcan & weapon damage on every sortie.' },
-        { id: 'titanium', name: 'Grumman Titanium Hull', icon: '🛡️', maxLvl: 5, crCost: 85, partCost: 1, desc: '+20 permanent starting Max Hull on every launch.' },
-        { id: 'startSidewinder', name: 'Pre-Arm AIM-9L Rack', icon: '🚀', maxLvl: 2, crCost: 150, partCost: 2, desc: 'Launch off Catapult 1 already armed with AIM-9L Sidewinders!' },
-        { id: 'startFlares', name: 'Pre-Arm Goose Flares', icon: '💥', maxLvl: 2, crCost: 140, partCost: 2, desc: 'Launch already equipped with automatic Chaff & Flare bursts!' },
-        { id: 'salvageRig', name: 'Pacific Salvage Scanner', icon: '🧲', maxLvl: 4, crCost: 95, partCost: 1, desc: '+25% Loot/EGO magnet pull & higher Salvage drop rates!' }
+        { id: 'engines', name: 'F110-GE-400 Engines', icon: 'afterburner', maxLvl: 5, crCost: 90, partCost: 1, desc: '+10% Airspeed & +15% faster Super State charge per rank.' },
+        { id: 'vulcanCore', name: 'M61A1 Overclock', icon: 'vulcan', maxLvl: 5, crCost: 100, partCost: 1, desc: '+18% base Vulcan & weapon damage on every sortie.' },
+        { id: 'titanium', name: 'Grumman Titanium Hull', icon: 'hull', maxLvl: 5, crCost: 85, partCost: 1, desc: '+20 permanent starting Max Hull on every launch.' },
+        { id: 'startSidewinder', name: 'Pre-Arm AIM-9L Rack', icon: 'sidewinder', maxLvl: 2, crCost: 150, partCost: 2, desc: 'Launch off Catapult 1 already armed with AIM-9L Sidewinders!' },
+        { id: 'startFlares', name: 'Pre-Arm Goose Flares', icon: 'flares', maxLvl: 2, crCost: 140, partCost: 2, desc: 'Launch already equipped with automatic Chaff & Flare bursts!' },
+        { id: 'salvageRig', name: 'Pacific Salvage Scanner', icon: 'scanner', maxLvl: 4, crCost: 95, partCost: 1, desc: '+25% Loot/EGO magnet pull & higher Salvage drop rates!' }
       ];
 
       const SPECIALTIES = {
@@ -1382,7 +1683,13 @@
           airDmgMult: 1.24, groundDmgMult: 0.92, speedMult: 1.08, turnMult: 1.0,
           hullBonus: 0, fuelMax: 100, abMult: 1.85, abFuelMult: 1.0,
           exhausts: [-6.5, 6.5], exhaustY: 22,
-          desc: '+24% Air-to-Air Dmg • Fastest top speed • 68° swing-wings on Afterburner.'
+          desc: '+24% Air-to-Air Dmg • Fastest top speed • 68° swing-wings on Afterburner.',
+          arsenal: {
+            vulcan:     { name: 'M61A1 Vulcan 20mm',   icon: 'vulcan', desc: (l) => `Close-In Guns Ring: ${l === 1 ? 'Adds extra 20mm rotary cannon streams & faster fire rate.' : `Lvl ${l+1}: +1 close-range stream & +16% cyclic rate.`}` },
+            sidewinder: { name: 'AIM-9L Sidewinders',  icon: 'sidewinder', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} heat-seekers locking targets outside the Guns Ring.` },
+            sparrow:    { name: 'AIM-7M Sparrow Radar',icon: 'sparrow', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} cross-plane radar missiles hitting the OTHER altitude.` },
+            phoenix:    { name: 'AIM-54C Phoenix BVR', icon: 'phoenix', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} long-range multi-target Phoenix splash salvos.` }
+          }
         },
         {
           id: 'f18', short: 'F/A-18C', name: 'F/A-18C HORNET', role: 'HYBRID',
@@ -1394,7 +1701,13 @@
           airDmgMult: 1.12, groundDmgMult: 1.12, speedMult: 1.02, turnMult: 1.28,
           hullBonus: 15, fuelMax: 108, abMult: 1.78, abFuelMult: 0.85,
           exhausts: [-4.5, 4.5], exhaustY: 24,
-          desc: '+12% Air & Ground Dmg • Razor-sharp agility • 15% better fuel economy.'
+          desc: '+12% Air & Ground Dmg • Razor-sharp agility • 15% better fuel economy.',
+          arsenal: {
+            vulcan:     { name: 'M61A2 High-ROF Gun',  icon: 'vulcan', desc: (l) => `Close-In Guns Ring: Lvl ${l+1} rapid twin-burst nose cannon effective vs Air & Ground.` },
+            sidewinder: { name: 'AIM-9X High-G Fox 2', icon: 'sidewinder', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} ultra-agile off-boresight missiles outside the Guns Ring.` },
+            sparrow:    { name: 'AIM-120 AMRAAM',      icon: 'sparrow', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} active-radar cross-plane missiles locking either altitude.` },
+            phoenix:    { name: 'AGM-88 HARM / Slam',  icon: 'phoenix', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} heavy multi-role stand-off splash salvos.` }
+          }
         },
         {
           id: 'a6', short: 'A-6E', name: 'A-6E INTRUDER', role: 'AIR-TO-GROUND',
@@ -1406,7 +1719,13 @@
           airDmgMult: 0.86, groundDmgMult: 1.38, speedMult: 0.92, turnMult: 0.92,
           hullBonus: 45, fuelMax: 130, abMult: 1.52, abFuelMult: 0.72,
           exhausts: [-9.5, 9.5], exhaustY: 12,
-          desc: '+38% Ground/Naval Dmg + HE Splash • +45 Hull • 130% Fuel • Mil-Power Overdrive.'
+          desc: '+38% Ground/Naval Dmg + HE Splash • +45 Hull • 130% Fuel • Mil-Power Overdrive.',
+          arsenal: {
+            vulcan:     { name: 'Mk-4 20mm Gun Pods',  icon: 'vulcan', desc: (l) => `Close-In Guns Ring: Lvl ${l+1} twin underwing explosive HE cannon pods with ground splash.` },
+            sidewinder: { name: 'Zuni 5" Rocket Pods', icon: 'sidewinder', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} high-explosive stand-off rocket salvos outside Guns Ring.` },
+            sparrow:    { name: 'AGM-65 Maverick',     icon: 'sparrow', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} precision cross-plane armor & ship killer missiles.` },
+            phoenix:    { name: 'AGM-84 Harpoon',      icon: 'phoenix', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} massive anti-ship & bunker-buster splash missiles.` }
+          }
         }
       ];
 
@@ -1495,8 +1814,11 @@
       let profile = profileStore.profiles[profileStore.selectedPilot] || defaultPilotRecord();
       profileStore.profiles[profileStore.selectedPilot] = profile;
 
+      let selectedPilotCfgCache = null;
+
       function switchActivePilot(pilotId) {
         profileStore.selectedPilot = pilotId;
+        selectedPilotCfgCache = null;
         if (!profileStore.profiles[pilotId]) profileStore.profiles[pilotId] = defaultPilotRecord();
         profile = profileStore.profiles[pilotId];
         selectedMapIdx = Math.max(0, Math.min(MAPS.length - 1, profile.currentCampaignIdx || 0));
@@ -1516,7 +1838,11 @@
       selectedMapIdx = Math.max(0, Math.min(MAPS.length - 1, profile.currentCampaignIdx || 0));
 
       function getSelectedPilotCfg() {
-        return getAllPilots().find(pl => pl.id === profileStore.selectedPilot) || BUILTIN_PILOTS[0];
+        if (selectedPilotCfgCache && selectedPilotCfgCache.id === profileStore.selectedPilot) {
+          return selectedPilotCfgCache;
+        }
+        selectedPilotCfgCache = getAllPilots().find(pl => pl.id === profileStore.selectedPilot) || BUILTIN_PILOTS[0];
+        return selectedPilotCfgCache;
       }
       function getSelectedPilotData() {
         return profile;
@@ -1524,7 +1850,8 @@
       function addCareerXP(amount) {
         const pd = getSelectedPilotData();
         const pc = getSelectedPilotCfg();
-        pd.xp += Math.round(amount * (pc.lootMult || 1));
+        const _synLoot = getPilotAircraftSynergy();
+        pd.xp += Math.round(amount * (pc.lootMult || 1) * (_synLoot ? _synLoot.loot : 1));
         let leveled = false;
         while (pd.xp >= pd.xpNext) {
           pd.xp -= pd.xpNext;
@@ -1550,15 +1877,15 @@
       ];
 
       const UPGRADE_POOL = [
-        { id: 'vulcan', name: 'M61A1 Vulcan 20mm', tag: 'NOSE GUN', icon: '🔫', maxLvl: 6, desc: (lvl) => lvl === 1 ? 'Adds extra nose-cannon streams & higher cyclic rate on your active plane.' : `Lvl ${lvl + 1}: +1 tracer stream & +16% fire rate.` },
-        { id: 'sidewinder', name: 'AIM-9L Sidewinders', tag: 'FOX TWO', icon: '🚀', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Wing-pylon heat-seekers locking onto MiG-28s on your plane.' : `Lvl ${lvl + 1}: +1 Sidewinder per Fox Two salvo.` },
-        { id: 'sparrow', name: 'AIM-7M Sparrow Radar', tag: 'CROSS-PLANE', icon: '📡', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'RIO radar missiles that climb/dive to splash MiGs on the OTHER plane!' : `Lvl ${lvl + 1}: +1 cross-plane Sparrow & heavier warhead.` },
-        { id: 'phoenix', name: 'AIM-54C Phoenix', tag: 'F-14 ICON', icon: '☄️', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Tomcat’s signature long-range missile—locks targets across BOTH planes!' : `Lvl ${lvl + 1}: +1 multi-target Phoenix & bigger splash.` },
-        { id: 'wingman', name: 'VF-1 Tomcat Wingman', tag: 'ICEMAN', icon: '✈️', maxLvl: 4, desc: (lvl) => lvl === 0 ? 'Calls in an F-14 wingman flying formation on your plane.' : `Lvl ${lvl + 1}: +1 F-14 escort (up to 4).` },
-        { id: 'flares', name: 'Goose Chaff & Flares', tag: 'DEFENSE', icon: '💥', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Periodic IR flare ring that clears enemy fire & scorches close MiGs.' : `Lvl ${lvl + 1}: Wider flare burst & faster cycle.` },
-        { id: 'afterburner', name: 'F110 Afterburner Core', tag: 'SUPER STATE', icon: '🔥', maxLvl: 4, desc: (lvl) => `Lvl ${lvl + 1}: +30% faster Afterburner charge & +2.2s longer ★ Inverted Mode.` },
-        { id: 'sweep', name: 'Variable-Sweep Wings', tag: 'AGILITY', icon: '⚡', maxLvl: 4, desc: (lvl) => `Lvl ${lvl + 1}: +14% airspeed, longer Barrel-Roll i-frames & wider magnet.` },
-        { id: 'hull', name: 'Grumman Airframe', tag: 'REPAIR', icon: '🛡️', maxLvl: 99, desc: () => 'Repairs +35 F-14 Hull immediately and boosts Max Hull by +20.' }
+        { id: 'vulcan', name: 'M61A1 Vulcan 20mm', tag: 'NOSE GUN', icon: 'vulcan', maxLvl: 6, desc: (lvl) => lvl === 1 ? 'Adds extra nose-cannon streams & higher cyclic rate on your active plane.' : `Lvl ${lvl + 1}: +1 tracer stream & +16% fire rate.` },
+        { id: 'sidewinder', name: 'AIM-9L Sidewinders', tag: 'FOX TWO', icon: 'sidewinder', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Wing-pylon heat-seekers locking onto MiG-28s on your plane.' : `Lvl ${lvl + 1}: +1 Sidewinder per Fox Two salvo.` },
+        { id: 'sparrow', name: 'AIM-7M Sparrow Radar', tag: 'CROSS-PLANE', icon: 'sparrow', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'RIO radar missiles that climb/dive to splash MiGs on the OTHER plane!' : `Lvl ${lvl + 1}: +1 cross-plane Sparrow & heavier warhead.` },
+        { id: 'phoenix', name: 'AIM-54C Phoenix', tag: 'F-14 ICON', icon: 'phoenix', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Tomcat’s signature long-range missile—locks targets across BOTH planes!' : `Lvl ${lvl + 1}: +1 multi-target Phoenix & bigger splash.` },
+        { id: 'wingman', name: 'VF-1 Tomcat Wingman', tag: 'ICEMAN', icon: 'wingman', maxLvl: 4, desc: (lvl) => lvl === 0 ? 'Calls in an F-14 wingman flying formation on your plane.' : `Lvl ${lvl + 1}: +1 F-14 escort (up to 4).` },
+        { id: 'flares', name: 'Goose Chaff & Flares', tag: 'DEFENSE', icon: 'flares', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Periodic IR flare ring that clears enemy fire & scorches close MiGs.' : `Lvl ${lvl + 1}: Wider flare burst & faster cycle.` },
+        { id: 'afterburner', name: 'F110 Afterburner Core', tag: 'SUPER STATE', icon: 'afterburner', maxLvl: 4, desc: (lvl) => `Lvl ${lvl + 1}: +30% faster Afterburner charge & +2.2s longer ★ Inverted Mode.` },
+        { id: 'sweep', name: 'Variable-Sweep Wings', tag: 'AGILITY', icon: 'sweep', maxLvl: 4, desc: (lvl) => `Lvl ${lvl + 1}: +14% airspeed, longer Barrel-Roll i-frames & wider magnet.` },
+        { id: 'hull', name: 'Grumman Airframe', tag: 'REPAIR', icon: 'hull', maxLvl: 99, desc: () => 'Repairs +35 F-14 Hull immediately and boosts Max Hull by +20.' }
       ];
 
       // ============================================================
@@ -1567,8 +1894,14 @@
       let state = null;
       let animFrameId = null;
       let lastTime = 0;
+      const SIM_HZ = 60;
+      const SIM_DT = 1 / SIM_HZ;
+      const MAX_FRAME_DT = 0.25;
+      const MAX_SIM_STEPS = 15;
+      let simAccum = 0;
       const keys = {};
-      const pointer = { active: false, startX: 0, startY: 0, x: 0, y: 0 };
+      const pointer = { active: false, id: null, startX: 0, startY: 0, x: 0, y: 0 };
+      const homeBeaconPos = { active: false, x: 0, y: 0 };
       let holdAfterburnerBtn = false;
 
       // Escort fleet anchored around USS Enterprise (0,0)
@@ -1640,7 +1973,7 @@
             superTimer: 0, superMaxDuration: 9.5,
 
             weapons: {
-              vulcan: 1, sidewinder: up.startSidewinder || 0, sparrow: 0,
+              vulcan: 1, sidewinder: 1 + (up.startSidewinder || 0), sparrow: 0,
               phoenix: 0, wingman: 0, flares: up.startFlares || 0,
               afterburner: 0, sweep: 0
             },
@@ -1770,7 +2103,8 @@
       function completeExtraction() {
         const c = state.cargo;
         const rangeBonus = Math.round(state.maxDistNM * 2.5);
-        const totalCr = Math.round((c.credits + rangeBonus) * (getSelectedPilotCfg().lootMult || 1));
+        const _extSyn = getPilotAircraftSynergy();
+        const totalCr = Math.round((c.credits + rangeBonus) * (getSelectedPilotCfg().lootMult || 1) * (_extSyn ? _extSyn.loot : 1));
 
         profile.credits += totalCr;
         profile.intel += c.intel;
@@ -1782,6 +2116,13 @@
         refreshRecordLine();
         renderPilotSelector();
 
+        if (state.allBossesCleared) {
+          profile.clearedMaps[getCurrentMap().id] = true;
+          selectedMapIdx = (selectedMapIdx + 1) % MAPS.length;
+          profile.currentCampaignIdx = selectedMapIdx;
+          saveProfile();
+          renderMapSelector();
+        }
         AudioFX.carrierTrap();
         AudioFX.playTrack('menu', false);
         openHangar({ credits: totalCr, intel: c.intel, parts: c.parts, maxNM: state.maxDistNM });
@@ -1807,9 +2148,9 @@
       }
 
       function renderHangarUI() {
-        document.getElementById('vaultCredits').textContent = `🪙 ${profile.credits} CR`;
-        document.getElementById('vaultIntel').textContent = `📦 ${profile.intel} INTEL`;
-        document.getElementById('vaultParts').textContent = `⚙️ ${profile.parts} PARTS`;
+        document.getElementById('vaultCredits').innerHTML = `<span class="inline-flex items-center gap-1">${UI_ICONS.credits}<span>${profile.credits} CR</span></span>`;
+        document.getElementById('vaultIntel').innerHTML = `<span class="inline-flex items-center gap-1">${UI_ICONS.intel}<span>${profile.intel} INTEL</span></span>`;
+        document.getElementById('vaultParts').innerHTML = `<span class="inline-flex items-center gap-1">${UI_ICONS.parts}<span>${profile.parts} PARTS</span></span>`;
 
         const sellBtn = document.getElementById('sellIntelBtn');
         sellBtn.disabled = profile.intel <= 0;
@@ -1826,21 +2167,21 @@
           const canAfford = !maxed && profile.credits >= crNeed && profile.parts >= partNeed;
 
           const card = document.createElement('div');
-          card.className = 'rounded-xl p-3 bg-slate-950/90 border border-slate-700/80 flex flex-col justify-between gap-2';
+          card.className = 'mfd-card rounded-xl p-3 flex flex-col justify-between gap-2 transition';
           card.innerHTML = `
             <div>
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xl">${u.icon}</span>
-                <span class="font-arcade text-[10px] font-bold text-sky-300">LVL ${lvl}/${u.maxLvl}</span>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="mfd-icon-badge">${getUiIcon(u.icon)}</span>
+                <span class="font-arcade text-[10px] font-bold px-2 py-0.5 rounded bg-sky-950/80 border border-sky-400/35 text-sky-300">LVL ${lvl}/${u.maxLvl}</span>
               </div>
-              <div class="font-arcade text-xs font-black text-white">${u.name}</div>
+              <div class="font-arcade text-xs font-black text-white tracking-wide">${u.name}</div>
               <p class="text-[11px] text-slate-300 mt-1 leading-snug">${u.desc}</p>
             </div>
             <button class="w-full py-1.5 rounded-lg font-arcade text-[10px] font-black transition cursor-pointer ${
               maxed ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-500/40 cursor-default'
-                    : (canAfford ? 'bg-amber-400 hover:bg-amber-300 text-slate-950' : 'bg-slate-800 text-slate-400 border border-slate-700 cursor-not-allowed')
+                    : (canAfford ? 'btn-catapult' : 'bg-slate-900/90 text-slate-400 border border-slate-700 cursor-not-allowed')
             }">
-              ${maxed ? 'MAXED OUT ✓' : `INSTALL (🪙${crNeed} + ⚙️${partNeed})`}
+              ${maxed ? 'MAXED OUT ✓' : `INSTALL (${crNeed} CR + ${partNeed} PRT)`}
             </button>
           `;
           const btn = card.querySelector('button');
@@ -1864,28 +2205,35 @@
         if (p.burnCharge >= 100 && p.aceStreak >= 10) {
           p.superArmed = true;
           AudioFX.armed();
-          showBanner('★ INVERTED MODE ARMED — PRESS SPACE TO FLIP! ★', 'border-amber-400 text-amber-300');
-          addFloatingText(p.x, p.y - 34, 'INVERTED READY!', '#fde047', 12);
+          const sName = (getSelectedAircraftCfg().superName || '★ INVERTED').replace(/^★\s*/, '');
+          showBanner(`★ ${sName} ARMED — PRESS SPACE! ★`, 'border-amber-400 text-amber-300');
+          addFloatingText(p.x, p.y - 34, `${sName} READY!`, '#fde047', 12);
         }
       }
 
-      function exitSuperState(targetPlane = null) {
+      function exitSuperState(targetPlane = null, opts = {}) {
         if (!state) return;
         const p = state.player;
         if (!p.superActive) return;
         const next = targetPlane !== null ? targetPlane : p.savedPlane;
+        const ac = getSelectedAircraftCfg();
+        const sName = (ac.superName || '★ INVERTED').replace(/^★\s*/, '');
+        const cdSec = p.superCooldownMax || 24;
         p.superActive = false;
         p.superTimer = 0;
-        p.superCooldown = p.superCooldownMax || 24;
+        p.superCooldown = cdSec;
         p.superArmed = false;
         p.burnCharge = 0;
         p.plane = next;
         p.swapCooldown = 0.32;
         p.rollTimer = 0.38;
-        p.invuln = Math.max(p.invuln, 1.35);
+        p.invuln = Math.max(p.invuln, opts.expired ? 2.0 : 1.35);
         AudioFX.planeSwap(next === 1);
         spawnRing(p.x, p.y, PLANE_CFG[next].color, 18, 64, next);
-        showBanner(`EXITED INVERTED → ${PLANE_CFG[next].name}`, 'border-sky-400 text-sky-200');
+        const bannerText = opts.expired
+          ? `DESCENDING TO ${PLANE_CFG[next].name} • ${sName} COOLDOWN ${Math.ceil(cdSec)}s`
+          : `EXITED ${sName} → ${PLANE_CFG[next].name} • COOLDOWN ${Math.ceil(cdSec)}s`;
+        showBanner(bannerText, 'border-sky-400 text-sky-200');
         addFloatingText(p.x, p.y - 32, PLANE_CFG[next].name, PLANE_CFG[next].color, 11);
       }
 
@@ -1959,7 +2307,8 @@
           return;
         }
         if (p.superCooldown > 0) {
-          addFloatingText(p.x, p.y - 34, `INVERTED COOLDOWN ${Math.ceil(p.superCooldown)}s`, '#fbbf24', 11);
+          const sName = (getSelectedAircraftCfg().superName || '★ INVERTED').replace(/^★\s*/, '');
+          addFloatingText(p.x, p.y - 34, `${sName} COOLDOWN ${Math.ceil(p.superCooldown)}s`, '#fbbf24', 11);
           return;
         }
         if (!p.superArmed) return;
@@ -1987,6 +2336,12 @@
           state.particles.shift();
         }
         state.particles.push(pt);
+      }
+      function pushTracer(tr) {
+        if (state.tracers.length >= ENGINE_CFG.maxTracers) {
+          state.tracers.shift();
+        }
+        state.tracers.push(tr);
       }
       function spawnExplosion(x, y, plane, color, count = 16, big = false) {
         // Dynamically scale burst density when many particles are already active (keeps Going Ballistic locked at 60fps!)
@@ -2151,12 +2506,21 @@
       // ============================================================
       // 360° F-14 TOMCAT AUTO-FIRE ARSENAL
       // ============================================================
-      function findTarget(x, y, plane, mode = 'same') {
+      function getCombatRadii() {
+        // Inner circle = 1/3 of screen combat area (r = R * sqrt(1/3) ≈ 0.5774 * R); Outer ring = 2/3 area (MISSILES)
+        const outerR = Math.max(240, Math.min(W, H) * 0.46);
+        const gunR = outerR * 0.5774;
+        return { gunR, outerR };
+      }
+
+      function findTarget(x, y, plane, mode = 'same', minDist = 0, maxDist = Infinity) {
         let best = null, bestDist = Infinity;
         for (const e of state.enemies) {
+          if (e.hp <= 0) continue;
           if (mode === 'same' && e.plane !== plane) continue;
           if (mode === 'other' && e.plane === plane) continue;
           const d = Math.hypot(e.x - x, e.y - y);
+          if (d < minDist || d > maxDist) continue;
           if (d < bestDist) { bestDist = d; best = e; }
         }
         return best;
@@ -2172,7 +2536,7 @@
 
         if (abFill && abPct) {
           abFill.style.width = p.abFuel.toFixed(1) + '%';
-          abPct.textContent = p.abActive ? '🔥 BURNING!' : (p.abFuel >= 99 ? '100% READY' : `${Math.floor(p.abFuel)}% RECHARGE`);
+          abPct.textContent = p.abActive ? 'ENGAGED!' : (p.abFuel >= 99 ? '100% READY' : `${Math.floor(p.abFuel)}% RECHARGE`);
           if (afterburnerBtn) {
             afterburnerBtn.style.boxShadow = p.abActive ? '0 0 18px rgba(56,189,248,0.9)' : 'none';
           }
@@ -2296,17 +2660,20 @@
           return;
         }
 
-        // 1. M61A1 VULCAN 20mm — SURVIVOR AUTO-AIM HITSCAN TRACERS!
+        const { gunR, outerR } = getCombatRadii();
+        const missileMaxR = Math.max(outerR * 1.45, 560);
+
+        // 1. CLOSE-IN GUNS ZONE (Inner 1/3 Screen Area: dist <= gunR)
         t.vulcan -= dt;
         if (t.vulcan <= 0) {
           const samePlane = state.enemies
-            .filter(e => e.plane === p.plane && Math.hypot(e.x - p.x, e.y - p.y) < 560)
+            .filter(e => e.hp > 0 && e.plane === p.plane && Math.hypot(e.x - p.x, e.y - p.y) <= gunR + e.r)
             .sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y));
 
           if (samePlane.length > 0) {
-            t.vulcan = Math.max(0.11, 0.31 * Math.pow(0.87, w.vulcan - 1));
+            t.vulcan = Math.max(0.10, 0.29 * Math.pow(0.87, w.vulcan - 1));
             const shots = Math.min(4, 1 + Math.floor((w.vulcan - 1) / 2));
-            const dmg = (8.5 + w.vulcan * 2.8) * dmgMult;
+            const dmg = (10.0 + w.vulcan * 3.1) * dmgMult; // Rewards aggressive close-in gun passes!
             const col = p.plane === 0 ? '#fde047' : '#7dd3fc';
 
             for (let i = 0; i < shots; i++) {
@@ -2321,14 +2688,14 @@
 
               // Instant hitscan damage + crisp glowing 20mm tracer streak & impact sparks!
               damageEnemy(tgt, dmg);
-              state.tracers.push({
+              pushTracer({
                 x1: startX, y1: startY, x2: endX, y2: endY,
                 plane: p.plane, color: col, width: 2.2 + (w.vulcan >= 4 ? 0.8 : 0),
                 life: 0.085, maxLife: 0.085
               });
               for (let sp = 0; sp < 3; sp++) {
                 const sa = Math.random() * Math.PI * 2;
-                state.particles.push({
+                pushParticle({
                   x: endX, y: endY, plane: p.plane,
                   vx: Math.cos(sa) * (70 + Math.random() * 90),
                   vy: Math.sin(sa) * (70 + Math.random() * 90),
@@ -2340,66 +2707,77 @@
           }
         }
 
-        // 2. AIM-9L SIDEWINDERS (360° homing on same plane)
+        // 2. STAND-OFF MISSILES ZONE — PRIMARY HEAT-SEEKERS / ROCKETS (Outer 2/3 Area: dist > gunR)
         if (w.sidewinder > 0) {
           t.sidewinder -= dt;
           if (t.sidewinder <= 0) {
-            t.sidewinder = Math.max(0.62, 1.65 - w.sidewinder * 0.16);
-            const count = 1 + Math.floor(w.sidewinder / 2) + (w.sidewinder >= 5 ? 1 : 0);
-            for (let i = 0; i < count; i++) {
-              const target = findTarget(p.x, p.y, p.plane, 'same');
-              if (!target) break;
-              const side = i % 2 === 0 ? -1 : 1;
-              const perp = p.heading + (Math.PI / 2) * side;
-              state.bullets.push({
-                kind: 'sidewinder',
-                x: p.x + Math.cos(perp) * 16, y: p.y + Math.sin(perp) * 16,
-                vx: Math.cos(p.heading) * 240 + Math.cos(perp) * 110,
-                vy: Math.sin(p.heading) * 240 + Math.sin(perp) * 110,
-                plane: p.plane, target, dmg: (20 + w.sidewinder * 6.5) * dmgMult, r: 5.5, color: '#fb923c', life: 2.5
-              });
+            const firstTgt = findTarget(p.x, p.y, p.plane, 'same', gunR, missileMaxR);
+            if (firstTgt) {
+              t.sidewinder = Math.max(0.62, 1.65 - w.sidewinder * 0.16);
+              const count = 1 + Math.floor(w.sidewinder / 2) + (w.sidewinder >= 5 ? 1 : 0);
+              for (let i = 0; i < count; i++) {
+                const target = i === 0 ? firstTgt : findTarget(p.x, p.y, p.plane, 'same', gunR, missileMaxR);
+                if (!target) break;
+                const side = i % 2 === 0 ? -1 : 1;
+                const perp = p.heading + (Math.PI / 2) * side;
+                state.bullets.push({
+                  kind: 'sidewinder',
+                  x: p.x + Math.cos(perp) * 16, y: p.y + Math.sin(perp) * 16,
+                  vx: Math.cos(p.heading) * 240 + Math.cos(perp) * 110,
+                  vy: Math.sin(p.heading) * 240 + Math.sin(perp) * 110,
+                  plane: p.plane, target, dmg: (20 + w.sidewinder * 6.5) * dmgMult, r: 5.5, color: '#fb923c', life: 2.6
+                });
+              }
+              AudioFX.foxTwo();
             }
-            if (state.enemies.some(e => e.plane === p.plane)) AudioFX.foxTwo();
           }
         }
 
-        // 3. AIM-7M SPARROW RADAR (Cross-plane!)
+        // 3. STAND-OFF MISSILES ZONE — CROSS-PLANE RADAR / MAVERICK (Outer 2/3 Area: dist > gunR)
         if (w.sparrow > 0) {
           t.sparrow -= dt;
           if (t.sparrow <= 0) {
-            t.sparrow = Math.max(0.75, 1.85 - w.sparrow * 0.2);
-            const count = 1 + Math.floor(w.sparrow / 2);
-            const otherPlane = p.plane === 0 ? 1 : 0;
-            for (let i = 0; i < count; i++) {
-              const target = findTarget(p.x, p.y, p.plane, 'other') || findTarget(p.x, p.y, p.plane, 'same');
-              if (!target) break;
-              state.bullets.push({
-                kind: 'sparrow', x: p.x, y: p.y,
-                vx: Math.cos(p.heading) * 280, vy: Math.sin(p.heading) * 280,
-                plane: target.plane, target, dmg: (32 + w.sparrow * 10) * dmgMult, r: 6,
-                color: otherPlane === 1 ? '#38bdf8' : '#f59e0b', life: 2.7
-              });
+            const firstTgt = findTarget(p.x, p.y, p.plane, 'other', gunR, missileMaxR) || findTarget(p.x, p.y, p.plane, 'same', gunR, missileMaxR);
+            if (firstTgt) {
+              t.sparrow = Math.max(0.75, 1.85 - w.sparrow * 0.2);
+              const count = 1 + Math.floor(w.sparrow / 2);
+              const otherPlane = p.plane === 0 ? 1 : 0;
+              for (let i = 0; i < count; i++) {
+                const target = i === 0 ? firstTgt : (findTarget(p.x, p.y, p.plane, 'other', gunR, missileMaxR) || findTarget(p.x, p.y, p.plane, 'same', gunR, missileMaxR));
+                if (!target) break;
+                state.bullets.push({
+                  kind: 'sparrow', x: p.x, y: p.y,
+                  vx: Math.cos(p.heading) * 280, vy: Math.sin(p.heading) * 280,
+                  plane: target.plane, target, dmg: (32 + w.sparrow * 10) * dmgMult, r: 6,
+                  color: otherPlane === 1 ? '#38bdf8' : '#f59e0b', life: 2.8
+                });
+              }
+              AudioFX.foxTwo();
             }
-            if (state.enemies.length > 0) AudioFX.foxTwo();
           }
         }
 
-        // 4. AIM-54C PHOENIX SALVO
+        // 4. STAND-OFF MISSILES ZONE — HEAVY BVR / HARM / HARPOON SALVO (Outer 2/3 Area: dist > gunR)
         if (w.phoenix > 0) {
           t.phoenix -= dt;
           if (t.phoenix <= 0) {
-            t.phoenix = Math.max(1.4, 3.2 - w.phoenix * 0.34);
             const count = 1 + w.phoenix;
-            const targets = [...state.enemies].sort(() => Math.random() - 0.5).slice(0, count);
-            targets.forEach((target) => {
-              state.bullets.push({
-                kind: 'phoenix', x: p.x, y: p.y,
-                vx: Math.cos(p.heading) * 220, vy: Math.sin(p.heading) * 220,
-                plane: target.plane, target, dmg: (44 + w.phoenix * 12) * dmgMult,
-                blastR: 64 + w.phoenix * 10, r: 7.5, color: '#facc15', life: 2.9
+            const targets = state.enemies
+              .filter(e => e.hp > 0 && Math.hypot(e.x - p.x, e.y - p.y) > gunR && Math.hypot(e.x - p.x, e.y - p.y) <= missileMaxR * 1.15)
+              .sort(() => Math.random() - 0.5)
+              .slice(0, count);
+            if (targets.length > 0) {
+              t.phoenix = Math.max(1.4, 3.2 - w.phoenix * 0.34);
+              targets.forEach((target) => {
+                state.bullets.push({
+                  kind: 'phoenix', x: p.x, y: p.y,
+                  vx: Math.cos(p.heading) * 220, vy: Math.sin(p.heading) * 220,
+                  plane: target.plane, target, dmg: (44 + w.phoenix * 12) * dmgMult,
+                  blastR: 64 + w.phoenix * 10, r: 7.5, color: '#facc15', life: 2.9
+                });
               });
-            });
-            if (targets.length > 0) AudioFX.phoenix();
+              AudioFX.phoenix();
+            }
           }
         }
 
@@ -2418,7 +2796,7 @@
               const wTgt = findTarget(wx, wy, p.plane, 'same');
               if (wTgt && Math.hypot(wTgt.x - wx, wTgt.y - wy) < 480) {
                 damageEnemy(wTgt, (11 + w.wingman * 3) * dmgMult);
-                state.tracers.push({ x1: wx, y1: wy, x2: wTgt.x, y2: wTgt.y, plane: p.plane, color: '#7dd3fc', width: 1.8, life: 0.08, maxLife: 0.08 });
+                pushTracer({ x1: wx, y1: wy, x2: wTgt.x, y2: wTgt.y, plane: p.plane, color: '#7dd3fc', width: 1.8, life: 0.08, maxLife: 0.08 });
               }
             }
           }
@@ -2434,7 +2812,7 @@
             AudioFX.chaff();
             for (let k = 0; k < 10; k++) {
               const a = (k / 10) * Math.PI * 2;
-              state.particles.push({ x: p.x, y: p.y, plane: p.plane, vx: Math.cos(a) * 180, vy: Math.sin(a) * 180, life: 0.45, maxLife: 0.45, size: 4, color: '#fef08a' });
+              pushParticle({ x: p.x, y: p.y, plane: p.plane, vx: Math.cos(a) * 180, vy: Math.sin(a) * 180, life: 0.45, maxLife: 0.45, size: 4, color: '#fef08a' });
             }
             for (const e of state.enemies) {
               if (e.plane === p.plane && Math.hypot(e.x - p.x, e.y - p.y) <= radius) damageEnemy(e, (26 + w.flares * 10) * dmgMult);
@@ -2590,24 +2968,45 @@
       function openUpgradeModal() {
         state.mode = 'upgrade'; AudioFX.levelUp();
         const p = state.player;
-        const available = UPGRADE_POOL.filter(u => u.id === 'hull' || (p.weapons[u.id] || 0) < u.maxLvl);
+        const ac = getSelectedAircraftCfg();
+        const upTitle = document.getElementById('upgradeModalTitle');
+        if (upTitle) upTitle.textContent = `ARM ${ac.name} LOADOUT`;
+        const ars = ac.arsenal || {};
+        const mappedPool = UPGRADE_POOL.map(u => {
+          const custom = ars[u.id];
+          if (u.id === 'vulcan' && custom) {
+            return { ...u, name: custom.name, icon: custom.icon, tag: 'GUNS ZONE', tagClass: 'bg-amber-500/25 text-amber-300 border-amber-400/50', desc: custom.desc };
+          }
+          if ((u.id === 'sidewinder' || u.id === 'sparrow' || u.id === 'phoenix') && custom) {
+            return { ...u, name: custom.name, icon: custom.icon, tag: 'MISSILES ZONE', tagClass: 'bg-sky-500/25 text-sky-300 border-sky-400/50', desc: custom.desc };
+          }
+          if (u.id === 'afterburner') {
+            return { ...u, name: `${ac.short} ${ac.superName.replace('★ ', '')} Core`, desc: (lvl) => `Lvl ${lvl+1}: +30% faster charge & +2.2s longer ${ac.superName}.` };
+          }
+          if (u.id === 'hull') {
+            return { ...u, name: `${ac.short} Airframe`, desc: () => `Repairs +35 ${ac.short} Hull immediately and boosts Max Hull by +20.` };
+          }
+          return u;
+        });
+        const available = mappedPool.filter(u => u.id === 'hull' || (p.weapons[u.id] || 0) < u.maxLvl);
         const picks = [...available].sort(() => Math.random() - 0.5).slice(0, 3);
         upgradeCards.innerHTML = '';
         picks.forEach(u => {
           const curLvl = u.id === 'hull' ? 0 : (p.weapons[u.id] || 0);
+          const tagCls = u.tagClass || 'bg-amber-500/20 text-amber-300 border-amber-400/30';
           const card = document.createElement('button');
-          card.className = 'text-left rounded-xl p-4 bg-slate-950/90 hover:bg-amber-950/60 border border-amber-500/35 hover:border-amber-300 transition flex flex-col justify-between gap-3 cursor-pointer active:scale-[0.98]';
+          card.className = 'mfd-card text-left rounded-xl p-4 transition flex flex-col justify-between gap-3 cursor-pointer active:scale-[0.98]';
           card.innerHTML = `
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="text-2xl">${u.icon}</span>
-                <span class="font-arcade text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">${u.tag}</span>
+                <span class="mfd-icon-badge">${getUiIcon(u.icon)}</span>
+                <span class="font-arcade text-[9px] font-bold px-2 py-0.5 rounded border ${tagCls} tracking-wider">${u.tag}</span>
               </div>
-              <div class="font-arcade text-sm font-black text-white mb-1">${u.name}</div>
+              <div class="font-arcade text-sm font-black text-white tracking-wide mb-1">${u.name}</div>
               <p class="text-xs text-slate-300 leading-relaxed">${u.desc(curLvl)}</p>
             </div>
-            <div class="font-arcade text-[11px] font-bold text-amber-300 pt-2 border-t border-slate-800">
-              ${u.id === 'hull' ? 'REPAIR & FORTIFY' : (curLvl === 0 ? 'EQUIP ORDNANCE' : `UPGRADE → LVL ${curLvl + 1}`)}
+            <div class="font-arcade text-[10px] font-bold text-amber-300 pt-2 border-t border-slate-700/70 tracking-wider">
+              ${u.id === 'hull' ? 'REPAIR & FORTIFY ▶' : (curLvl === 0 ? 'EQUIP ORDNANCE ▶' : `UPGRADE → LVL ${curLvl + 1} ▶`)}
             </div>
           `;
           card.addEventListener('click', () => applyUpgrade(u.id));
@@ -2623,6 +3022,7 @@
         upgradeOverlay.classList.add('hidden'); upgradeOverlay.classList.remove('flex');
         p.invuln = Math.max(p.invuln, 0.95); // Brief resume grace while keeping held keys active!
         lastTime = performance.now();
+        simAccum = 0;
         state.mode = 'playing'; updateWeaponsHud();
         addFloatingText(p.x, p.y - 30, 'ORDNANCE ARMED!', '#fde047', 12);
         if (state.pendingLevelUps > 0) state.levelUpDelay = 0.45;
@@ -2809,7 +3209,7 @@
           p.heading = -Math.PI / 2;
           // Catapult steam puffs
           if (Math.random() < 0.8) {
-            state.particles.push({ x: p.x + (Math.random() * 14 - 7), y: p.y + 24, plane: 0, vx: (Math.random() - 0.5) * 40, vy: 80, life: 0.45, maxLife: 0.45, size: 7, color: '#e2e8f0' });
+            pushParticle({ x: p.x + (Math.random() * 14 - 7), y: p.y + 24, plane: 0, vx: (Math.random() - 0.5) * 40, vy: 80, life: 0.45, maxLife: 0.45, size: 7, color: '#e2e8f0' });
           }
         } else {
           let ix = 0, iy = 0;
@@ -2840,7 +3240,7 @@
             }
             // Supersonic blue-white afterburner vapor sparks
             if (Math.random() < 0.85) {
-              state.particles.push({
+              pushParticle({
                 x: p.x - Math.cos(p.heading) * 26 + (Math.random() * 8 - 4),
                 y: p.y - Math.sin(p.heading) * 26 + (Math.random() * 8 - 4),
                 plane: p.plane,
@@ -2854,7 +3254,8 @@
             p.abActive = false;
             // Recharges slowly over time (~11%/sec, slightly faster with F110 Engines hangar upgrade)
             const rechargeRate = 10.5 + profile.upgrades.engines * 1.8;
-            p.abFuel = Math.min(100, p.abFuel + rechargeRate * dt);
+            const _abSyn = getPilotAircraftSynergy();
+            p.abFuel = Math.min(100, p.abFuel + rechargeRate * (_abSyn ? _abSyn.abCharge : 1) * dt);
           }
 
           if (p.superActive && _ac.reversesControls) {
@@ -2915,7 +3316,7 @@
             const perp = p.heading + Math.PI / 2;
             const ex = p.x - Math.cos(p.heading) * 18 + Math.cos(perp) * 7;
             const ey = p.y - Math.sin(p.heading) * 18 + Math.sin(perp) * 7;
-            state.particles.push({
+            pushParticle({
               x: ex, y: ey, plane: p.plane,
               vx: -Math.cos(p.heading) * 45 + (Math.random() - 0.5) * 24,
               vy: -Math.sin(p.heading) * 45 + (Math.random() - 0.5) * 24,
@@ -2924,7 +3325,7 @@
               color: dmgRatio > 0.65 ? 'rgba(51, 65, 85, 0.85)' : 'rgba(148, 163, 184, 0.62)'
             });
             if (dmgRatio > 0.65 && Math.random() < 0.45) {
-              state.particles.push({
+              pushParticle({
                 x: ex, y: ey, plane: p.plane,
                 vx: -Math.cos(p.heading) * 70 + (Math.random() - 0.5) * 35,
                 vy: -Math.sin(p.heading) * 70 + (Math.random() - 0.5) * 35,
@@ -2975,7 +3376,7 @@
           for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
             const b = state.enemyBullets[i];
             if (Math.hypot(b.x, b.y) < SAFE_ZONE_PX - 40) {
-              state.particles.push({ x: b.x, y: b.y, plane: b.plane, vx: 0, vy: 0, life: 0.16, maxLife: 0.16, size: 3.5, color: '#fef08a' });
+              pushParticle({ x: b.x, y: b.y, plane: b.plane, vx: 0, vy: 0, life: 0.16, maxLife: 0.16, size: 3.5, color: '#fef08a' });
               state.enemyBullets.splice(i, 1);
             }
           }
@@ -2991,7 +3392,7 @@
             for (const [mx, my] of mounts) {
               const jx = (Math.random() - 0.5) * 10;
               const jy = (Math.random() - 0.5) * 10;
-              state.tracers.push({
+              pushTracer({
                 x1: mx, y1: my, x2: ciwsTarget.x + jx, y2: ciwsTarget.y + jy,
                 plane: ciwsTarget.plane, color: '#fef08a', width: 2.6, life: 0.08, maxLife: 0.08
               });
@@ -3037,7 +3438,7 @@
         if (p.superActive) {
           p.superTimer -= dt;
           if (Math.random() < 0.85) {
-            state.particles.push({
+            pushParticle({
               x: p.x - Math.cos(p.heading) * 24, y: p.y - Math.sin(p.heading) * 24, plane: 2,
               vx: -Math.cos(p.heading) * 160 + (Math.random() - 0.5) * 35,
               vy: -Math.sin(p.heading) * 160 + (Math.random() - 0.5) * 35,
@@ -3046,10 +3447,7 @@
             });
           }
           if (p.superTimer <= 0) {
-            p.superActive = false; p.plane = p.savedPlane; p.invuln = 2.0; p.rollTimer = 0.4;
-            p.superCooldown = p.superCooldownMax || 24; p.superArmed = false; p.burnCharge = 0;
-            AudioFX.planeSwap(false);
-            showBanner('DESCENDING TO COMBAT ALTITUDE • INVERTED COOLDOWN 24s', 'border-sky-400 text-sky-200');
+            exitSuperState(p.savedPlane, { expired: true });
           }
         }
 
@@ -3115,7 +3513,7 @@
               if (e.isNaval && Math.random() < 0.45) {
                 const bx = e.x - Math.cos(e.angle) * (e.r * 1.15);
                 const by = e.y - Math.sin(e.angle) * (e.r * 1.15);
-                state.particles.push({ x: bx, y: by, plane: 0, vx: (Math.random()-0.5)*16, vy: (Math.random()-0.5)*16, life: 0.75, maxLife: 0.75, size: 7 + Math.random()*5, color: 'rgba(224,242,254,0.45)' });
+                pushParticle({ x: bx, y: by, plane: 0, vx: (Math.random()-0.5)*16, vy: (Math.random()-0.5)*16, life: 0.75, maxLife: 0.75, size: 7 + Math.random()*5, color: 'rgba(224,242,254,0.45)' });
               }
             } else if (bk === 'kosmos') {
               // Massive Soviet Space Station slowly drifts and rotates its armored weapons ring!
@@ -3175,7 +3573,7 @@
             if (e.isNaval && Math.random() < 0.32) {
               const bx = e.x - Math.cos(e.angle) * (e.r * 0.95);
               const by = e.y - Math.sin(e.angle) * (e.r * 0.95);
-              state.particles.push({ x: bx, y: by, plane: 0, vx: (Math.random()-0.5)*10, vy: (Math.random()-0.5)*10, life: 0.55, maxLife: 0.55, size: 4.5, color: 'rgba(224,242,254,0.4)' });
+              pushParticle({ x: bx, y: by, plane: 0, vx: (Math.random()-0.5)*10, vy: (Math.random()-0.5)*10, life: 0.55, maxLife: 0.55, size: 4.5, color: 'rgba(224,242,254,0.4)' });
             }
           } else {
             // Realistic Top Gun dogfight maneuvers instead of bee-lining straight at your nose!
@@ -3290,7 +3688,7 @@
               b.plane = b.target.plane;
             }
             if (Math.random() < 0.65) {
-              state.particles.push({ x: b.x, y: b.y, plane: b.plane, vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 20, life: 0.22, maxLife: 0.22, size: b.kind === 'superPhoenix' ? 4 : 2.4, color: b.kind === 'superPhoenix' ? '#fde047' : '#e2e8f0' });
+              pushParticle({ x: b.x, y: b.y, plane: b.plane, vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 20, life: 0.22, maxLife: 0.22, size: b.kind === 'superPhoenix' ? 4 : 2.4, color: b.kind === 'superPhoenix' ? '#fde047' : '#e2e8f0' });
             }
           }
           b.x += b.vx * dt; b.y += b.vy * dt;
@@ -3401,58 +3799,90 @@
           const lvl = p.weapons[u.id] || 0;
           if (lvl <= 0) continue;
           const el = document.createElement('div');
-          el.className = 'flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-950/90 border border-amber-500/30 text-[11px] font-bold whitespace-nowrap';
-          el.innerHTML = `<span>${u.icon}</span><span class="font-arcade text-amber-300">L${lvl}</span>`;
+          el.className = 'flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-950/90 border border-amber-500/35 text-[10px] font-bold whitespace-nowrap';
+          el.innerHTML = `<span class="hud-ico">${getUiIcon(u.icon)}</span><span class="font-arcade text-amber-300">L${lvl}</span>`;
           el.title = u.name;
           weaponsHud.appendChild(el);
         }
       }
 
+      const _hudDomCache = new WeakMap();
+      function _hudSlot(el) {
+        let s = _hudDomCache.get(el);
+        if (!s) { s = {}; _hudDomCache.set(el, s); }
+        return s;
+      }
+      function setHudText(el, val) {
+        if (!el) return;
+        const s = _hudSlot(el);
+        if (s.t !== val) { s.t = val; el.textContent = val; }
+      }
+      function setHudWidth(el, val) {
+        if (!el) return;
+        const s = _hudSlot(el);
+        if (s.w !== val) { s.w = val; el.style.width = val; }
+      }
+      function setHudClass(el, val) {
+        if (!el) return;
+        const s = _hudSlot(el);
+        if (s.c !== val) { s.c = val; el.className = val; }
+      }
+      function setHudColor(el, val) {
+        if (!el) return;
+        const s = _hudSlot(el);
+        if (s.col !== val) { s.col = val; el.style.color = val; }
+      }
+
+      function getPrimaryBoss() {
+        if (!state || !state.enemies) return null;
+        const p = state.player;
+        return state.enemies.find(e => e.type === 'boss' && e.hp > 0 && e.plane === p.plane)
+          || state.enemies.find(e => e.type === 'boss' && e.hp > 0)
+          || null;
+      }
+
       function updateHud(distNM, threat) {
         const p = state.player;
-        hpBar.style.width = Math.max(0, (p.hp / p.maxHp) * 100).toFixed(1) + '%';
-        hpText.textContent = `${Math.ceil(p.hp)} / ${p.maxHp}`;
+        setHudWidth(hpBar, Math.max(0, (p.hp / p.maxHp) * 100).toFixed(1) + '%');
+        setHudText(hpText, `${Math.ceil(p.hp)} / ${p.maxHp}`);
         if (fuelBar && fuelText) {
           const fp = Math.max(0, Math.min(100, (p.fuel / p.maxFuel) * 100));
-          fuelBar.style.width = fp.toFixed(1) + '%';
+          setHudWidth(fuelBar, fp.toFixed(1) + '%');
           if (p.superActive) {
-            fuelText.textContent = `${Math.ceil(fp)}% HOLD`;
-            fuelText.className = 'text-amber-300 tabular-nums font-arcade';
-            fuelBar.className = 'h-full bg-gradient-to-r from-amber-300 to-yellow-200 transition-all duration-150';
+            setHudText(fuelText, `${Math.ceil(fp)}% HOLD`);
+            setHudClass(fuelText, 'text-amber-300 tabular-nums font-arcade');
+            setHudClass(fuelBar, 'h-full bg-gradient-to-r from-amber-300 to-yellow-200 transition-all duration-150');
           } else if (fp <= 10) {
-            fuelText.textContent = `BINGO ${Math.ceil(fp)}%`;
-            fuelText.className = 'text-rose-400 tabular-nums font-arcade animate-pulse';
-            fuelBar.className = 'h-full bg-gradient-to-r from-red-600 to-rose-400 transition-all duration-150';
+            setHudText(fuelText, `BINGO ${Math.ceil(fp)}%`);
+            setHudClass(fuelText, 'text-rose-400 tabular-nums font-arcade animate-pulse');
+            setHudClass(fuelBar, 'h-full bg-gradient-to-r from-red-600 to-rose-400 transition-all duration-150');
           } else if (fp <= 30) {
-            fuelText.textContent = `${Math.ceil(fp)}% LOW`;
-            fuelText.className = 'text-amber-300 tabular-nums font-arcade';
-            fuelBar.className = 'h-full bg-gradient-to-r from-amber-500 to-yellow-300 transition-all duration-150';
+            setHudText(fuelText, `${Math.ceil(fp)}% LOW`);
+            setHudClass(fuelText, 'text-amber-300 tabular-nums font-arcade');
+            setHudClass(fuelBar, 'h-full bg-gradient-to-r from-amber-500 to-yellow-300 transition-all duration-150');
           } else {
-            fuelText.textContent = `${Math.ceil(fp)}%`;
-            fuelText.className = 'text-sky-200 tabular-nums font-arcade';
-            fuelBar.className = 'h-full bg-gradient-to-r from-sky-400 to-emerald-400 transition-all duration-150';
+            setHudText(fuelText, `${Math.ceil(fp)}%`);
+            setHudClass(fuelText, 'text-sky-200 tabular-nums font-arcade');
+            setHudClass(fuelBar, 'h-full bg-gradient-to-r from-sky-400 to-emerald-400 transition-all duration-150');
           }
         }
 
-        xpBar.style.width = Math.min(100, (p.xp / p.xpNext) * 100).toFixed(1) + '%';
-        const navyRanks = ['ENSIGN', 'LTJG', 'LIEUTENANT', 'LT CMDR', 'COMMANDER', 'CAPTAIN', 'REAR ADM', 'VICE ADM', 'ADMIRAL'];
-        levelBadge.textContent = navyRanks[Math.min(p.level - 1, navyRanks.length - 1)] + ' • L' + p.level;
-        xpText.textContent = `${Math.floor(p.xp)} / ${p.xpNext} EGO`;
+        setHudWidth(xpBar, Math.min(100, (p.xp / p.xpNext) * 100).toFixed(1) + '%');
+        setHudText(xpText, `${Math.floor(p.xp)} / ${p.xpNext} EGO`);
 
         const c = state.cargo;
-        cargoSummary.textContent = `🪙${c.credits} 📦${c.intel} ⚙️${c.parts}`;
+        setHudText(cargoSummary, `${c.credits} CR • ${c.intel} INT • ${c.parts} PRT`);
 
-        distBadge.textContent = `⚓ ${distNM.toFixed(1)} NM`;
-        distBadgeMobile.textContent = `⚓ ${distNM.toFixed(1)} NM`;
-        threatZoneText.textContent = threat.name;
-        threatZoneText.style.color = threat.color;
-        lootMultText.textContent = `LOOT ${threat.lootMult.toFixed(1)}×`;
+        const distStr = `⚓ ${distNM.toFixed(1)} NM`;
+        setHudText(distBadge, distStr);
+        setHudText(distBadgeMobile, distStr);
+        setHudText(threatZoneText, threat.name);
+        setHudColor(threatZoneText, threat.color);
+        setHudText(lootMultText, `LOOT ${threat.lootMult.toFixed(1)}×`);
         // Show active Pilot Callsign & permanent Career Level in top-left HUD
         const _pcHud = getSelectedPilotCfg();
         const _pdHud = getSelectedPilotData();
-        if (levelBadge) {
-          levelBadge.textContent = `${_pcHud.callsign} • CAREER LV.${_pdHud.level} (SORTIE L${p.level})`;
-        }
+        setHudText(levelBadge, `${_pcHud.callsign} • CAREER LV.${_pdHud.level} (SORTIE L${p.level})`);
 
         const zbp = document.getElementById('zoneBossProgress');
         if (zbp) {
@@ -3492,39 +3922,6 @@
               zbp.className = 'text-amber-300 font-arcade';
             } else {
               zbp.textContent = `Z${threat.lvl} AIR BOSS: ${k}/${bCfg.killsNeeded} (${clearedTot}/8)`;
-              zbp.className = 'text-sky-300 font-arcade';
-            }
-          }
-        }
-        if (false) {
-          if (threat.lvl === 0) {
-            zbp.textContent = 'CIWS SAFE • FLY >3.5 NM';
-            zbp.className = 'text-emerald-300 font-arcade';
-          } else {
-            const bCfg = STAGE_BOSSES[threat.lvl];
-            const sCfg = getSurfaceBossCfg(threat.lvl, p.x, p.y);
-            const airDone = !!state.bossDefeatedStages[threat.lvl];
-            const surfDone = !!state.surfaceBossDefeatedStages[threat.lvl];
-            const airAct = !!state.bossSpawnedStages[threat.lvl] && !airDone;
-            const surfAct = !!state.surfaceBossSpawnedStages[threat.lvl] && !surfDone;
-            const k = state.zoneKills[threat.lvl] || 0;
-            if (airDone && surfDone) {
-              zbp.textContent = `✓ ZONE ${threat.lvl} BOSSES CLEARED (2/2)`;
-              zbp.className = 'text-emerald-300 font-arcade';
-            } else if (surfAct && airAct) {
-              zbp.textContent = `⚠ DUAL BOSSES ACTIVE!`;
-              zbp.className = 'text-rose-400 font-arcade';
-            } else if (surfAct) {
-              zbp.textContent = `⚠ DECK: ${sCfg.shortName}`;
-              zbp.className = 'text-amber-300 font-arcade';
-            } else if (airAct) {
-              zbp.textContent = `⚠ AIR: ${bCfg.shortName}`;
-              zbp.className = 'text-rose-400 font-arcade';
-            } else if (!state.surfaceBossSpawnedStages[threat.lvl]) {
-              zbp.textContent = `DECK BOSS: ${k}/${sCfg.killsNeeded}`;
-              zbp.className = 'text-amber-300 font-arcade';
-            } else {
-              zbp.textContent = `AIR BOSS: ${k}/${bCfg.killsNeeded}`;
               zbp.className = 'text-sky-300 font-arcade';
             }
           }
@@ -3587,17 +3984,17 @@
           superKeyHint.textContent = 'LOCKED'; superBtn.classList.remove('super-pulse');
         }
         if (altInlineBadge) {
-          altInlineBadge.textContent = p.superActive ? '★ INVERTED' : (p.plane === 1 ? 'ANGELS 20' : 'HARD DECK');
-          altInlineBadge.style.color = PLANE_CFG[p.plane].color;
+          setHudText(altInlineBadge, p.superActive ? _sName : (p.plane === 1 ? 'ANGELS 20' : 'HARD DECK'));
+          setHudColor(altInlineBadge, PLANE_CFG[p.plane].color);
         }
 
-        const activeBoss = state.enemies.find(e => e.type === 'boss' && e.plane === p.plane) || state.enemies.find(e => e.type === 'boss');
+        const activeBoss = getPrimaryBoss();
         if (activeBoss && activeBoss.bossCfg) {
           bossHudBar.classList.remove('hidden');
-          bossNameLabel.textContent = '⚠ ' + activeBoss.bossCfg.title;
-          bossPlaneLabel.textContent = PLANE_CFG[activeBoss.plane].name;
-          bossPlaneLabel.style.color = PLANE_CFG[activeBoss.plane].color;
-          bossHpFill.style.width = Math.max(0, (activeBoss.hp / activeBoss.maxHp) * 100).toFixed(1) + '%';
+          setHudText(bossNameLabel, '⚠ ' + activeBoss.bossCfg.title);
+          setHudText(bossPlaneLabel, PLANE_CFG[activeBoss.plane].name);
+          setHudColor(bossPlaneLabel, PLANE_CFG[activeBoss.plane].color);
+          setHudWidth(bossHpFill, Math.max(0, (activeBoss.hp / activeBoss.maxHp) * 100).toFixed(1) + '%');
         } else {
           bossHudBar.classList.add('hidden');
         }
@@ -3687,9 +4084,7 @@
           ctx.save();
           ctx.font = '900 9px Orbitron, sans-serif';
           ctx.textAlign = 'center';
-          ctx.fillStyle = '#fde047';
-          ctx.shadowBlur = 8; ctx.shadowColor = '#000';
-          ctx.fillText(ac.superTag || '★ INVERTED ★', x, y + 48);
+          fillOutlinedText(ac.superTag || '★ INVERTED ★', x, y + 48, '#fde047', '#000000', 3.0);
           ctx.restore();
         }
       }
@@ -3786,32 +4181,8 @@
 
       function drawWorldOceanAndCarrier(distNM, threat) {
         const p = state.player;
-        // Ocean base color dynamically shifts stormier/deeper the further out from CVN-65!
-        const oceanGrad = ctx.createLinearGradient(0, 0, 0, H);
-        oceanGrad.addColorStop(0, p.superActive ? '#1e1038' : threat.seaTop);
-        oceanGrad.addColorStop(1, p.superActive ? '#091632' : threat.seaBot);
-        ctx.fillStyle = oceanGrad;
-        ctx.fillRect(0, 0, W, H);
-
-        // Golden-Hour Striped Sunset Sun anchored at top horizon
-        const sunX = W * 0.5;
-        const sunR = Math.min(W, H) * 0.21;
-        const sunGlow = ctx.createRadialGradient(sunX, -10, sunR * 0.15, sunX, -10, sunR * 2.1);
-        sunGlow.addColorStop(0, 'rgba(253, 224, 71, 0.34)');
-        sunGlow.addColorStop(0.45, 'rgba(249, 115, 22, 0.18)');
-        sunGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        ctx.fillStyle = sunGlow; ctx.fillRect(0, 0, W, H * 0.55);
-
-        ctx.save();
-        ctx.beginPath(); ctx.arc(sunX, 12, sunR * 0.5, 0, Math.PI * 2); ctx.clip();
-        const discGrad = ctx.createLinearGradient(0, 0, 0, sunR * 0.7);
-        discGrad.addColorStop(0, 'rgba(254, 240, 138, 0.34)');
-        discGrad.addColorStop(0.6, 'rgba(249, 115, 22, 0.28)');
-        discGrad.addColorStop(1, 'rgba(225, 29, 72, 0.22)');
-        ctx.fillStyle = discGrad; ctx.fillRect(sunX - sunR, 0, sunR * 2, sunR);
-        ctx.fillStyle = 'rgba(10, 45, 94, 0.42)';
-        for (let sy = 16; sy < sunR * 0.65; sy += 10) ctx.fillRect(sunX - sunR, sy, sunR * 2, 2.8);
-        ctx.restore();
+        // Cached full-screen ocean gradient + golden-hour sunset glow & striped disc (1 blit!)
+        BgCache.blitBackdrop(threat, p.superActive);
 
         // Enter World Space!
         ctx.save();
@@ -3824,7 +4195,8 @@
         const startY = Math.floor((state.camY - H * 0.6) / tile) * tile;
         const endY = state.camY + H * 0.6 + tile;
 
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.16)';
+        const _pal = getActivePalette();
+        ctx.strokeStyle = _pal.swell;
         ctx.lineWidth = 1.8;
         ctx.beginPath();
         for (let y = startY; y <= endY; y += tile) {
@@ -3838,8 +4210,7 @@
         ctx.stroke();
 
         // Animated ocean whitecaps & frothy foam crests!
-        const capAlpha = threat.lvl >= 3 ? 0.34 : 0.25;
-        ctx.strokeStyle = `rgba(224, 242, 254, ${capAlpha})`;
+        ctx.strokeStyle = _pal.foam;
         ctx.lineWidth = 2.0;
         ctx.beginPath();
         for (let y = startY; y <= endY; y += tile) {
@@ -3860,8 +4231,8 @@
         }
         ctx.stroke();
 
-        // Golden-hour sunset glint sparkles on the water
-        ctx.fillStyle = 'rgba(254, 240, 138, 0.18)';
+        // Theater-tuned horizon glint sparkles on the water
+        ctx.fillStyle = _pal.glint;
         for (let y = startY; y <= endY; y += tile * 2) {
           for (let x = startX; x <= endX; x += tile * 2) {
             const h = Math.sin(x * 0.019 + y * 0.041) * 5000;
@@ -3888,10 +4259,10 @@
         } else if (curMap.baseType === 'airbase') {
           const th = curMap.theme;
           const landColors = {
-            miramar:   { bg: '#5a4332', patch: 'rgba(138, 92, 54, 0.38)', accent: 'rgba(63, 98, 68, 0.34)', tower: '#fde047' },
-            pax:       { bg: '#2c4c3b', patch: 'rgba(22, 101, 52, 0.44)', accent: 'rgba(14, 116, 144, 0.28)', tower: '#38bdf8' },
-            chinalake: { bg: '#7c4a2d', patch: 'rgba(180, 114, 62, 0.42)', accent: 'rgba(217, 169, 116, 0.28)', tower: '#fb923c' },
-            area51:    { bg: '#453e38', patch: 'rgba(100, 96, 86, 0.40)', accent: 'rgba(34, 197, 94, 0.16)', tower: '#4ade80' }
+            miramar:   { bg: '#5b4037', patch: 'rgba(146, 94, 68, 0.36)', accent: 'rgba(110, 76, 114, 0.22)', tower: '#f5b971' },
+            pax:       { bg: '#264440', patch: 'rgba(46, 112, 102, 0.34)', accent: 'rgba(128, 158, 92, 0.22)', tower: '#a8d5a2' },
+            chinalake: { bg: '#573c46', patch: 'rgba(136, 86, 104, 0.34)', accent: 'rgba(92, 134, 152, 0.22)', tower: '#e5a4b8' },
+            area51:    { bg: '#2b2b36', patch: 'rgba(74, 72, 94, 0.36)', accent: 'rgba(84, 136, 108, 0.20)', tower: '#86efac' }
           }[th] || { bg: '#475741', patch: 'rgba(100,100,80,0.3)', accent: 'rgba(40,80,50,0.3)', tower: '#fde047' };
 
           ctx.save();
@@ -4012,12 +4383,10 @@
               ctx.beginPath(); ctx.arc(0, 0, 62, -Math.PI / 2, -Math.PI / 2 + state.trapProgress * Math.PI * 2); ctx.stroke();
             }
             ctx.font = '800 10px Orbitron, sans-serif'; ctx.textAlign = 'center';
-            ctx.fillStyle = canTrap ? '#4ade80' : '#fde047';
-            ctx.shadowBlur = 8; ctx.shadowColor = '#000';
             const msg = state.trapProgress > 0
               ? `TOUCHDOWN ${curMap.baseCall}... ${Math.round(state.trapProgress * 100)}%`
               : (canTrap ? `★ LAND AT ${curMap.baseCall} TO BANK` : '▼ SWAP TO HARD DECK TO LAND');
-            ctx.fillText(msg, 0, -rwLen / 2 - 14);
+            fillOutlinedText(msg, 0, -rwLen / 2 - 14, canTrap ? '#4ade80' : '#fde047', '#000000', 3.4);
           }
           ctx.restore();
         } else {
@@ -4054,12 +4423,10 @@
               ctx.beginPath(); ctx.arc(0, 0, 58, -Math.PI / 2, -Math.PI / 2 + state.trapProgress * Math.PI * 2); ctx.stroke();
             }
             ctx.font = '800 10px Orbitron, sans-serif'; ctx.textAlign = 'center';
-            ctx.fillStyle = canTrap ? '#4ade80' : '#fde047';
-            ctx.shadowBlur = 8; ctx.shadowColor = '#000';
             const msg = state.trapProgress > 0
               ? `TRAPPING 3-WIRE... ${Math.round(state.trapProgress * 100)}%`
               : (canTrap ? '⚓ LAND ON DECK TO BANK CARGO' : '▼ SWAP TO HARD DECK TO TRAP');
-            ctx.fillText(msg, 0, -98);
+            fillOutlinedText(msg, 0, -98, canTrap ? '#4ade80' : '#fde047', '#000000', 3.4);
           }
           ctx.restore();
         }
@@ -4232,6 +4599,20 @@
           }
         }
         const pDmgRatio = Math.max(0, Math.min(1, 1 - p.hp / Math.max(1, p.maxHp)));
+        // Subtle diegetic Guns/Missiles boundary hint (4 faint cockpit reticle corner ticks, no text clutter)
+        if (state.mode === 'playing' && !p.superActive) {
+          const { gunR } = getCombatRadii();
+          ctx.save();
+          ctx.strokeStyle = 'rgba(251, 191, 36, 0.14)';
+          ctx.lineWidth = 1.2;
+          for (let q = 0; q < 4; q++) {
+            const a0 = q * (Math.PI * 0.5) + 0.52;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, gunR, a0, a0 + 0.48);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
         drawF14Tomcat(p.x, p.y, p.heading, sc, p.bank, p.rollTimer, p.wingSweep, p.superActive, pDmgRatio, getSelectedAircraftCfg());
         ctx.strokeStyle = accent; ctx.globalAlpha = p.superActive ? 0.68 : 0.28; ctx.lineWidth = p.superActive ? 2.6 : 1.5;
         ctx.beginPath(); ctx.arc(p.x, p.y, 32 * sc, 0, Math.PI * 2); ctx.stroke();
@@ -4298,6 +4679,7 @@
         const p = state.player;
         const screenX = W * 0.5 - state.camX;
         const screenY = H * 0.5 - state.camY;
+        homeBeaconPos.active = false;
         // Only draw edge compass arrow when home base is off-screen
         if (screenX > 70 && screenX < W - 70 && screenY > 70 && screenY < H - 70) return;
 
@@ -4312,6 +4694,9 @@
         );
         const bx = W * 0.5 + cosA * scaleEdge;
         const by = H * 0.5 + sinA * scaleEdge;
+        homeBeaconPos.active = true;
+        homeBeaconPos.x = bx;
+        homeBeaconPos.y = by;
 
         ctx.save();
         ctx.translate(bx, by);
@@ -4344,7 +4729,7 @@
       function drawBossGuidanceArrow() {
         if (state.mode !== 'playing' || state.allBossesCleared) return;
         const p = state.player;
-        const activeBoss = state.enemies.find(e => e.type === 'boss' && e.hp > 0);
+        const activeBoss = getPrimaryBoss();
         if (!activeBoss) return;
         const sx = W * 0.5 + (activeBoss.x - state.camX);
         const sy = H * 0.5 + (activeBoss.y - state.camY);
@@ -4355,7 +4740,13 @@
         const halfW = Math.max(80, W * 0.5 - 56);
         const halfH = Math.max(80, H * 0.5 - 92);
         const sc = Math.min(Math.abs(cosA) > 0.001 ? halfW / Math.abs(cosA) : 1e9, Math.abs(sinA) > 0.001 ? halfH / Math.abs(sinA) : 1e9);
-        const bx = W * 0.5 + cosA * sc, by = H * 0.5 + sinA * sc;
+        let bx = W * 0.5 + cosA * sc, by = H * 0.5 + sinA * sc;
+        if (homeBeaconPos.active && Math.hypot(bx - homeBeaconPos.x, by - homeBeaconPos.y) < 54) {
+          // Offset along screen-edge tangent so boss arrow never overlaps home beacon
+          const tx = -sinA, ty = cosA;
+          bx = Math.max(54, Math.min(W - 54, bx + tx * 58));
+          by = Math.max(90, Math.min(H - 90, by + ty * 58));
+        }
         const bNM = (Math.hypot(activeBoss.x - p.x, activeBoss.y - p.y) / 140).toFixed(1);
 
         ctx.save();
@@ -4651,18 +5042,27 @@
         for (const ft of state.floatingTexts) {
           ctx.save(); ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
           ctx.font = `800 ${ft.size || 11}px Orbitron, sans-serif`; ctx.textAlign = 'center';
-          ctx.fillStyle = ft.color; ctx.shadowBlur = 6; ctx.shadowColor = '#000';
-          ctx.fillText(ft.text, ft.x, ft.y); ctx.restore();
+          fillOutlinedText(ft.text, ft.x, ft.y, ft.color, '#000000', 3.0);
+          ctx.restore();
         }
         ctx.restore(); // Exit World Space
 
-        // Screen-space Super Plane golden vignette
+        // Subdued 80s/90s hardware palette-register shift (dirty-checked so DOM only updates on level/theater change!)
+        const _wPal = getActivePalette();
+        const _lvlDrift = Math.min(18, Math.max(0, Math.round(((p.level || 1) - 1) * 2.5)));
+        const _totHue = (_wPal.baseHue || 0) + _lvlDrift;
+        const _cFilter = _totHue === 0 ? '' : `hue-rotate(${_totHue}deg) saturate(0.96)`;
+        if (canvas.dataset.palFilter !== _cFilter) {
+          canvas.dataset.palFilter = _cFilter;
+          canvas.style.filter = _cFilter;
+        }
+        if (!p.superActive && _wPal.wash) {
+          ctx.fillStyle = _wPal.wash;
+          ctx.fillRect(0, 0, W, H);
+        }
+        // Screen-space Super Plane golden vignette (cached offscreen!)
         if (p.superActive) {
-          const vig = ctx.createRadialGradient(W * 0.5, H * 0.5, 40, W * 0.5, H * 0.5, Math.max(W, H) * 0.72);
-          vig.addColorStop(0, 'rgba(253, 224, 71, 0.1)');
-          vig.addColorStop(0.55, 'rgba(239, 68, 68, 0.08)');
-          vig.addColorStop(1, 'rgba(15, 23, 42, 0.32)');
-          ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+          BgCache.blitSuperVignette();
         }
 
         // Always-on Home Bearing Beacon back to home base
@@ -4691,12 +5091,9 @@
 
             ctx.font = '900 22px Orbitron, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillStyle = '#fef08a';
-            ctx.shadowBlur = 10; ctx.shadowColor = '#f43f5e';
-            ctx.fillText('⚠ BINGO ⚠', W * 0.5, by + 25);
+            fillOutlinedText('⚠ BINGO ⚠', W * 0.5, by + 25, '#fef08a', '#881337', 4.0);
 
             ctx.font = '800 10px Orbitron, sans-serif';
-            ctx.shadowBlur = 0;
             ctx.fillStyle = '#fecdd3';
             ctx.fillText(`FUEL CRITICAL: ${p.fuel.toFixed(1)}% — RTB IMMEDIATELY!`, W * 0.5, by + 43);
             ctx.restore();
@@ -4741,7 +5138,10 @@
         pauseOverlay.classList.add('hidden'); pauseOverlay.classList.remove('flex');
         gameOverOverlay.classList.add('hidden'); gameOverOverlay.classList.remove('flex');
 
+        bossHudBar.classList.add('hidden');
         hudLayer.classList.remove('hidden'); hudLayer.classList.add('flex');
+        const abLabelEl = document.getElementById('abLabelText');
+        if (abLabelEl) abLabelEl.innerHTML = `${UI_ICONS.burnerSm}<span>${getSelectedAircraftCfg().hasAfterburner ? 'BURNER' : 'OVERDRIVE'}</span>`;
         updateWeaponsHud();
         updateHud(0, getThreatInfo(0));
         const cm = getCurrentMap(); showBanner(cm.baseType === 'airbase' ? `SCRAMBLED FROM ${cm.baseCall}! RETURN TO RUNWAY TO BANK!` : 'CATAPULT 1 LAUNCH — INDIAN OCEAN! RETURN TO CVN-65 TO TRAP!', 'border-amber-400 text-amber-300');
@@ -4758,23 +5158,46 @@
           AudioFX.pauseMusic(false);
           pauseOverlay.classList.add('hidden'); pauseOverlay.classList.remove('flex');
           lastTime = performance.now();
+          simAccum = 0;
         }
       }
 
+      // Fixed 60 Hz simulation accumulator: keeps real-time speed on slow machines & uniform physics on 144 Hz monitors!
       function loop(now) {
-        const dt = Math.min(0.05, (now - lastTime) / 1000);
+        const frameDt = Math.min(MAX_FRAME_DT, Math.max(0, (now - lastTime) / 1000));
         lastTime = now;
-        update(dt);
+        noteFrameTime(frameDt);
+        simAccum += frameDt;
+        let steps = 0;
+        while (simAccum >= SIM_DT && steps < MAX_SIM_STEPS) {
+          update(SIM_DT);
+          simAccum -= SIM_DT;
+          steps++;
+        }
+        if (steps >= MAX_SIM_STEPS) simAccum = 0;
         render();
         animFrameId = requestAnimationFrame(loop);
       }
 
+      function isTypingTarget(el) {
+        if (!el) return false;
+        const tag = el.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+      }
+
+      window.addEventListener('focusin', (e) => {
+        if (isTypingTarget(e.target)) {
+          for (const k in keys) keys[k] = false;
+        }
+      });
+
       window.addEventListener('keydown', (e) => {
+        if (isTypingTarget(e.target)) return;
         AudioFX.unlock();
         keys[e.code] = true;
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Tab'].includes(e.code)) e.preventDefault();
         if (!state) return;
-        if (e.code === 'KeyM') { AudioFX.setMuted(!AudioFX.isMuted()); muteIcon.textContent = AudioFX.isMuted() ? '🔇' : '🔊'; }
+        if (e.code === 'KeyM') { AudioFX.setMuted(!AudioFX.isMuted()); setMuteIcon(AudioFX.isMuted()); }
         if (e.code === 'KeyP' || e.code === 'Escape') { if (state.mode === 'playing' || state.mode === 'paused') togglePause(); }
         if (state.mode !== 'playing') return;
 
@@ -4785,8 +5208,22 @@
           igniteSuperState();
         }
       });
-      window.addEventListener('keyup', (e) => { keys[e.code] = false; });
+      window.addEventListener('keyup', (e) => {
+        if (isTypingTarget(e.target)) return;
+        keys[e.code] = false;
+      });
       window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+
+      function releaseStickPointer(e) {
+        if (pointer.active && (e.pointerId === undefined || pointer.id === null || e.pointerId === pointer.id)) {
+          if (pointer.id !== null) {
+            try { if (canvas.hasPointerCapture && canvas.hasPointerCapture(pointer.id)) canvas.releasePointerCapture(pointer.id); } catch (_) {}
+          }
+          pointer.active = false;
+          pointer.id = null;
+        }
+        holdAfterburnerBtn = false;
+      }
 
       canvas.addEventListener('contextmenu', (e) => { e.preventDefault(); AudioFX.unlock(); swapPlane(); });
       canvas.addEventListener('pointerdown', (e) => {
@@ -4800,15 +5237,23 @@
           return;
         }
         pointer.active = true;
+        pointer.id = e.pointerId;
         pointer.startX = e.clientX; pointer.startY = e.clientY;
         pointer.x = e.clientX; pointer.y = e.clientY;
+        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
       });
-      canvas.addEventListener('pointermove', (e) => { if (pointer.active) { pointer.x = e.clientX; pointer.y = e.clientY; } });
+      canvas.addEventListener('pointermove', (e) => {
+        if (pointer.active && (pointer.id === null || e.pointerId === pointer.id)) {
+          pointer.x = e.clientX; pointer.y = e.clientY;
+        }
+      });
+      canvas.addEventListener('pointerup', releaseStickPointer);
+      canvas.addEventListener('pointercancel', releaseStickPointer);
       if (afterburnerBtn) {
         afterburnerBtn.addEventListener('pointerdown', (e) => { e.stopPropagation(); AudioFX.unlock(); holdAfterburnerBtn = true; });
       }
-      window.addEventListener('pointerup', () => { pointer.active = false; holdAfterburnerBtn = false; });
-      window.addEventListener('pointercancel', () => { pointer.active = false; holdAfterburnerBtn = false; });
+      window.addEventListener('pointerup', releaseStickPointer);
+      window.addEventListener('pointercancel', releaseStickPointer);
 
       document.getElementById('startBtn').addEventListener('click', startGame);
       document.getElementById('restartBtn').addEventListener('click', startGame);
@@ -4835,7 +5280,7 @@
       document.getElementById('resumeBtn').addEventListener('click', togglePause);
       document.getElementById('pauseBtn').addEventListener('click', togglePause);
       document.getElementById('muteBtn').addEventListener('click', () => {
-        AudioFX.unlock(); AudioFX.setMuted(!AudioFX.isMuted()); muteIcon.textContent = AudioFX.isMuted() ? '🔇' : '🔊';
+        AudioFX.unlock(); AudioFX.setMuted(!AudioFX.isMuted()); setMuteIcon(AudioFX.isMuted());
       });
       superBtn.addEventListener('click', () => { AudioFX.unlock(); igniteSuperState(); });
 
@@ -4909,6 +5354,8 @@
           roster.appendChild(card);
         });
         if (summary) summary.textContent = `ACTIVE: ${cur.callsign} (LV.${curData.level}) • ${cur.perk}`;
+        const cpb = document.getElementById('confirmPilotBtn');
+        if (cpb) cpb.textContent = getOwnedAircraft().length > 1 ? 'CHOOSE AIRFRAME ▶' : 'TO FLIGHT DECK ▶';
       }
 
       // Wire Splash 1 -> Splash 2 -> Title Screen flow!
@@ -4941,9 +5388,17 @@
           AudioFX.playTrack('menu', false);
           pilotSelectOverlay.classList.add('hidden');
           pilotSelectOverlay.classList.remove('flex');
-          aircraftSelectOverlay.classList.remove('hidden');
-          aircraftSelectOverlay.classList.add('flex');
-          renderAircraftBayUI();
+          if (getOwnedAircraft().length > 1) {
+            aircraftSelectOverlay.classList.remove('hidden');
+            aircraftSelectOverlay.classList.add('flex');
+            renderAircraftBayUI();
+          } else {
+            titleOverlay.classList.remove('hidden');
+            titleOverlay.classList.add('flex');
+            renderAircraftBayUI();
+            renderMapSelector();
+            refreshRecordLine();
+          }
         });
       }
       const backToPilotSelectBtn = document.getElementById('backToPilotSelectBtn');
@@ -5207,6 +5662,7 @@
         state = createInitialState('title');
         refreshRecordLine();
         lastTime = performance.now();
+        simAccum = 0;
         if (animFrameId) cancelAnimationFrame(animFrameId);
         animFrameId = requestAnimationFrame(loop);
       };
