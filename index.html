@@ -43,13 +43,13 @@
     }
     .cockpit-panel {
       position: relative;
-      background: linear-gradient(180deg, rgba(8, 21, 43, 0.92) 0%, rgba(4, 11, 25, 0.95) 100%);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(7, 19, 40, 0.94) 0%, rgba(3, 10, 24, 0.97) 100%);
       border: 1px solid rgba(251, 191, 36, 0.32);
       box-shadow: 0 10px 30px rgba(2, 6, 23, 0.72), inset 0 1px 0 rgba(253, 224, 71, 0.14), inset 0 0 0 1px rgba(56, 189, 248, 0.08);
     }
     .deck-modal {
       overflow: hidden;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       border-top-color: rgba(251, 191, 36, 0.55);
     }
     .deck-modal::before {
@@ -281,14 +281,25 @@
       </div>
 
       <div class="mx-auto sm:mx-0 flex items-center gap-1.5 pointer-events-auto">
-        <button id="afterburnerBtn" class="relative overflow-hidden rounded-lg px-2 py-1 sm:px-2.5 sm:py-1.5 border border-sky-400/55 bg-slate-950/85 min-w-[92px] sm:min-w-[122px] transition cursor-pointer text-left" title="Hold for Turbo Boost (C / V / Ctrl)">
+        <button id="skyhookBtn" class="hidden relative overflow-hidden rounded-lg px-2 py-1 sm:px-2.5 sm:py-1.5 border border-emerald-400/65 bg-slate-950/85 min-w-[100px] sm:min-w-[132px] transition cursor-pointer text-left" title="Call KC-130F Skyhook for Mid-Air Cargo Extraction (R)">
+          <div id="skyhookFill" class="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-500/80 via-teal-400/80 to-amber-300/80 opacity-85 transition-all duration-150" style="width: 100%"></div>
+          <div class="relative z-10 flex items-center justify-between gap-1">
+            <div>
+              <div class="font-arcade text-[8px] sm:text-[9px] font-black tracking-wider text-white drop-shadow leading-tight">✈ SKYHOOK</div>
+              <div id="skyhookStatus" class="font-arcade text-[7px] sm:text-[8px] font-bold text-emerald-100 tabular-nums drop-shadow">READY</div>
+            </div>
+            <span class="hidden sm:inline-block font-arcade text-[8px] font-black px-1 py-0.5 rounded bg-slate-900/80 text-emerald-300 border border-emerald-400/40">R</span>
+          </div>
+        </button>
+
+        <button id="afterburnerBtn" class="relative overflow-hidden rounded-lg px-2 py-1 sm:px-2.5 sm:py-1.5 border border-sky-400/55 bg-slate-950/85 min-w-[92px] sm:min-w-[122px] transition cursor-pointer text-left" title="Hold for Turbo Boost (SHIFT)">
           <div id="abFill" class="absolute inset-y-0 left-0 bg-gradient-to-r from-sky-500 via-cyan-400 to-amber-300 opacity-80 transition-all duration-75" style="width: 100%"></div>
           <div class="relative z-10 flex items-center justify-between gap-1">
             <div>
               <div id="abLabelText" class="font-arcade text-[8px] sm:text-[9px] font-black tracking-wider text-white drop-shadow leading-tight inline-flex items-center gap-1"><svg class="w-2.5 h-2.5 text-amber-300" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L13.5 7.5H10L12.5 14.5L8 11.2L3.5 14.5L6 7.5H2.5L8 1Z"/></svg><span>BURNER</span></div>
               <div id="abPct" class="font-arcade text-[7px] sm:text-[8px] font-bold text-sky-100 tabular-nums drop-shadow">100%</div>
             </div>
-            <span class="hidden sm:inline-block font-arcade text-[8px] font-black px-1 py-0.5 rounded bg-slate-900/80 text-cyan-300 border border-cyan-400/40">C</span>
+            <span class="hidden sm:inline-block font-arcade text-[8px] font-black px-1 py-0.5 rounded bg-slate-900/80 text-cyan-300 border border-cyan-400/40">SHIFT</span>
           </div>
         </button>
 
@@ -309,6 +320,53 @@
       </div>
 
       <div class="hidden sm:block w-16"></div>
+    </div>
+  </div>
+
+  <!-- PREFLIGHT & JP-5 FUEL CHECK MODAL (Purple-Shirt "Grape" Aviation Fuels Officer before Catapult 1!) -->
+  <div id="preflightOverlay" class="menu-scroll-overlay fixed inset-0 z-40 hidden items-start justify-center p-4 bg-slate-950/75 backdrop-blur-[4px]">
+    <div class="cockpit-panel deck-modal rounded-2xl max-w-lg w-full p-5 shadow-2xl border-purple-400/60 my-auto">
+      <div class="flex items-center justify-between gap-2 pb-2.5 mb-3 border-b border-slate-700/70">
+        <div>
+          <div class="font-arcade text-[9px] text-purple-300 tracking-widest font-bold">FLIGHT DECK • AVIATION FUELS ("GRAPES")</div>
+          <h3 class="font-stencil text-2xl text-white tracking-wider leading-tight">PREFLIGHT &amp; JP-5 FUEL LOAD</h3>
+        </div>
+        <span class="font-arcade text-[9px] px-2 py-1 rounded bg-purple-500/25 border border-purple-400/60 text-purple-200 font-black">CAT 1 CHECK</span>
+      </div>
+
+      <div class="flex items-center gap-3.5 rounded-xl bg-slate-950/90 border border-slate-700/80 p-3.5 mb-3.5">
+        <div class="w-20 h-20 rounded-xl bg-slate-900 border border-purple-400/50 flex items-center justify-center shrink-0 relative overflow-hidden">
+          <svg class="w-16 h-16" viewBox="0 0 64 64" fill="none">
+            <circle cx="28" cy="18" r="10" fill="#9333ea" stroke="#e9d5ff" stroke-width="2"/>
+            <rect x="20" y="15" width="16" height="6" rx="2" fill="#0f172a"/>
+            <rect x="22" y="16.5" width="5" height="2" rx="1" fill="#38bdf8"/>
+            <rect x="29" y="16.5" width="5" height="2" rx="1" fill="#38bdf8"/>
+            <path d="M16 32 C16 28 40 28 40 32 L42 52 L14 52 Z" fill="#7e22ce" stroke="#d8b4fe" stroke-width="1.8"/>
+            <rect x="21" y="31" width="4" height="19" fill="#1e293b"/>
+            <rect x="31" y="31" width="4" height="19" fill="#1e293b"/>
+            <path d="M40 38 Q50 38 52 28 L56 24" stroke="#facc15" stroke-width="3.2" stroke-linecap="round"/>
+            <circle cx="56" cy="23" r="3.5" fill="#4ade80" class="animate-pulse"/>
+            <text x="28" y="45" text-anchor="middle" fill="#fef08a" font-size="6.5" font-weight="900" font-family="monospace">JP-5</text>
+          </svg>
+        </div>
+        <div class="min-w-0 flex-1 text-left">
+          <div class="font-arcade text-[10px] font-black text-purple-300 mb-1">ABH2 "GRAPE" — DECK FUEL CREW</div>
+          <p class="text-[11px] text-slate-200 leading-snug mb-2">
+            "Topping off your internal JP-5 tanks, pilot! Watch your <strong class="text-sky-300">FUEL BAR</strong> in flight—Afterburner burns it fast. Hit <strong class="text-amber-300">30% LOW</strong> or <strong class="text-rose-400">10% BINGO</strong> and you'll need to refuel at base, Sea King VERTREP, or Skyking!"
+          </p>
+          <div class="flex items-center justify-between font-arcade text-[9px] mb-1">
+            <span class="text-slate-400">JP-5 INTERNAL FUEL LOAD</span>
+            <span id="preflightFuelPct" class="text-emerald-300 font-black tabular-nums">0%</span>
+          </div>
+          <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+            <div id="preflightFuelBar" class="h-full bg-gradient-to-r from-purple-500 via-sky-400 to-emerald-400 transition-all duration-100" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <button id="confirmPreflightBtn" type="button" class="btn-catapult w-full py-3 px-4 rounded-xl font-arcade text-xs font-black tracking-widest cursor-pointer transition">
+        ✓ CONFIRM PREFLIGHT &amp; FUEL LOAD — TO CATAPULT 1 ▶
+      </button>
     </div>
   </div>
 
@@ -493,9 +551,9 @@
         <div id="titleAircraftGrid" class="grid grid-cols-3 gap-1.5"></div>
       </div>
 
-      <!-- 6-MAP THEATER SELECTOR -->
-      <div class="mb-4 text-left">
-        <div class="font-arcade text-[10px] font-bold text-amber-300 tracking-widest mb-1.5">ACTIVE THEATER OF OPERATIONS (LEVEL 1 DEPLOYMENT)</div>
+      <!-- THEATER SELECTOR (Hidden until Level 1 is cleared & Level 2 Coronado unlocks!) -->
+      <div id="theaterSelectorPanel" class="hidden mb-4 text-left">
+        <div class="font-arcade text-[10px] font-bold text-amber-300 tracking-widest mb-1.5">THEATER OF OPERATIONS</div>
         <div id="mapSelectorGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5"></div>
         <div id="mapDescLine" class="text-[11px] text-sky-200/90 mt-1.5 font-medium truncate">Level 1: Indian Ocean — USS Enterprise (CVN-65)</div>
       </div>
@@ -713,7 +771,7 @@
       // CANVAS & VIEWPORT
       // ============================================================
       const canvas = document.getElementById('gameCanvas');
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { alpha: false });
       let W = window.innerWidth;
       let H = window.innerHeight;
       // ============================================================
@@ -730,6 +788,8 @@
         maxShockwaves: 24,
         maxFloatingTexts: 22,
         maxTracers: 36,
+        maxEnemyBullets: 240,
+        maxPickups: 110,
         hudRefreshInterval: 0.085
       };
 
@@ -745,9 +805,56 @@
           g.fillRect(0, 0, 160, 160);
           return c;
         }
+        function bakePickup(drawFn) {
+          const c = document.createElement('canvas');
+          c.width = 44; c.height = 44;
+          const g = c.getContext('2d');
+          g.translate(22, 22);
+          drawFn(g);
+          return c;
+        }
+        const pickupEmblem = bakePickup(g => {
+          g.fillStyle = 'rgba(245, 158, 11, 0.25)'; g.beginPath(); g.arc(0, 0, 18, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#fde047'; g.strokeStyle = '#92400e'; g.lineWidth = 1.2;
+          g.beginPath();
+          g.moveTo(-16, -2); g.lineTo(-4, -6); g.lineTo(0, -10); g.lineTo(4, -6); g.lineTo(16, -2);
+          g.lineTo(13, 3); g.lineTo(4, 2); g.lineTo(0, 7); g.lineTo(-4, 2); g.lineTo(-13, 3);
+          g.closePath(); g.fill(); g.stroke();
+          g.fillStyle = '#1e3a8a'; g.beginPath(); g.arc(0, -1, 3.2, 0, Math.PI * 2); g.fill();
+        });
+        const pickupCredit = bakePickup(g => {
+          g.fillStyle = 'rgba(250, 204, 21, 0.24)'; g.beginPath(); g.arc(0, 0, 13, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#1e3a8a'; g.strokeStyle = '#fde047'; g.lineWidth = 2.2;
+          g.beginPath(); g.arc(0, 0, 9, 0, Math.PI * 2); g.fill(); g.stroke();
+          g.fillStyle = '#fde047'; g.font = '900 8px Orbitron, sans-serif'; g.textAlign = 'center'; g.fillText('★', 0, 3);
+        });
+        const bakeIntel = ledCol => bakePickup(g => {
+          g.fillStyle = 'rgba(249, 115, 22, 0.24)'; g.beginPath(); g.arc(0, 0, 14, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#ea580c'; g.strokeStyle = '#fed7aa'; g.lineWidth = 1.4;
+          g.fillRect(-9, -6, 18, 12); g.strokeRect(-9, -6, 18, 12);
+          g.fillStyle = '#0f172a'; g.fillRect(-6, -3, 12, 6);
+          g.fillStyle = ledCol; g.beginPath(); g.arc(5, -3, 2, 0, Math.PI * 2); g.fill();
+        });
+        const pickupPart = bakePickup(g => {
+          g.fillStyle = 'rgba(192, 132, 252, 0.24)'; g.beginPath(); g.arc(0, 0, 14, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#a855f7'; g.strokeStyle = '#f3e8ff'; g.lineWidth = 1.2;
+          for (let t = 0; t < 6; t++) { g.rotate(Math.PI / 3); g.fillRect(-2.5, -10, 5, 20); }
+          g.beginPath(); g.arc(0, 0, 6.5, 0, Math.PI * 2); g.fill(); g.stroke();
+          g.fillStyle = '#0f172a'; g.beginPath(); g.arc(0, 0, 2.5, 0, Math.PI * 2); g.fill();
+        });
+        const pickupXp = bakePickup(g => {
+          g.fillStyle = '#94a3b8'; g.strokeStyle = '#e2e8f0'; g.lineWidth = 1;
+          g.fillRect(-6, -7, 7, 11); g.strokeRect(-6, -7, 7, 11);
+          g.fillStyle = '#cbd5e1'; g.fillRect(-1, -4, 7, 11); g.strokeRect(-1, -4, 7, 11);
+          g.fillStyle = '#38bdf8'; g.fillRect(1, -1, 3, 2);
+        });
         return {
           cloudNormal: bakeCloud('rgba(224, 242, 254, 0.22)', 'rgba(224, 242, 254, 0)'),
-          cloudSuper:  bakeCloud('rgba(251, 146, 60, 0.24)', 'rgba(251, 146, 60, 0)')
+          cloudSuper:  bakeCloud('rgba(251, 146, 60, 0.24)', 'rgba(251, 146, 60, 0)'),
+          pickupEmblem, pickupCredit,
+          pickupIntelA: bakeIntel('#ef4444'),
+          pickupIntelB: bakeIntel('#fde047'),
+          pickupPart, pickupXp
         };
       })();
 
@@ -813,11 +920,13 @@
         const oceanC = document.createElement('canvas');
         const sunC = document.createElement('canvas');
         const vigC = document.createElement('canvas');
+        const bossVigC = document.createElement('canvas');
         let oceanKey = '';
         let sunKey = '';
         let vigKey = '';
+        let bossVigKey = '';
 
-        function invalidate() { oceanKey = ''; sunKey = ''; vigKey = ''; }
+        function invalidate() { oceanKey = ''; sunKey = ''; vigKey = ''; bossVigKey = ''; }
 
         function ensureOcean(w, h, topCol, botCol, weirdHueDeg) {
           const k = `${w}x${h}|${topCol}|${botCol}|${weirdHueDeg}`;
@@ -889,6 +998,22 @@
           return vigC;
         }
 
+        function ensureBossVig(w, h) {
+          const k = `${w}x${h}`;
+          if (bossVigKey === k) return bossVigC;
+          bossVigC.width = Math.max(1, w);
+          bossVigC.height = Math.max(1, h);
+          const g = bossVigC.getContext('2d');
+          g.clearRect(0, 0, w, h);
+          const vg = g.createRadialGradient(w * 0.5, h * 0.5, Math.min(w, h) * 0.34, w * 0.5, h * 0.5, Math.max(w, h) * 0.72);
+          vg.addColorStop(0, 'rgba(0,0,0,0)');
+          vg.addColorStop(1, 'rgba(244, 63, 94, 1)');
+          g.fillStyle = vg;
+          g.fillRect(0, 0, w, h);
+          bossVigKey = k;
+          return bossVigC;
+        }
+
         return {
           invalidate,
           blitBackdrop(threat, isSuper) {
@@ -902,6 +1027,14 @@
           },
           blitSuperVignette() {
             ctx.drawImage(ensureVig(W, H), 0, 0, W, H);
+          },
+          blitBossVignette(alpha) {
+            if (alpha <= 0.01) return;
+            ctx.save();
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+            ctx.globalAlpha = Math.min(0.45, alpha);
+            ctx.drawImage(ensureBossVig(W, H), 0, 0, W, H);
+            ctx.restore();
           }
         };
       })();
@@ -1027,17 +1160,44 @@
         // Ch 1: Heroic 80s/90s Top Gun Anthem Lead (soaring synth-guitar / FM brass)
         // MULTI-THEATER CUSTOM MP3 SOUNDTRACK CONTROLLER (Menu + 6 Levels!)
         const BGM_TRACKS = {
-          menu:      "assets/level1_bgm.mp3",
-          ocean:     "assets/bgm_m1_indian_ocean.mp3",
+          menu:       "assets/level1_bgm.mp3",
+          dangerzone: "assets/bgm_danger_zone.mp3",
+          ocean:      "assets/bgm_m1_indian_ocean.mp3",
           miramar:   "assets/bgm_m2_miramar.mp3",
           pax:       "assets/bgm_m3_pax_river.mp3",
           chinalake: "assets/bgm_m4_china_lake.mp3",
           coronado:  "assets/bgm_m5_coronado.mp3",
-          area51:    "assets/bgm_m6_area51.mp3"
+          area51:      "assets/bgm_m6_area51.mp3",
+          boss_air1:   "assets/bgm_boss_air1.mp3",
+          boss_air2:   "assets/bgm_boss_air2.mp3",
+          boss_air3:   "assets/bgm_boss_air3.mp3",
+          boss_air4:   "assets/bgm_boss_air4.mp3",
+          boss_naval1: "assets/bgm_boss_naval1.mp3",
+          boss_naval2: "assets/bgm_boss_naval2.mp3",
+          boss_naval3: "assets/bgm_boss_naval3.mp3",
+          boss_naval4: "assets/bgm_boss_naval4.mp3"
         };
         const bgmEl = document.getElementById('bgmAudio');
         let currentTrackKey = 'menu';
-        if (bgmEl) bgmEl.volume = 0.65;
+        let queuedNextTrackKey = null;
+        let bgmAnalyser = null;
+        let bgmSourceConnected = false;
+        let bgmFreqData = null;
+        let beatAvg = 0.28;
+        let beatPulseVal = 0;
+        let lastBeatDropMs = 0;
+        if (bgmEl) {
+          bgmEl.volume = 0.65;
+          bgmEl.addEventListener('ended', () => {
+            if (queuedNextTrackKey) {
+              const nxt = queuedNextTrackKey;
+              queuedNextTrackKey = null;
+              if (typeof AudioFX !== 'undefined' && AudioFX.playTrack) {
+                AudioFX.playTrack(nxt, true, null);
+              }
+            }
+          });
+        }
 
         function ensureContext() {
           if (!actx) {
@@ -1057,6 +1217,18 @@
             sfxBus.connect(comp);
             comp.connect(master);
             master.connect(actx.destination);
+          }
+          if (actx && bgmEl && !bgmSourceConnected) {
+            try {
+              const srcNode = actx.createMediaElementSource(bgmEl);
+              bgmAnalyser = actx.createAnalyser();
+              bgmAnalyser.fftSize = 256;
+              bgmAnalyser.smoothingTimeConstant = 0.72;
+              bgmFreqData = new Uint8Array(bgmAnalyser.frequencyBinCount);
+              srcNode.connect(bgmAnalyser);
+              bgmAnalyser.connect(actx.destination);
+              bgmSourceConnected = true;
+            } catch (_) {}
           }
           if (actx.state === 'suspended') {
             actx.resume().catch(() => {});
@@ -1122,6 +1294,33 @@
 
         return {
           unlock, setMuted, isMuted,
+          sampleBossBeat(dt = 0.016) {
+            let energy = 0;
+            let hit = false;
+            if (bgmAnalyser && bgmFreqData && !muted && bgmEl && !bgmEl.paused) {
+              try {
+                bgmAnalyser.getByteFrequencyData(bgmFreqData);
+                let sum = 0;
+                for (let i = 0; i < 10; i++) sum += bgmFreqData[i];
+                energy = sum / (10 * 255);
+                const now = performance.now();
+                if (energy > beatAvg * 1.24 && energy > 0.34 && (now - lastBeatDropMs) > 260) {
+                  beatPulseVal = 1.0;
+                  lastBeatDropMs = now;
+                  hit = true;
+                }
+                beatAvg = beatAvg * 0.94 + energy * 0.06;
+              } catch (_) {}
+            } else {
+              const cyc = ((performance.now() * 0.001) * (132 / 60)) % 1;
+              energy = Math.pow(Math.max(0, 1 - cyc * 2.2), 2) * 0.65;
+              if (cyc < 0.05 && (performance.now() - lastBeatDropMs) > 400) {
+                beatPulseVal = 0.85; lastBeatDropMs = performance.now(); hit = true;
+              }
+            }
+            beatPulseVal = Math.max(energy * 0.85, beatPulseVal - dt * 3.4);
+            return { energy, pulse: Math.min(1, beatPulseVal), hit };
+          },
           catapult() {
             playNoise(0.62, 0.26, 650);
             playNoise(0.45, 0.18, 1450);
@@ -1183,8 +1382,38 @@
             playNoise(big ? 0.35 : 0.14, big ? 0.16 : 0.08, 1200);
             playTone(big ? 105 : 175, 28, big ? 0.45 : 0.2, 'sawtooth', big ? 0.18 : 0.1);
           },
-          coinLoot() { playTone(987.77, 987.77, 0.065, 'square', 0.1); setTimeout(() => playTone(1318.51, 1318.51, 0.15, 'square', 0.1), 55); },
-          pickup(combo = 0) { const base = 600 + Math.min(combo, 12) * 45; playTone(base, base * 1.25, 0.065, 'triangle', 0.075); },
+          _playPickupClip: (() => {
+            const urls = {
+              std:  "assets/sfx_pickup_std.mp3",
+              rare: "assets/sfx_pickup_rare.mp3"
+            };
+            const pools = { std: [], rare: [] };
+            const idx = { std: 0, rare: 0 };
+            const lastMs = { std: 0, rare: 0 };
+            return (kind = 'std', vol = 0.42) => {
+              if (muted) return;
+              const now = performance.now();
+              if (now - lastMs[kind] < 55) return;
+              lastMs[kind] = now;
+              try {
+                if (!pools[kind].length) {
+                  for (let i = 0; i < 4; i++) {
+                    const a = new Audio(urls[kind]);
+                    a.preload = 'auto';
+                    pools[kind].push(a);
+                  }
+                }
+                const a = pools[kind][idx[kind] % pools[kind].length];
+                idx[kind]++;
+                a.volume = vol;
+                a.currentTime = 0;
+                const p = a.play();
+                if (p && p.catch) p.catch(() => {});
+              } catch (_) {}
+            };
+          })(),
+          coinLoot(rare = false) { this._playPickupClip(rare ? 'rare' : 'std', rare ? 0.52 : 0.42); },
+          pickup(combo = 0) { this._playPickupClip('std', 0.34); },
           armed() { [523.25, 659.25, 783.99, 1046.5].forEach((n, i) => setTimeout(() => playTone(n, n * 1.02, 0.15, 'sawtooth', 0.13), i * 58)); },
           carrierTrap() {
             playNoise(0.32, 0.18, 2100);
@@ -1195,10 +1424,12 @@
             playNoise(0.45, 0.22, 650);
             [329.63, 440, 554.37, 659.25, 880, 1318.5].forEach((n, i) => setTimeout(() => playTone(n, n * 1.05, 0.2, 'sawtooth', 0.14), i * 45));
           },
-          playTrack(key = 'menu', restart = false) {
+          playTrack(key = 'menu', restart = false, nextLoopKey = null) {
             if (!bgmEl) return;
             const targetKey = BGM_TRACKS[key] ? key : 'menu';
             try {
+              queuedNextTrackKey = (nextLoopKey && BGM_TRACKS[nextLoopKey]) ? nextLoopKey : null;
+              bgmEl.loop = !queuedNextTrackKey;
               if (targetKey !== currentTrackKey) {
                 currentTrackKey = targetKey;
                 bgmEl.src = BGM_TRACKS[targetKey];
@@ -1254,28 +1485,28 @@
           theme: 'ocean'
         },
         {
-          id: 'miramar', num: 2, short: 'MIRAMAR',
-          name: 'Level 2: NAS Miramar — Fightertown USA, CA',
+          id: 'coronado', num: 2, short: 'CORONADO',
+          name: 'Level 2: Coronado Island — NAS North Island (NASNI)',
+          baseType: 'airbase', baseShort: 'NASNI', baseCall: 'NAS NORTH ISLAND',
+          theme: 'coronado'
+        },
+        {
+          id: 'miramar', num: 3, short: 'MIRAMAR',
+          name: 'Level 3: NAS Miramar — Fightertown USA, CA',
           baseType: 'airbase', baseShort: 'NKX', baseCall: 'NAS MIRAMAR',
           theme: 'miramar'
         },
         {
-          id: 'pax_river', num: 3, short: 'PAX RIVER',
-          name: 'Level 3: NAS Patuxent River — Chesapeake Bay, MD',
+          id: 'pax_river', num: 4, short: 'PAX RIVER',
+          name: 'Level 4: NAS Patuxent River — Chesapeake Bay, MD',
           baseType: 'airbase', baseShort: 'NHK', baseCall: 'NAS PAX RIVER',
           theme: 'pax'
         },
         {
-          id: 'china_lake', num: 4, short: 'CHINA LAKE',
-          name: 'Level 4: NAWS China Lake — Mojave Desert, CA',
+          id: 'china_lake', num: 5, short: 'CHINA LAKE',
+          name: 'Level 5: NAWS China Lake — Mojave Desert, CA',
           baseType: 'airbase', baseShort: 'NID', baseCall: 'NAWS CHINA LAKE',
           theme: 'chinalake'
-        },
-        {
-          id: 'coronado', num: 5, short: 'CORONADO',
-          name: 'Level 5: Coronado Island — NAS North Island, San Diego',
-          baseType: 'airbase', baseShort: 'NASNI', baseCall: 'NAS NORTH ISLAND',
-          theme: 'coronado'
         },
         {
           id: 'area51', num: 6, short: '★ AREA 51',
@@ -1679,114 +1910,114 @@
       // ============================================================
       const STAGE_BOSSES = {
         1: {
-          key: 'bear',
+          key: 'bear', bossMusic: 'boss_air1',
           title: 'STAGE 1 BOSS • Tu-95 "BEAR" HEAVY BOMBER',
           shortName: 'Tu-95 "BEAR"',
           sprite: 'bear',
-          hp: 420, speed: 64, r: 52, drawSize: 142, fireRate: 1.35,
-          killsNeeded: 38, score: 1600, xp: 85, crDrop: 90, intelDrop: 1, partDrop: 1
+          hp: 3600, speed: 70, r: 54, drawSize: 148, fireRate: 1.15,
+          killsNeeded: 38, score: 2400, xp: 110, crDrop: 135, intelDrop: 1, partDrop: 2
         },
         2: {
-          key: 'foxbat',
+          key: 'foxbat', bossMusic: 'boss_air2',
           title: 'STAGE 2 BOSS • MiG-25 "FOXBAT" MACH-3',
           shortName: 'MiG-25 "FOXBAT"',
           sprite: 'foxbat',
-          hp: 680, speed: 155, r: 44, drawSize: 122, fireRate: 0.95,
-          killsNeeded: 52, score: 2600, xp: 120, crDrop: 140, intelDrop: 2, partDrop: 2
+          hp: 6400, speed: 165, r: 46, drawSize: 126, fireRate: 0.88,
+          killsNeeded: 52, score: 3800, xp: 155, crDrop: 210, intelDrop: 2, partDrop: 2
         },
         3: {
-          key: 'buran',
+          key: 'buran', bossMusic: 'boss_air3',
           title: 'STAGE 3 SECRET • "BURAN-X" SOVIET SPACE PLANE',
           shortName: 'BURAN-X SPACE PLANE',
           sprite: 'buran',
-          hp: 1050, speed: 125, r: 50, drawSize: 136, fireRate: 0.85,
-          killsNeeded: 64, score: 4200, xp: 170, crDrop: 210, intelDrop: 2, partDrop: 3
+          hp: 10500, speed: 136, r: 52, drawSize: 142, fireRate: 0.78,
+          killsNeeded: 64, score: 6200, xp: 220, crDrop: 300, intelDrop: 3, partDrop: 3
         },
         4: {
-          key: 'kosmos',
+          key: 'kosmos', bossMusic: 'boss_air4',
           title: 'FINAL SECRET • "KOSMOS-86" ORBITAL STATION',
           shortName: 'KOSMOS-86 STATION',
           sprite: 'kosmos',
-          hp: 1750, speed: 46, r: 66, drawSize: 180, fireRate: 0.72,
-          killsNeeded: 80, score: 7500, xp: 260, crDrop: 320, intelDrop: 3, partDrop: 4
+          hp: 16500, speed: 50, r: 68, drawSize: 186, fireRate: 0.68,
+          killsNeeded: 80, score: 11000, xp: 340, crDrop: 460, intelDrop: 4, partDrop: 5
         }
       };
 
       const SURFACE_BOSSES_OCEAN = {
         1: {
-          key: 'krivakLeader',
+          key: 'krivakLeader', bossMusic: 'boss_naval1',
           title: 'HARD DECK BOSS • KRIVAK-II DESTROYER "BESSMENNY"',
           shortName: 'KRIVAK-II DESTROYER',
           sprite: 'frigate',
           isSurface: true, isNaval: true,
-          hp: 460, speed: 44, r: 44, drawSize: 168, fireRate: 1.45,
-          killsNeeded: 48, score: 1750, xp: 90, crDrop: 100, intelDrop: 1, partDrop: 1
+          hp: 3900, speed: 46, r: 46, drawSize: 174, fireRate: 1.22,
+          killsNeeded: 48, score: 2600, xp: 115, crDrop: 150, intelDrop: 1, partDrop: 2
         },
         2: {
-          key: 'moskva',
+          key: 'moskva', bossMusic: 'boss_naval2',
           title: 'HARD DECK BOSS • SLAVA-CLASS CRUISER "MOSKVA"',
           shortName: 'CRUISER "MOSKVA"',
           sprite: 'moskva',
           isSurface: true, isNaval: true,
-          hp: 760, speed: 38, r: 54, drawSize: 215, fireRate: 1.15,
-          killsNeeded: 62, score: 2900, xp: 135, crDrop: 160, intelDrop: 2, partDrop: 2
+          hp: 6900, speed: 40, r: 56, drawSize: 220, fireRate: 0.98,
+          killsNeeded: 62, score: 4200, xp: 170, crDrop: 230, intelDrop: 2, partDrop: 3
         },
         3: {
-          key: 'kirov',
+          key: 'kirov', bossMusic: 'boss_naval3',
           title: 'HARD DECK BOSS • KIROV BATTLECRUISER "FRUNZE"',
           shortName: 'KIROV BATTLECRUISER',
           sprite: 'moskva',
           isSurface: true, isNaval: true,
-          hp: 1180, speed: 35, r: 58, drawSize: 235, fireRate: 0.98,
-          killsNeeded: 74, score: 4600, xp: 185, crDrop: 230, intelDrop: 2, partDrop: 3
+          hp: 11400, speed: 37, r: 60, drawSize: 242, fireRate: 0.85,
+          killsNeeded: 74, score: 6800, xp: 240, crDrop: 330, intelDrop: 3, partDrop: 4
         },
         4: {
-          key: 'redOctober',
+          key: 'redOctober', bossMusic: 'boss_naval4',
           title: 'FLAGSHIP BOSS • "RED OCTOBER" MISSILE CRUISER',
           shortName: 'RED OCTOBER CRUISER',
           sprite: 'moskva',
           isSurface: true, isNaval: true,
-          hp: 1850, speed: 32, r: 64, drawSize: 256, fireRate: 0.85,
-          killsNeeded: 90, score: 8200, xp: 280, crDrop: 350, intelDrop: 3, partDrop: 4
+          hp: 17800, speed: 35, r: 66, drawSize: 264, fireRate: 0.74,
+          killsNeeded: 90, score: 12000, xp: 360, crDrop: 500, intelDrop: 4, partDrop: 5
         }
       };
 
       const SURFACE_BOSSES_LAND = {
         1: {
-          key: 'shilkaCmd',
+          key: 'shilkaCmd', bossMusic: 'boss_naval1',
           title: 'HARD DECK BOSS • SOVIET COMMAND TANK "VOLGA"',
           shortName: 'CMD TANK "VOLGA"',
           sprite: 'groundBoss',
           isSurface: true, isNaval: false,
-          hp: 460, speed: 46, r: 44, drawSize: 148, fireRate: 1.4,
-          killsNeeded: 46, score: 1750, xp: 90, crDrop: 100, intelDrop: 1, partDrop: 1
+          hp: 3900, speed: 48, r: 44, drawSize: 152, fireRate: 1.18,
+          killsNeeded: 48, score: 2600, xp: 115, crDrop: 150, intelDrop: 1, partDrop: 2
         },
         2: {
-          key: 'juggernaut',
+          key: 'juggernaut', bossMusic: 'boss_naval2',
           title: 'HARD DECK BOSS • T-80U TWIN-CANNON JUGGERNAUT',
           shortName: 'T-80U JUGGERNAUT',
           sprite: 'groundBoss',
           isSurface: true, isNaval: false,
-          hp: 760, speed: 42, r: 50, drawSize: 166, fireRate: 1.12,
-          killsNeeded: 54, score: 2900, xp: 135, crDrop: 160, intelDrop: 2, partDrop: 2
+          hp: 6900, speed: 44, r: 50, drawSize: 170, fireRate: 0.96,
+          killsNeeded: 62, score: 4200, xp: 170, crDrop: 230, intelDrop: 2, partDrop: 3
         },
         3: {
-          key: 'mamont',
+          key: 'mamont', bossMusic: 'boss_naval3',
           title: 'HARD DECK BOSS • "MAMONT" MOBILE SAM FORTRESS',
           shortName: 'MAMONT SAM FORTRESS',
           sprite: 'groundBoss',
           isSurface: true, isNaval: false,
-          hp: 1180, speed: 38, r: 55, drawSize: 182, fireRate: 0.96,
-          killsNeeded: 68, score: 4600, xp: 185, crDrop: 230, intelDrop: 2, partDrop: 3
+          hp: 11400, speed: 38, r: 56, drawSize: 188, fireRate: 0.84,
+          killsNeeded: 74, score: 6800, xp: 240, crDrop: 330, intelDrop: 3, partDrop: 4
         },
         4: {
-          key: 'kremlin86',
+          key: 'kremlin86', bossMusic: 'boss_naval4',
           title: 'FINAL GROUND BOSS • "KREMLIN-86" LAND CRUISER',
           shortName: 'KREMLIN-86 CRUISER',
           sprite: 'groundBoss',
           isSurface: true, isNaval: false,
-          hp: 1850, speed: 34, r: 62, drawSize: 198, fireRate: 0.84,
-          killsNeeded: 84, score: 8200, xp: 280, crDrop: 350, intelDrop: 3, partDrop: 4
+          hp: 17800, speed: 34, r: 64, drawSize: 204, fireRate: 0.74,
+          killsNeeded: 90, score: 12000, xp: 360, crDrop: 500, intelDrop: 4, partDrop: 5
         }
       };
 
@@ -1927,14 +2158,31 @@
         return profileStore.ownedAircraft;
       }
 
-      // Level 1 Tutorial Focus: F-14A Tomcat & LTJG Maverick only visible for now (other jets & pilots stay intact for later levels!)
-      const LEVEL1_F14_ONLY = true;
-      const LEVEL1_PILOT_ONLY = true;
+      // Progressive Zero-Spoiler Unlocks:
+      // Level 1: F-14A Tomcat + LTJG Maverick (no map selector visible).
+      // Beating Level 1 rescues LT "ICEMAN", flies home to NASNI Coronado (Level 2), and unlocks F/A-18C Hornet + M1/M2 Map Selector!
+      function isLevel2Unlocked() {
+        if (typeof profileStore !== 'undefined' && profileStore && profileStore.level2Unlocked) return true;
+        if (typeof profile !== 'undefined' && profile && profile.clearedMaps && profile.clearedMaps.indian_ocean) return true;
+        return false;
+      }
       function getVisibleAircraft() {
-        return LEVEL1_F14_ONLY ? [AIRCRAFT[0]] : AIRCRAFT;
+        return isLevel2Unlocked() ? [AIRCRAFT[0], AIRCRAFT[1]] : [AIRCRAFT[0]];
       }
       function getVisiblePilots() {
-        return LEVEL1_PILOT_ONLY ? [BUILTIN_PILOTS[0]] : getAllPilots();
+        return isLevel2Unlocked() ? [BUILTIN_PILOTS[0], BUILTIN_PILOTS[1]] : [BUILTIN_PILOTS[0]];
+      }
+      function unlockCoronadoAndHornet() {
+        profileStore.level2Unlocked = true;
+        const owned = getOwnedAircraft();
+        if (!owned.includes('f18')) profileStore.ownedAircraft = [...owned, 'f18'];
+        if (!profile.freeMissilePickByAc) profile.freeMissilePickByAc = {};
+        if (!hasFittedMissileTree('f18')) profile.freeMissilePickByAc.f18 = true;
+        profile.selectedAircraft = 'f18';
+        _acCacheKey = '';
+        selectedMapIdx = 1;
+        profile.currentCampaignIdx = 1;
+        saveProfile();
       }
 
       // ============================================================
@@ -1944,53 +2192,176 @@
       const AIRCRAFT_TREES = {
         f14: {
           guns: [
-            { id: 'g1_rotary', tier: 1, name: 'M61A1 6-Barrel Rotary', icon: 'vulcan', cr: 0, prt: 0, req: [], freeDefault: true, desc: 'Standard 20mm nose rotary cannon for close-in dogfighting.' },
-            { id: 'g2_cyclic', tier: 2, name: 'High-Cyclic Hydraulic Drive', icon: 'vulcan', cr: 75, prt: 1, req: ['g1_rotary'], desc: '+16% Vulcan cannon power & faster cyclic burst rhythm.' },
-            { id: 'g3_du',     tier: 3, name: 'PGU-28/B Armor-Piercing', icon: 'vulcan', cr: 130, prt: 2, req: ['g2_cyclic'], desc: '+22% cannon damage & heavy armor penetration vs bosses.' },
-            { id: 'g4_twin',   tier: 4, name: 'Twin-Stream Lead HUD', icon: 'vulcan', cr: 210, prt: 3, req: ['g3_du'], desc: 'Launch every sortie with +1 permanent extra Vulcan 20mm rank.' }
+            { id: 'g1_rotary', tier: 1, name: 'M61A1 6-Barrel Rotary', icon: 'vulcan', cr: 0, prt: 0, req: [], freeDefault: true, desc: 'Stock 20mm nose rotary cannon — modest single tracer for close-in dogfights.' },
+            { id: 'g2_cyclic', tier: 2, branch: true, name: '6,000 RPM Hydraulic Drive', icon: 'vulcan', cr: 65, prt: 1, req: ['g1_rotary'], desc: '+20% Vulcan cyclic fire rate, +14% cannon dmg & rapid golden muzzle bursts.' },
+            { id: 'g2_tcs',    tier: 2, branch: true, name: 'AN/AXX-1 TCS Optical Lock', icon: 'scanner', cr: 65, prt: 1, req: ['g1_rotary'], desc: '+26% Guns Ring reach & every 4th burst fires a blazing 2.2× Optical CRIT beam!' },
+            { id: 'g3_du',     tier: 3, branch: true, name: 'PGU-28/B SAPHEI Rounds', icon: 'vulcan', cr: 115, prt: 2, reqAny: ['g2_cyclic', 'g2_tcs'], desc: '+26% gun dmg, +35% vs Bosses & explosive 20mm fiery flak splash on every hit!' },
+            { id: 'g3_hud',    tier: 3, branch: true, name: 'AN/AVG-12 Lead HUD Sweep', icon: 'vulcan', cr: 115, prt: 2, reqAny: ['g2_cyclic', 'g2_tcs'], desc: 'Each 20mm burst arcs an electric cyan chain-shot to a nearby bogey (65% dmg)!' },
+            { id: 'g4_twin',   tier: 4, name: 'Dual-Feed 675-Rd Drum', icon: 'vulcan', cr: 175, prt: 3, reqAny: ['g3_du', 'g3_hud'], desc: 'Launch with +2 permanent Vulcan ranks & +1 simultaneous target stream!' },
+            { id: 'g5_overdrive', tier: 5, name: 'TF30 Bleed-Air Gun Overclock', icon: 'afterburner', cr: 250, prt: 4, req: ['g4_twin'], desc: 'SNOWBALL: Gun splashes stack +5% ROF & +6% dmg (max 12×) into white-hot plasma beams!' }
           ],
           missiles: [
-            { id: 'm1_sidewinder', tier: 1, branch: true, name: 'AIM-9L Sidewinder (Fox 2)', icon: 'sidewinder', cr: 110, prt: 1, req: [], desc: 'Heat-seeking dogfight missiles locking targets outside your Guns Ring.' },
-            { id: 'm1_sparrow',    tier: 1, branch: true, name: 'AIM-7M Sparrow (Fox 1)', icon: 'sparrow', cr: 110, prt: 1, req: [], desc: 'Cross-plane radar missiles that climb or dive to splash the other altitude.' },
-            { id: 'm2_salvo',      tier: 2, name: 'Dual-Rail Pylon Salvo', icon: 'sidewinder', cr: 145, prt: 2, reqAny: ['m1_sidewinder', 'm1_sparrow'], desc: '+1 extra missile rank on your fitted pylon & +15% warhead punch.' },
-            { id: 'm3_phoenix',    tier: 3, name: 'AIM-54C Phoenix BVR', icon: 'phoenix', cr: 240, prt: 3, req: ['m2_salvo'], desc: 'Launch armed with Tomcat signature long-range multi-target Phoenix missiles.' }
+            { id: 'm1_sidewinder', tier: 1, branch: true, name: 'AIM-9L Sidewinder (Fox 2)', icon: 'sidewinder', cr: 100, prt: 1, req: [], desc: 'Stock all-aspect heat-seeking missile locking targets outside Guns Ring.' },
+            { id: 'm1_sparrow',    tier: 1, branch: true, name: 'AIM-7M Sparrow (Fox 1)', icon: 'sparrow', cr: 100, prt: 1, req: [], desc: 'Stock cross-plane radar missile climbing or diving to hit the other altitude.' },
+            { id: 'm2_seam',       tier: 2, branch: true, name: 'SEAM Off-Boresight Seeker', icon: 'sidewinder', cr: 130, prt: 2, reqAny: ['m1_sidewinder', 'm1_sparrow'], desc: '+1 fitted missile rank, +18% dmg & +38% blazing amber high-G seeker speed!' },
+            { id: 'm2_tws',        tier: 2, branch: true, name: 'AN/AWG-9 Track-While-Scan', icon: 'scanner', cr: 130, prt: 2, reqAny: ['m1_sidewinder', 'm1_sparrow'], desc: '+1 extra missile per Sidewinder & Sparrow salvo, +25% range & radar lock rings!' },
+            { id: 'm3_phoenix',    tier: 3, name: 'AIM-54C Phoenix BVR', icon: 'phoenix', cr: 195, prt: 3, reqAny: ['m2_seam', 'm2_tws'], desc: 'Launch armed with Tomcat signature long-range multi-target Phoenix BVR salvos!' },
+            { id: 'm4_pallet',     tier: 4, branch: true, name: '6-Rail Belly Pallet Saturation', icon: 'phoenix', cr: 235, prt: 3, req: ['m3_phoenix'], desc: '+2 Phoenix per salvo, +35% double-ring shockwave & splits into 2 homing sub-seekers!' },
+            { id: 'm4_ripple',     tier: 4, branch: true, name: 'RIO "Ripple Fire" Bus', icon: 'sparrow', cr: 235, prt: 3, req: ['m3_phoenix'], desc: 'SNOWBALL: -25% all missile CDs & every missile kill pulses radar + shaves 0.35s CD!' },
+            { id: 'm5_sixshooter', tier: 5, name: 'AWG-9 "Six-Shooter" Alpha', icon: 'phoenix', cr: 310, prt: 5, reqAny: ['m4_pallet', 'm4_ripple'], desc: 'CAPSTONE: +2 ranks to ALL missiles, +30% dmg & free 3-missile Golden Phoenix Barrage every 10 missile kills!' }
+          ]
+        },
+        f18: {
+          guns: [
+            { id: 'h_g1_m61a2',      tier: 1, name: 'M61A2 Lightweight 20mm', icon: 'vulcan', cr: 0, prt: 0, req: [], freeDefault: true, desc: 'Stock Hornet nose cannon — balanced hybrid fire for both Air & Hard Deck targets.' },
+            { id: 'h_g2_highalpha',  tier: 2, branch: true, name: 'LEX High-Alpha Strafe', icon: 'sweep', cr: 65, prt: 1, req: ['h_g1_m61a2'], desc: '+22% gun ROF, +16% dmg & crisp teal-gold twin high-alpha tracers.' },
+            { id: 'h_g2_flir',       tier: 2, branch: true, name: 'AN/AAS-38 NITE Hawk FLIR', icon: 'scanner', cr: 65, prt: 1, req: ['h_g1_m61a2'], desc: '+26% gun reach & every 3rd burst lases an opposite-plane target with a green FLIR strike!' },
+            { id: 'h_g3_he',         tier: 3, branch: true, name: 'Mk-20 Rockeye 20mm HE', icon: 'vulcan', cr: 115, prt: 2, reqAny: ['h_g2_highalpha', 'h_g2_flir'], desc: '+24% gun dmg, +40% vs Hard Deck armor/ships & 54px dual-plane frag bursts!' },
+            { id: 'h_g3_jhmcs',      tier: 3, branch: true, name: 'JHMCS Helmet Cueing Sight', icon: 'scanner', cr: 115, prt: 2, reqAny: ['h_g2_highalpha', 'h_g2_flir'], desc: 'Off-boresight snap-shots chain emerald-cyan beams to +2 extra targets simultaneously!' },
+            { id: 'h_g4_twin_pod',   tier: 4, name: 'Twin Wing-Root Gun Synchro', icon: 'vulcan', cr: 175, prt: 3, reqAny: ['h_g3_he', 'h_g3_jhmcs'], desc: 'Launch with +2 permanent M61A2 ranks & +1 simultaneous gun stream!' },
+            { id: 'h_g5_superhornet',tier: 5, name: 'F404-GE-402 "Stinger" Overdrive', icon: 'afterburner', cr: 250, prt: 4, req: ['h_g4_twin_pod'], desc: 'SNOWBALL: Gun splashes stack +5% ROF & +6% dmg (max 12×) + restore +2% fuel per kill!' }
+          ],
+          missiles: [
+            { id: 'h_m1_aim9x',      tier: 1, branch: true, name: 'AIM-9X High-G Fox 2', icon: 'sidewinder', cr: 100, prt: 1, req: [], desc: 'Ultra-agile off-boresight heat-seekers locking targets outside Guns Ring.' },
+            { id: 'h_m1_amraam',     tier: 1, branch: true, name: 'AIM-120 AMRAAM (Fox 3)', icon: 'sparrow', cr: 100, prt: 1, req: [], desc: 'Active-radar cross-plane Fox 3 missiles locking EITHER altitude automatically.' },
+            { id: 'h_m2_apg73',      tier: 2, branch: true, name: 'AN/APG-73 Multi-Mode Radar', icon: 'scanner', cr: 130, prt: 2, reqAny: ['h_m1_aim9x', 'h_m1_amraam'], desc: '+1 fitted missile rank, +20% dmg, +35% speed & +30% vs Hard Deck armor/ships!' },
+            { id: 'h_m2_datalink',   tier: 2, branch: true, name: 'Link-16 Tactical Datalink', icon: 'sparrow', cr: 130, prt: 2, reqAny: ['h_m1_aim9x', 'h_m1_amraam'], desc: '+1 extra missile per salvo, +28% lock range & cyan Link-16 diamond lock rings!' },
+            { id: 'h_m3_harm',       tier: 3, name: 'AGM-88 HARM / SLAM-ER', icon: 'phoenix', cr: 195, prt: 3, reqAny: ['h_m2_apg73', 'h_m2_datalink'], desc: 'Launch armed with heavy multi-role HARM/SLAM stand-off splash missiles!' },
+            { id: 'h_m4_jsow',       tier: 4, branch: true, name: 'AGM-154 JSOW Cluster Bus', icon: 'phoenix', cr: 235, prt: 3, req: ['h_m3_harm'], desc: '+2 HARM/SLAM per salvo, +35% blast radius & splits into 3 cross-plane sub-seekers!' },
+            { id: 'h_m4_wildweasel', tier: 4, branch: true, name: 'SEAD "Magnum" Rapid Bus', icon: 'sidewinder', cr: 235, prt: 3, req: ['h_m3_harm'], desc: 'SNOWBALL: -25% all missile CDs & every missile kill pulses emerald SEAD (-0.35s CD)!' },
+            { id: 'h_m5_strikegroup',tier: 5, name: 'CVW-14 "Alpha Strike" Package', icon: 'phoenix', cr: 310, prt: 5, reqAny: ['h_m4_jsow', 'h_m4_wildweasel'], desc: 'CAPSTONE: +2 ranks to ALL missiles, +30% dmg & free 4-missile AMRAAM+HARM Storm every 8 kills!' }
           ]
         }
       };
 
       function getAircraftTreeOwned(acId = 'f14') {
         if (!profile.aircraftTrees) profile.aircraftTrees = {};
-        if (!profile.aircraftTrees[acId]) profile.aircraftTrees[acId] = { g1_rotary: true };
-        profile.aircraftTrees[acId].g1_rotary = true;
+        const defaultNode = acId === 'f18' ? 'h_g1_m61a2' : 'g1_rotary';
+        if (!profile.aircraftTrees[acId]) profile.aircraftTrees[acId] = { [defaultNode]: true };
+        profile.aircraftTrees[acId][defaultNode] = true;
         return profile.aircraftTrees[acId];
       }
 
       function hasFittedMissileTree(acId = 'f14') {
         const owned = getAircraftTreeOwned(acId);
+        if (acId === 'f18') return !!(owned.h_m1_aim9x || owned.h_m1_amraam);
         return !!(owned.m1_sidewinder || owned.m1_sparrow);
       }
 
+      let _acBonusCache = {};
+      function invalidateAircraftBonusCache() { _acBonusCache = {}; }
       function getAircraftTreeBonuses(acId = 'f14') {
+        if (_acBonusCache[acId]) return _acBonusCache[acId];
+        const _res = _computeAircraftTreeBonuses(acId);
+        _acBonusCache[acId] = _res;
+        return _res;
+      }
+      function _computeAircraftTreeBonuses(acId = 'f14') {
         const owned = getAircraftTreeOwned(acId);
-        let dmgMult = 1.0;
-        if (owned.g2_cyclic) dmgMult += 0.16;
-        if (owned.g3_du) dmgMult += 0.22;
-        if (owned.m2_salvo) dmgMult += 0.15;
+        let gunDmgMult = 1.0, gunRofMult = 1.0, gunRangeMult = 1.0;
+        let missileDmgMult = 1.0, missileCdMult = 1.0, missileSpeedMult = 1.0, missileRangeMult = 1.0;
+        let gunTierCount = 0, missileTierCount = 0;
+
+        if (acId === 'f18') {
+          if (owned.h_g2_highalpha) { gunDmgMult += 0.16; gunRofMult += 0.22; gunTierCount++; }
+          if (owned.h_g2_flir)      { gunRangeMult += 0.26; gunTierCount++; }
+          if (owned.h_g3_he)        { gunDmgMult += 0.24; gunTierCount++; }
+          if (owned.h_g3_jhmcs)     { gunTierCount++; }
+          if (owned.h_g4_twin_pod)  { gunTierCount++; }
+          if (owned.h_g5_superhornet){ gunTierCount++; }
+          if (owned.h_m2_apg73)     { missileDmgMult += 0.20; missileSpeedMult += 0.35; missileTierCount++; }
+          if (owned.h_m2_datalink)  { missileRangeMult += 0.28; missileTierCount++; }
+          if (owned.h_m3_harm)      { missileTierCount++; }
+          if (owned.h_m4_jsow)      { missileTierCount++; }
+          if (owned.h_m4_wildweasel){ missileCdMult *= 0.75; missileTierCount++; }
+          if (owned.h_m5_strikegroup){ missileDmgMult += 0.30; gunDmgMult += 0.15; missileTierCount++; }
+          const hasSw = !!owned.h_m1_aim9x;
+          const hasSp = !!owned.h_m1_amraam;
+          const t2Bonus = owned.h_m2_apg73 ? 1 : 0;
+          const capBonus = owned.h_m5_strikegroup ? 2 : 0;
+          return {
+            dmgMult: Math.max(gunDmgMult, missileDmgMult),
+            gunDmgMult, gunRofMult, gunRangeMult,
+            missileDmgMult, missileCdMult, missileSpeedMult, missileRangeMult,
+            gunTierCount, missileTierCount,
+            hasTcsCrit: false,
+            hasFlirCrossPlane: !!owned.h_g2_flir,
+            hasSapheiSplash: !!owned.h_g3_he,
+            splashRadius: owned.h_g3_he ? 54 : 46,
+            groundBonusMult: owned.h_g3_he ? 1.40 : 1.0,
+            missileGroundBonusMult: owned.h_m2_apg73 ? 1.30 : 1.0,
+            hasHudChain: !!owned.h_g3_jhmcs,
+            chainCount: owned.h_g3_jhmcs ? 2 : 1,
+            extraGunBeams: owned.h_g4_twin_pod ? 1 : 0,
+            hasGunOverclock: !!owned.h_g5_superhornet,
+            fuelPerGunKill: owned.h_g5_superhornet ? 2.0 : 0,
+            hasSeamPlume: !!owned.h_m2_apg73,
+            extraTwsSalvo: owned.h_m2_datalink ? 1 : 0,
+            hasSixPallet: !!owned.h_m4_jsow,
+            subSeekerCount: owned.h_m4_jsow ? 3 : 2,
+            hasRioRipple: !!owned.h_m4_wildweasel,
+            hasSixShooter: !!owned.h_m5_strikegroup,
+            alphaStrikeKills: 8,
+            alphaStrikeCount: 4,
+            vulcanBonus: owned.h_g4_twin_pod ? 2 : 0,
+            sidewinderBonus: hasSw ? (1 + t2Bonus + capBonus) : 0,
+            sparrowBonus: hasSp ? (1 + t2Bonus + capBonus) : 0,
+            phoenixBonus: owned.h_m3_harm ? (1 + capBonus) : 0
+          };
+        }
+
+        if (owned.g2_cyclic) { gunDmgMult += 0.14; gunRofMult += 0.20; gunTierCount++; }
+        if (owned.g2_tcs)    { gunRangeMult += 0.26; gunTierCount++; }
+        if (owned.g3_du)     { gunDmgMult += 0.26; gunTierCount++; }
+        if (owned.g3_hud)    { gunTierCount++; }
+        if (owned.g4_twin)   { gunTierCount++; }
+        if (owned.g5_overdrive) { gunTierCount++; }
+        if (owned.m2_seam || owned.m2_salvo) { missileDmgMult += 0.18; missileSpeedMult += 0.38; missileTierCount++; }
+        if (owned.m2_tws)    { missileRangeMult += 0.25; missileTierCount++; }
+        if (owned.m3_phoenix) { missileTierCount++; }
+        if (owned.m4_pallet) { missileTierCount++; }
+        if (owned.m4_ripple) { missileCdMult *= 0.75; missileTierCount++; }
+        if (owned.m5_sixshooter) { missileDmgMult += 0.30; gunDmgMult += 0.15; missileTierCount++; }
+
         const hasSw = !!owned.m1_sidewinder;
         const hasSp = !!owned.m1_sparrow;
+        const seamBonus = (owned.m2_seam || owned.m2_salvo) ? 1 : 0;
+        const sixBonus = owned.m5_sixshooter ? 2 : 0;
         return {
-          dmgMult,
-          vulcanBonus: owned.g4_twin ? 1 : 0,
-          sidewinderBonus: hasSw ? (1 + (owned.m2_salvo ? 1 : 0)) : 0,
-          sparrowBonus: hasSp ? (1 + (owned.m2_salvo ? 1 : 0)) : 0,
-          phoenixBonus: owned.m3_phoenix ? 1 : 0
+          dmgMult: Math.max(gunDmgMult, missileDmgMult),
+          gunDmgMult, gunRofMult, gunRangeMult,
+          missileDmgMult, missileCdMult, missileSpeedMult, missileRangeMult,
+          gunTierCount, missileTierCount,
+          hasTcsCrit: !!owned.g2_tcs,
+          hasFlirCrossPlane: false,
+          hasSapheiSplash: !!owned.g3_du,
+          splashRadius: 46,
+          groundBonusMult: 1.0,
+          missileGroundBonusMult: 1.0,
+          hasHudChain: !!owned.g3_hud,
+          chainCount: 1,
+          extraGunBeams: owned.g4_twin ? 1 : 0,
+          hasGunOverclock: !!owned.g5_overdrive,
+          fuelPerGunKill: 0,
+          hasSeamPlume: !!(owned.m2_seam || owned.m2_salvo),
+          extraTwsSalvo: owned.m2_tws ? 1 : 0,
+          hasSixPallet: !!owned.m4_pallet,
+          subSeekerCount: 2,
+          hasRioRipple: !!owned.m4_ripple,
+          hasSixShooter: !!owned.m5_sixshooter,
+          alphaStrikeKills: 10,
+          alphaStrikeCount: 3,
+          vulcanBonus: owned.g4_twin ? 2 : 0,
+          sidewinderBonus: hasSw ? (1 + seamBonus + sixBonus) : 0,
+          sparrowBonus: hasSp ? (1 + seamBonus + sixBonus) : 0,
+          phoenixBonus: owned.m3_phoenix ? (1 + sixBonus) : 0
         };
       }
 
       let _acCacheKey = '';
       let _acCacheVal = AIRCRAFT[0];
       function getSelectedAircraftCfg() {
-        if (LEVEL1_F14_ONLY) return AIRCRAFT[0];
+        if (!isLevel2Unlocked()) return AIRCRAFT[0];
         const id = (profile && profile.selectedAircraft) || 'f14';
         const owned = getOwnedAircraft();
         const k = id + '|' + owned.length;
@@ -2081,7 +2452,7 @@
       let selectedPilotCfgCache = null;
 
       function switchActivePilot(pilotId) {
-        if (LEVEL1_PILOT_ONLY) pilotId = BUILTIN_PILOTS[0].id;
+        if (!isLevel2Unlocked()) pilotId = BUILTIN_PILOTS[0].id;
         profileStore.selectedPilot = pilotId;
         selectedPilotCfgCache = null;
         if (!profileStore.profiles[pilotId]) profileStore.profiles[pilotId] = defaultPilotRecord();
@@ -2095,6 +2466,7 @@
       }
 
       function saveProfile() {
+        invalidateAircraftBonusCache();
         try {
           profileStore.profiles[profileStore.selectedPilot] = profile;
           localStorage.setItem(PROFILE_STORE_KEY, JSON.stringify(profileStore));
@@ -2232,9 +2604,9 @@
         if (selectedPilotCfgCache && selectedPilotCfgCache.id === profileStore.selectedPilot) {
           return selectedPilotCfgCache;
         }
-        selectedPilotCfgCache = LEVEL1_PILOT_ONLY
+        selectedPilotCfgCache = !isLevel2Unlocked()
           ? BUILTIN_PILOTS[0]
-          : (getAllPilots().find(pl => pl.id === profileStore.selectedPilot) || BUILTIN_PILOTS[0]);
+          : (getVisiblePilots().find(pl => pl.id === profileStore.selectedPilot) || BUILTIN_PILOTS[0]);
         return selectedPilotCfgCache;
       }
       function getSelectedPilotData() {
@@ -2270,10 +2642,10 @@
       ];
 
       const UPGRADE_POOL = [
-        { id: 'vulcan', name: 'M61A1 Vulcan 20mm', tag: 'NOSE GUN', icon: 'vulcan', maxLvl: 6, desc: (lvl) => lvl === 1 ? 'Adds extra nose-cannon streams & higher cyclic rate on your active plane.' : `Lvl ${lvl + 1}: +1 tracer stream & +16% fire rate.` },
-        { id: 'sidewinder', name: 'AIM-9L Sidewinders', tag: 'FOX TWO', icon: 'sidewinder', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Wing-pylon heat-seekers locking onto MiG-28s on your plane.' : `Lvl ${lvl + 1}: +1 Sidewinder per Fox Two salvo.` },
-        { id: 'sparrow', name: 'AIM-7M Sparrow Radar', tag: 'CROSS-PLANE', icon: 'sparrow', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'RIO radar missiles that climb/dive to splash MiGs on the OTHER plane!' : `Lvl ${lvl + 1}: +1 cross-plane Sparrow & heavier warhead.` },
-        { id: 'phoenix', name: 'AIM-54C Phoenix', tag: 'F-14 ICON', icon: 'phoenix', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Tomcat’s signature long-range missile—locks targets across BOTH planes!' : `Lvl ${lvl + 1}: +1 multi-target Phoenix & bigger splash.` },
+        { id: 'vulcan', name: 'M61A1 Vulcan 20mm', tag: 'NOSE GUN', icon: 'vulcan', maxLvl: 12, desc: (lvl) => lvl === 1 ? 'Adds extra nose-cannon streams & higher cyclic rate on your active plane.' : `Lvl ${lvl + 1}: +1 tracer stream & +16% fire rate.` },
+        { id: 'sidewinder', name: 'AIM-9L Sidewinders', tag: 'FOX TWO', icon: 'sidewinder', maxLvl: 10, desc: (lvl) => lvl === 0 ? 'Wing-pylon heat-seekers locking onto MiG-28s on your plane.' : `Lvl ${lvl + 1}: +1 Sidewinder per Fox Two salvo.` },
+        { id: 'sparrow', name: 'AIM-7M Sparrow Radar', tag: 'CROSS-PLANE', icon: 'sparrow', maxLvl: 10, desc: (lvl) => lvl === 0 ? 'RIO radar missiles that climb/dive to splash MiGs on the OTHER plane!' : `Lvl ${lvl + 1}: +1 cross-plane Sparrow & heavier warhead.` },
+        { id: 'phoenix', name: 'AIM-54C Phoenix', tag: 'F-14 ICON', icon: 'phoenix', maxLvl: 10, desc: (lvl) => lvl === 0 ? 'Tomcat’s signature long-range missile—locks targets across BOTH planes!' : `Lvl ${lvl + 1}: +1 multi-target Phoenix & bigger splash.` },
         { id: 'wingman', name: 'VF-1 Tomcat Wingman', tag: 'ICEMAN', icon: 'wingman', maxLvl: 4, desc: (lvl) => lvl === 0 ? 'Calls in an F-14 wingman flying formation on your plane.' : `Lvl ${lvl + 1}: +1 F-14 escort (up to 4).` },
         { id: 'flares', name: 'Goose Chaff & Flares', tag: 'DEFENSE', icon: 'flares', maxLvl: 5, desc: (lvl) => lvl === 0 ? 'Periodic IR flare ring that clears enemy fire & scorches close MiGs.' : `Lvl ${lvl + 1}: Wider flare burst & faster cycle.` },
         { id: 'afterburner', name: 'F110 Afterburner Core', tag: 'SUPER STATE', icon: 'afterburner', maxLvl: 4, desc: (lvl) => `Lvl ${lvl + 1}: +30% faster Afterburner charge & +2.2s longer ★ Inverted Mode.` },
@@ -2301,7 +2673,9 @@
         afterburner: false,
         missiles: false,
         altitude: false,
-        superState: false
+        superState: false,
+        vertrep: false,
+        skyhook: false
       };
       let sessionSplashes = 0;
       let sessionCombatSec = 0;
@@ -2315,7 +2689,7 @@
         {
           key: 'altitude', zoneReq: 1, zoneKillsReq: 28, shortLabel: 'HARD DECK', blocking: true,
           portrait: 'iceman', sender: 'UHF 305.2 • LT "ICEMAN" — FLIGHT LEAD',
-          line: () => `"Tu-95 Bear heavy bomber closing on the fleet! Vertical vectoring authorized—press E or tap your jet to dive down to Hard Deck to dodge flak, trap on USS Enterprise, or strafe surface escorts!"`,
+          line: () => `"Tu-95 Bear closing on the fleet! Vertical vectoring authorized—press E or tap your jet to swap between Angels 20 & Hard Deck. PRO TIP: Swap altitude right on top of a bogey to trigger GOING BALLISTIC—a shockwave slam that insta-splashes fighters, chunks bosses, and surges your Burn Charge!"`,
           badge: () => '★ UNLOCKED: HARD DECK / ALTITUDE SWAP (E / TAP JET)'
         },
 
@@ -2463,6 +2837,16 @@
           showRadioComm(nextMsg);
           return;
         }
+        if (state && state.radioCamFocus) {
+          if (state.radioCamFocus.type === 'vertrep' && state.vertrepPos) {
+            state.vertrepPos.x = 250; state.vertrepPos.y = -95; state.vertrepPos.t = 1;
+          }
+          if (state.player) {
+            state.camX = state.player.x;
+            state.camY = state.player.y;
+          }
+          state.radioCamFocus = null;
+        }
         if (state && state.mode === 'radiocomm') {
           state.mode = 'playing';
         }
@@ -2587,7 +2971,7 @@
           // Catapult launch boost timer (prevents immediate re-landing for 3.5s after launch!)
           launchTimer: (mode === 'playing' || mode === 'catshot') ? 1.25 : 0,
           trapGrace: (mode === 'playing' || mode === 'catshot') ? 4.5 : 0,
-          trapProgress: 0,
+          trapProgress: 0, vertrepCd: 0, vertrepPos: { x: 250, y: -95, t: 1 }, skyhookCd: 0, skyhook: null, radioCamFocus: null,
           ciwsTimer: 0,
           hudTimer: 0,
           levelUpDelay: 0,
@@ -2636,6 +3020,7 @@
                 sweep: profile.carriedWeapons.sweep || 0
               };
             })(),
+            gunBurstCount: 0, gunFrenzyStacks: 0, gunFrenzyTimer: 0, missileKillCounter: 0,
             timers: { vulcan: 0, sidewinder: 0, sparrow: 0, phoenix: 0, wingman: 0, flares: 0, superPhoenix: 0, superBoom: 0 },
             wingAngle: 0
           },
@@ -2705,6 +3090,60 @@
       const killsText = document.getElementById('killsText');
       const superBtn = document.getElementById('superBtn');
       const afterburnerBtn = document.getElementById('afterburnerBtn');
+      const skyhookBtn = document.getElementById('skyhookBtn');
+      const skyhookFill = document.getElementById('skyhookFill');
+      const skyhookStatus = document.getElementById('skyhookStatus');
+
+      function bankCargoInFlight(label, fuelBoost = 25, hullBoost = 0) {
+        if (!state) return false;
+        const c = state.cargo;
+        const hasCargo = (c.credits > 0 || c.intel > 0 || c.parts > 0);
+        if (!hasCargo) return false;
+        const p = state.player;
+        const rangeBonus = Math.round((state.maxDistNM || 0) * 2.5);
+        const syn = getPilotAircraftSynergy(getSelectedPilotCfg(), getSelectedAircraftCfg());
+        const totalCr = Math.round((c.credits + rangeBonus) * (getSelectedPilotCfg().lootMult || 1) * (syn ? syn.loot : 1));
+        profile.credits += totalCr;
+        profile.intel += c.intel;
+        profile.parts += c.parts;
+        state.cargo = { credits: 0, intel: 0, parts: 0 };
+        if (fuelBoost > 0) p.fuel = Math.min(p.maxFuel, p.fuel + fuelBoost);
+        if (hullBoost > 0) p.hp = Math.min(p.maxHp, p.hp + hullBoost);
+        saveProfile();
+        AudioFX.levelUp();
+        spawnRing(p.x, p.y, '#4ade80', 18, 125, p.plane);
+        const haulStr = `+${totalCr} CR` + (c.intel > 0 ? ` • +${c.intel} INT` : '') + (c.parts > 0 ? ` • +${c.parts} PRT` : '');
+        showBanner(`${label} BANKED: ${haulStr}!`, 'border-emerald-400 text-emerald-200');
+        addFloatingText(p.x, p.y - 34, `${label} ${haulStr}`, '#4ade80', 12);
+        return true;
+      }
+
+      function callSkyhook() {
+        if (!state || state.mode !== 'playing' || !sessionUnlocks.skyhook) return;
+        const c = state.cargo;
+        const hasCargo = (c.credits > 0 || c.intel > 0 || c.parts > 0);
+        if (!hasCargo) {
+          addFloatingText(state.player.x, state.player.y - 26, 'NO CARGO TO EXTRACT', '#94a3b8', 10);
+          return;
+        }
+        if (state.skyhook || state.skyhookCd > 0) return;
+        const p = state.player;
+        const crossAng = p.heading + (Math.random() < 0.5 ? 0.55 : -0.55);
+        const startDist = 520;
+        const sx = p.x + Math.cos(p.heading) * 210 - Math.cos(crossAng) * startDist;
+        const sy = p.y + Math.sin(p.heading) * 210 - Math.sin(crossAng) * startDist;
+        state.skyhook = {
+          x: sx, y: sy, angle: crossAng, speed: 128, plane: p.plane,
+          life: 24, extracted: false
+        };
+        state.skyhookCd = 36;
+        AudioFX.armed();
+        showBanner('✈ KC-130F "SKYHOOK" ON STATION — FLY THROUGH THE GOLD PICKUP RING TO BANK!', 'border-emerald-400 text-amber-200');
+        addFloatingText(p.x, p.y - 30, '✈ SKYHOOK INBOUND!', '#4ade80', 11);
+      }
+      if (skyhookBtn) {
+        skyhookBtn.addEventListener('click', (e) => { e.stopPropagation(); AudioFX.unlock(); callSkyhook(); });
+      }
       const abFill = document.getElementById('abFill');
       const abPct = document.getElementById('abPct');
       const superFill = document.getElementById('superFill');
@@ -2780,21 +3219,27 @@
         profile.missionSave = null;
         profile.carriedWeapons = { ...state.player.weapons };
         profile.carriedLevel = state.player.level || 1;
-        // Stay locked on Level 1 while dialing in the Indian Ocean theater!
-        selectedMapIdx = 0;
-        profile.currentCampaignIdx = 0;
+        const wasLockedL2 = !isLevel2Unlocked();
+        if (curMap.id === 'indian_ocean') {
+          unlockCoronadoAndHornet();
+        } else {
+          selectedMapIdx = 1;
+          profile.currentCampaignIdx = 1;
+        }
         if (state.score > profile.highScore) profile.highScore = state.score;
         saveProfile();
         recordLeaderboardRun('BUZZED');
         refreshRecordLine();
         renderMapSelector();
         renderPilotSelector();
+        renderAircraftBayUI();
 
         AudioFX.playTrack('menu', false);
         openHangar({
           credits: totalCr, intel: c.intel + 2, parts: c.parts + 2,
           maxNM: state.maxDistNM,
           buzzCleared: true,
+          rescuedIceman: wasLockedL2 && curMap.id === 'indian_ocean',
           nextMapName: getCurrentMap().name
         });
       }
@@ -2821,11 +3266,18 @@
         let savedMidMission = false;
         if (state.allBossesCleared) {
           profile.missionSave = null;
-          profile.clearedMaps[getCurrentMap().id] = true;
-          selectedMapIdx = (selectedMapIdx + 1) % MAPS.length;
-          profile.currentCampaignIdx = selectedMapIdx;
+          const clearedId = getCurrentMap().id;
+          profile.clearedMaps[clearedId] = true;
+          if (clearedId === 'indian_ocean') {
+            unlockCoronadoAndHornet();
+          } else {
+            selectedMapIdx = Math.min(1, selectedMapIdx);
+            profile.currentCampaignIdx = selectedMapIdx;
+          }
           saveProfile();
           renderMapSelector();
+          renderPilotSelector();
+          renderAircraftBayUI();
         } else {
           // Save full mid-mission state at base so landing lets you refit or return later right where you left off!
           savedMidMission = true;
@@ -2864,9 +3316,11 @@
         const haulBox = document.getElementById('extractionHaulBox');
         if (haul) {
           haulBox.classList.remove('hidden');
-          document.getElementById('haulText').textContent = haul.buzzCleared
-            ? `☕ TOWER BUZZED! +${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS → NEXT: ${haul.nextMapName}`
-            : `+${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS (Peak ${haul.maxNM.toFixed(1)} NM)${haul.checkpointSaved ? ' • ✓ MISSION STATE SAVED AT BASE!' : ''}`;
+          document.getElementById('haulText').textContent = haul.rescuedIceman
+            ? `★ LT "ICEMAN" RESCUED! RTB TO NASNI CORONADO — F/A-18C HORNET & LEVEL 2 UNLOCKED! (+${haul.credits} CR)`
+            : (haul.buzzCleared
+              ? `☕ TOWER BUZZED! +${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS → NEXT: ${haul.nextMapName}`
+              : `+${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS (Peak ${haul.maxNM.toFixed(1)} NM)${haul.checkpointSaved ? ' • ✓ MISSION STATE SAVED AT BASE!' : ''}`);
         } else {
           haulBox.classList.add('hidden');
         }
@@ -2882,8 +3336,11 @@
         const ac = getSelectedAircraftCfg();
         const tree = AIRCRAFT_TREES[ac.id] || AIRCRAFT_TREES.f14;
         const owned = getAircraftTreeOwned(ac.id);
-        const missilesOpen = !!(profile.missilesTreeUnlocked || sessionUnlocks.missiles);
-        const hasFreePick = missilesOpen && !!profile.freeMissilePick && !hasFittedMissileTree(ac.id);
+        const missilesOpen = !!(profile.missilesTreeUnlocked || sessionUnlocks.missiles || (ac.id === 'f18' && isLevel2Unlocked()));
+        const acFreeFlag = ac.id === 'f18'
+          ? !!(profile.freeMissilePickByAc && profile.freeMissilePickByAc.f18)
+          : !!profile.freeMissilePick;
+        const hasFreePick = missilesOpen && acFreeFlag && !hasFittedMissileTree(ac.id);
 
         if (hdr) hdr.textContent = `${ac.name} — WEAPON UPGRADE TREES`;
         if (freeBanner) freeBanner.classList.toggle('hidden', !hasFreePick);
@@ -2911,9 +3368,11 @@
             return col;
           }
 
+          let hiddenCount = 0;
           nodes.forEach(n => {
             const isOwned = !!owned[n.id];
             const reqMet = (n.req ? n.req.every(r => owned[r]) : true) && (n.reqAny ? n.reqAny.some(r => owned[r]) : true);
+            if (!isOwned && !reqMet) { hiddenCount++; return; }
             const isFreeNow = isMissileTree && hasFreePick && n.tier === 1 && !isOwned;
             const crCost = isFreeNow ? 0 : n.cr;
             const prtCost = isFreeNow ? 0 : n.prt;
@@ -2950,10 +3409,15 @@
                   profile.credits -= crCost;
                   profile.parts -= prtCost;
                 } else {
-                  profile.freeMissilePick = false;
+                  if (ac.id === 'f18') {
+                    if (!profile.freeMissilePickByAc) profile.freeMissilePickByAc = {};
+                    profile.freeMissilePickByAc.f18 = false;
+                  } else {
+                    profile.freeMissilePick = false;
+                  }
                 }
                 owned[n.id] = true;
-                sessionUnlocks.missiles = true;
+                if (isMissileTree) sessionUnlocks.missiles = true;
                 // Also carry newly fitted pylon directly into any saved mid-mission checkpoint!
                 if (profile.missionSave && profile.missionSave.weapons) {
                   const tb = getAircraftTreeBonuses(ac.id);
@@ -2969,10 +3433,24 @@
             }
             col.appendChild(row);
           });
+          if (hiddenCount > 0) {
+            const hint = document.createElement('div');
+            hint.className = 'rounded-lg px-2.5 py-2 bg-slate-900/60 border border-dashed border-slate-700/80 text-center font-arcade text-[8px] text-slate-400 tracking-wider';
+            hint.textContent = `CLASSIFIED • ${hiddenCount} FURTHER SYSTEM${hiddenCount > 1 ? 'S' : ''} REVEAL AS YOU FIT UPGRADES`;
+            col.appendChild(hint);
+          }
           return col;
         };
 
+        const _tbStats = getAircraftTreeBonuses(ac.id);
+        const statsStrip = document.createElement('div');
+        statsStrip.className = 'sm:col-span-2 rounded-lg px-3 py-1.5 bg-slate-950/90 border border-slate-700/80 flex flex-wrap items-center justify-between gap-2 font-arcade text-[9px] text-slate-300';
+        statsStrip.innerHTML = `
+          <span>GUN DMG <strong class="text-amber-300">+${Math.round((_tbStats.gunDmgMult - 1) * 100)}%</strong> • ROF <strong class="text-amber-300">+${Math.round((_tbStats.gunRofMult - 1) * 100)}%</strong> • REACH <strong class="text-amber-300">+${Math.round((_tbStats.gunRangeMult - 1) * 100)}%</strong></span>
+          <span>MISSILE DMG <strong class="text-sky-300">+${Math.round((_tbStats.missileDmgMult - 1) * 100)}%</strong> • CD <strong class="text-sky-300">-${Math.round((1 - _tbStats.missileCdMult) * 100)}%</strong> • CAP <strong class="text-emerald-300">L12 GUN / L10 MSL</strong></span>
+        `;
         wrap.innerHTML = '';
+        wrap.appendChild(statsStrip);
         wrap.appendChild(renderBranch('GUNS TREE (CLOSE-IN)', 'text-amber-300', 'border-amber-500/40', tree.guns, false));
         wrap.appendChild(renderBranch('MISSILES TREE (STAND-OFF)', 'text-sky-300', 'border-sky-500/40', tree.missiles, true));
       }
@@ -3233,47 +3711,82 @@
 
         const onOcean = isOceanAt(x, y);
         let type = typeOverride;
+        const isCoronado = getCurrentMap().theme === 'coronado';
         if (!type) {
           if (plane === 0) {
-            // Hard Deck = Surface Units (Soviet Navy Frigates on ocean; Soviet BMP-2s & T-72 Tanks on land)
-            if (onOcean) {
-              type = 'frigate';
+            if (isCoronado) {
+              // Level 2 Coronado Hard Deck: Caspian Sea Monster Ekranoplan on Bay/Ocean; Mi-24 Hind Gunships & T-72s on Coast/Land!
+              if (onOcean) {
+                type = (threat.lvl >= 2 && Math.random() < 0.58) ? 'ekranoplan' : 'frigate';
+              } else {
+                type = Math.random() < 0.62 ? 'hind' : 'tank';
+              }
             } else {
-              const tankChance = threat.lvl >= 2 ? 0.48 : 0.34;
-              type = Math.random() < tankChance ? 'tank' : 'bmp';
+              if (onOcean) {
+                type = 'frigate';
+              } else {
+                const tankChance = threat.lvl >= 2 ? 0.48 : 0.34;
+                type = Math.random() < tankChance ? 'tank' : 'bmp';
+              }
             }
           } else {
-            // Angels 20 = Aerial Dogfight Units (Escalating Air-to-Air Waves)
             const r = Math.random();
-            const z1Kills = (state.zoneKills && state.zoneKills[1]) || 0;
-            if (threat.lvl >= 4) {
-              type = r < 0.48 ? 'ace' : (r < 0.80 ? 'bomber' : 'mig28');
-            } else if (threat.lvl === 3) {
-              type = r < 0.38 ? 'ace' : (r < 0.66 ? 'bomber' : 'mig28');
-            } else if (threat.lvl === 2) {
-              type = r < 0.20 ? 'ace' : (r < 0.50 ? 'bomber' : 'mig28');
+            if (isCoronado) {
+              // Level 2 Coronado Exclusive Cold War Soviet Air Roster: Fishbed -> Flogger -> Frogfoot -> Tu-160 Blackjack!
+              if (threat.lvl >= 4) {
+                type = r < 0.30 ? 'blackjack' : (r < 0.60 ? 'frogfoot' : (r < 0.82 ? 'flogger' : 'fishbed'));
+              } else if (threat.lvl === 3) {
+                type = r < 0.24 ? 'blackjack' : (r < 0.58 ? 'frogfoot' : (r < 0.84 ? 'flogger' : 'fishbed'));
+              } else if (threat.lvl === 2) {
+                type = r < 0.34 ? 'frogfoot' : (r < 0.72 ? 'flogger' : 'fishbed');
+              } else {
+                type = r < 0.52 ? 'fishbed' : 'flogger';
+              }
             } else {
-              // Zone 1 smooth dogfight warm-up: Scouts lead early, then MiG-28s ramp up
-              const scoutCut = z1Kills < 12 ? 0.60 : 0.35;
-              type = r < scoutCut ? 'scout' : 'mig28';
+              // Level 1 Indian Ocean Escalating Cold War & Secret Prototype Aerial Waves!
+              const z1Kills = (state.zoneKills && state.zoneKills[1]) || 0;
+              if (threat.lvl >= 4) {
+                type = r < 0.28 ? 'berkut' : (r < 0.50 ? 'freestyle' : (r < 0.74 ? 'foxhound' : 'ace'));
+              } else if (threat.lvl === 3) {
+                type = r < 0.28 ? 'foxhound' : (r < 0.54 ? 'flanker' : (r < 0.78 ? 'ace' : 'bomber'));
+              } else if (threat.lvl === 2) {
+                type = r < 0.30 ? 'flanker' : (r < 0.56 ? 'bomber' : (r < 0.76 ? 'ace' : 'mig28'));
+              } else {
+                const scoutCut = z1Kills < 12 ? 0.60 : 0.35;
+                type = r < scoutCut ? 'scout' : 'mig28';
+              }
             }
           }
         }
 
-        const isSurface = (type === 'bmp' || type === 'tank' || type === 'frigate');
-        const isNaval = (type === 'frigate');
-        const hpScale = threat.hpMult * (1 + state.time / 240);
+        const isSurface = (type === 'bmp' || type === 'tank' || type === 'frigate' || type === 'hind' || type === 'ekranoplan');
+        const isNaval = (type === 'frigate' || type === 'ekranoplan');
+        // Higher enemy density with slightly snappier HP & calmer per-enemy fire rates!
+        const hpScale = threat.hpMult * (1 + state.time / 240) * 0.84;
         const deepSpd = (threat.deepFactor || 0) * 14;
-        const deepRoF = (threat.deepFactor || 0) * 0.08;
+        const deepRoF = (threat.deepFactor || 0) * 0.06;
         const configs = {
-          scout:   { hp: 24 * hpScale,  speed: 142 + threat.lvl * 13 + deepSpd, r: 15, score: 65,   xp: 7,  fireRate: 0, emblemDrop: 0.04 },
-          mig28:   { hp: 40 * hpScale,  speed: 120 + threat.lvl * 11 + deepSpd, r: 18, score: 120,  xp: 11, fireRate: 2.05 - threat.lvl * 0.15 - deepRoF, emblemDrop: 0.07 },
-          bomber:  { hp: 105 * hpScale, speed: 74 + threat.lvl * 8 + deepSpd * 0.5, r: 27, score: 270, xp: 24, fireRate: 1.75 - threat.lvl * 0.1 - deepRoF, emblemDrop: 0.35 },
-          ace:     { hp: 62 * hpScale,  speed: 148 + threat.lvl * 13 + deepSpd, r: 19, score: 220,  xp: 19, fireRate: 1.85 - threat.lvl * 0.14 - deepRoF, emblemDrop: 0.28 },
-          bmp:     { hp: 42 * hpScale,  speed: 62 + threat.lvl * 6 + deepSpd * 0.4, r: 18, score: 115, xp: 11, fireRate: 2.1 - threat.lvl * 0.14 - deepRoF, emblemDrop: 0.08 },
-          tank:    { hp: 82 * hpScale,  speed: 44 + threat.lvl * 4 + deepSpd * 0.3, r: 22, score: 210, xp: 19, fireRate: 1.85 - threat.lvl * 0.12 - deepRoF, emblemDrop: 0.22 },
-          frigate: { hp: 76 * hpScale,  speed: 48 + threat.lvl * 5 + deepSpd * 0.3, r: 23, score: 195, xp: 18, fireRate: 1.9 - threat.lvl * 0.12 - deepRoF, emblemDrop: 0.18 },
-          boss:    { hp: 520 * hpScale, speed: 95 + threat.lvl * 10, r: 42, score: 1800, xp: 95, fireRate: 1.05, emblemDrop: 1.0 }
+          // Level 1 Indian Ocean Roster
+          scout:      { hp: 22 * hpScale,  speed: 144 + threat.lvl * 13 + deepSpd, r: 15, score: 55,  xp: 5,  fireRate: 0, emblemDrop: 0.025 },
+          mig28:      { hp: 38 * hpScale,  speed: 122 + threat.lvl * 11 + deepSpd, r: 18, score: 95,  xp: 8,  fireRate: 2.95 - threat.lvl * 0.16 - deepRoF, emblemDrop: 0.045 },
+          flanker:    { hp: 66 * hpScale,  speed: 148 + threat.lvl * 12 + deepSpd, r: 20, score: 185, xp: 14, fireRate: 2.35 - threat.lvl * 0.12 - deepRoF, emblemDrop: 0.13 },
+          foxhound:   { hp: 88 * hpScale,  speed: 186 + threat.lvl * 14 + deepSpd, r: 21, score: 255, xp: 19, fireRate: 2.15 - threat.lvl * 0.10 - deepRoF, emblemDrop: 0.18 },
+          berkut:     { hp: 126 * hpScale, speed: 174 + threat.lvl * 14 + deepSpd, r: 23, score: 360, xp: 26, fireRate: 1.95 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.28 },
+          freestyle:  { hp: 158 * hpScale, speed: 110 + threat.lvl * 8 + deepSpd * 0.6, r: 26, score: 390, xp: 28, fireRate: 1.85 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.30 },
+          bomber:     { hp: 96 * hpScale,  speed: 74 + threat.lvl * 8 + deepSpd * 0.5, r: 27, score: 210, xp: 17, fireRate: 2.45 - threat.lvl * 0.10 - deepRoF, emblemDrop: 0.22 },
+          ace:        { hp: 60 * hpScale,  speed: 154 + threat.lvl * 13 + deepSpd, r: 19, score: 180, xp: 14, fireRate: 2.55 - threat.lvl * 0.14 - deepRoF, emblemDrop: 0.16 },
+          // Level 2 Coronado Exclusive Cold War Soviet Roster
+          fishbed:    { hp: 28 * hpScale,  speed: 158 + threat.lvl * 13 + deepSpd, r: 16, score: 70,  xp: 6,  fireRate: 3.10 - threat.lvl * 0.15 - deepRoF, emblemDrop: 0.035 },
+          flogger:    { hp: 52 * hpScale,  speed: 140 + threat.lvl * 12 + deepSpd, r: 19, score: 145, xp: 11, fireRate: 2.55 - threat.lvl * 0.13 - deepRoF, emblemDrop: 0.09 },
+          frogfoot:   { hp: 112 * hpScale, speed: 96 + threat.lvl * 8 + deepSpd * 0.5, r: 23, score: 245, xp: 18, fireRate: 2.25 - threat.lvl * 0.10 - deepRoF, emblemDrop: 0.20 },
+          blackjack:  { hp: 168 * hpScale, speed: 126 + threat.lvl * 10 + deepSpd * 0.6, r: 29, score: 420, xp: 30, fireRate: 1.95 - threat.lvl * 0.08 - deepRoF, emblemDrop: 0.32 },
+          hind:       { hp: 78 * hpScale,  speed: 78 + threat.lvl * 6 + deepSpd * 0.4, r: 22, score: 190, xp: 14, fireRate: 2.35 - threat.lvl * 0.10 - deepRoF, emblemDrop: 0.15 },
+          ekranoplan: { hp: 132 * hpScale, speed: 92 + threat.lvl * 7 + deepSpd * 0.5, r: 28, score: 295, xp: 22, fireRate: 2.20 - threat.lvl * 0.10 - deepRoF, emblemDrop: 0.24 },
+          // Classic Surface Units & Bosses
+          bmp:        { hp: 38 * hpScale,  speed: 62 + threat.lvl * 6 + deepSpd * 0.4, r: 18, score: 90,  xp: 8,  fireRate: 2.95 - threat.lvl * 0.14 - deepRoF, emblemDrop: 0.05 },
+          tank:       { hp: 74 * hpScale,  speed: 44 + threat.lvl * 4 + deepSpd * 0.3, r: 22, score: 165, xp: 13, fireRate: 2.65 - threat.lvl * 0.12 - deepRoF, emblemDrop: 0.13 },
+          frigate:    { hp: 68 * hpScale,  speed: 48 + threat.lvl * 5 + deepSpd * 0.3, r: 23, score: 155, xp: 13, fireRate: 2.75 - threat.lvl * 0.12 - deepRoF, emblemDrop: 0.11 },
+          boss:       { hp: 750 * hpScale, speed: 95 + threat.lvl * 10, r: 42, score: 1800, xp: 95, fireRate: 0.92, emblemDrop: 1.0 }
         };
         const c = configs[type];
         const maneuvers = ['bankingPass', 'strafeArc', 'boomZoom'];
@@ -3291,15 +3804,40 @@
         });
       }
 
+      function clearArenaForBoss(bossMusicKey) {
+        state.enemies = state.enemies.filter(en => en.type === 'boss' && en.hp > 0);
+        state.enemyBullets.length = 0;
+        state.screenShake = Math.max(state.screenShake, 16);
+        if (bossMusicKey) AudioFX.playTrack(bossMusicKey, true, null);
+      }
+
+      function spawnBossBreakoffDebris(e, count = 8, col = '#94a3b8') {
+        for (let d = 0; d < count; d++) {
+          const a = Math.random() * Math.PI * 2;
+          const spd = 80 + Math.random() * 145;
+          pushParticle({
+            x: e.x + (Math.random() - 0.5) * e.r, y: e.y + (Math.random() - 0.5) * e.r,
+            plane: e.plane, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+            life: 1.15 + Math.random() * 0.55, maxLife: 1.7,
+            size: 6 + Math.random() * 6, color: d % 2 === 0 ? col : '#f97316'
+          });
+        }
+        spawnExplosion(e.x, e.y, e.plane, '#f97316', 28, true);
+        spawnRing(e.x, e.y, '#ef4444', 20, e.r * 2.8, e.plane);
+        state.screenShake = 18;
+        AudioFX.explode(true);
+      }
+
       function spawnStageBoss(stageLvl) {
         const cfg = STAGE_BOSSES[stageLvl];
         if (!cfg) return;
+        clearArenaForBoss(cfg.bossMusic || ('boss_air' + Math.min(4, Math.max(1, stageLvl))));
         const p = state.player;
         const ang = p.heading + (Math.random() - 0.5) * 0.5;
         const spawnR = Math.max(W, H) * 0.48 + 50;
         const x = p.x + Math.cos(ang) * spawnR;
         const y = p.y + Math.sin(ang) * spawnR;
-        const plane = 1; // Air Bosses patrol Angels 20
+        const plane = 1;
 
         state.enemies.push({
           id: Math.random(),
@@ -3308,11 +3846,13 @@
           bossKey: cfg.key,
           bossStageLvl: stageLvl,
           bossCfg: cfg,
+          bossPhase: 1,
+          attackSeq: 0,
           x, y, plane,
           hp: cfg.hp, maxHp: cfg.hp,
           speed: cfg.speed, r: cfg.r,
           score: cfg.score, xp: cfg.xp,
-          fireRate: cfg.fireRate, fireTimer: 1.0,
+          fireRate: cfg.fireRate, fireTimer: 1.2,
           emblemDrop: 1.0, hitFlash: 0, phaseTimer: 0,
           angle: Math.atan2(p.y - y, p.x - x),
           spinAngle: 0,
@@ -3320,7 +3860,7 @@
         });
 
         AudioFX.armed();
-        showBanner(`⚠ ${cfg.title} ⚠`, 'border-rose-500 text-rose-300');
+        showBanner(`⚠ BOSS ENCOUNTER • ${cfg.title} ⚠`, 'border-rose-500 text-rose-300');
       }
 
       function spawnSurfaceBoss(stageLvl) {
@@ -3331,6 +3871,7 @@
         const y = p.y + Math.sin(ang) * spawnR;
         const cfg = getSurfaceBossCfg(stageLvl, x, y);
         if (!cfg) return;
+        clearArenaForBoss(cfg.bossMusic || ('boss_naval' + Math.min(4, Math.max(1, stageLvl))));
 
         state.enemies.push({
           id: Math.random(),
@@ -3340,11 +3881,13 @@
           bossKey: cfg.key,
           bossStageLvl: stageLvl,
           bossCfg: cfg,
-          x, y, plane: 0, // Locked to Hard Deck!
+          bossPhase: 1,
+          attackSeq: 0,
+          x, y, plane: 0,
           hp: cfg.hp, maxHp: cfg.hp,
           speed: cfg.speed, r: cfg.r,
           score: cfg.score, xp: cfg.xp,
-          fireRate: cfg.fireRate, fireTimer: 1.1,
+          fireRate: cfg.fireRate, fireTimer: 1.2,
           emblemDrop: 1.0, hitFlash: 0, phaseTimer: 0,
           angle: Math.atan2(p.y - y, p.x - x),
           spinAngle: 0,
@@ -3352,7 +3895,7 @@
         });
 
         AudioFX.armed();
-        showBanner(`⚠ ${cfg.title} ⚠`, 'border-amber-500 text-amber-300');
+        showBanner(`⚠ BOSS ENCOUNTER • ${cfg.title} ⚠`, 'border-amber-500 text-amber-300');
       }
 
       // ============================================================
@@ -3366,17 +3909,24 @@
       }
 
       function findTarget(x, y, plane, mode = 'same', minDist = 0, maxDist = Infinity) {
-        let best = null, bestDist = Infinity;
-        for (const e of state.enemies) {
+        let best = null, bestDistSq = Infinity;
+        const minSq = minDist * minDist;
+        const maxSq = maxDist === Infinity ? Infinity : maxDist * maxDist;
+        const enemies = state.enemies;
+        for (let i = 0, n = enemies.length; i < n; i++) {
+          const e = enemies[i];
           if (e.hp <= 0) continue;
           if (mode === 'same' && e.plane !== plane) continue;
           if (mode === 'other' && e.plane === plane) continue;
-          const d = Math.hypot(e.x - x, e.y - y);
-          if (d < minDist || d > maxDist) continue;
-          if (d < bestDist) { bestDist = d; best = e; }
+          const dx = e.x - x, dy = e.y - y;
+          const dSq = dx * dx + dy * dy;
+          if (dSq < minSq || dSq > maxSq) continue;
+          if (dSq < bestDistSq) { bestDistSq = dSq; best = e; }
         }
         return best;
       }
+      const _gunScratch = [];
+      const _mslScratch = [];
 
       function updateWeapons(dt) {
         const p = state.player;
@@ -3385,13 +3935,22 @@
         const _pc = getSelectedPilotCfg();
         const _pd = getSelectedPilotData();
         const _tb = getAircraftTreeBonuses(getSelectedAircraftCfg().id);
-        const dmgMult = (1 + profile.upgrades.vulcanCore * 0.18 + Math.max(0, (_pd.level || 1) - 1) * 0.03) * (_pc.dmgMult || 1) * _tb.dmgMult;
+        if (p.gunFrenzyTimer > 0) {
+          p.gunFrenzyTimer -= dt;
+          if (p.gunFrenzyTimer <= 0) p.gunFrenzyStacks = 0;
+        }
+        const baseDmgMult = (1 + profile.upgrades.vulcanCore * 0.18 + Math.max(0, (_pd.level || 1) - 1) * 0.03) * (_pc.dmgMult || 1);
+        const frenzyDmgMult = 1 + (p.gunFrenzyStacks || 0) * 0.06;
+        const frenzyRofMult = 1 + (p.gunFrenzyStacks || 0) * 0.05 + (_tb.hasGunOverclock && p.abActive ? 0.25 : 0);
+        const gunDmgMult = baseDmgMult * _tb.gunDmgMult * frenzyDmgMult;
+        const mslDmgMult = baseDmgMult * _tb.missileDmgMult;
+        const dmgMult = Math.max(gunDmgMult, mslDmgMult);
 
         if (abFill && abPct) {
-          abFill.style.width = p.abFuel.toFixed(1) + '%';
-          abPct.textContent = p.abActive ? 'ENGAGED!' : (p.abFuel >= 99 ? '100% READY' : `${Math.floor(p.abFuel)}% RECHARGE`);
+          setHudWidth(abFill, p.abFuel.toFixed(1) + '%');
+          setHudText(abPct, p.abActive ? 'ENGAGED!' : (p.abFuel >= 99 ? '100% READY' : `${Math.floor(p.abFuel)}% RECHARGE`));
           if (afterburnerBtn) {
-            afterburnerBtn.style.boxShadow = p.abActive ? '0 0 18px rgba(56,189,248,0.9)' : 'none';
+            setHudShadow(afterburnerBtn, p.abActive ? '0 0 18px rgba(56,189,248,0.9)' : 'none');
           }
         }
 
@@ -3513,21 +4072,46 @@
           return;
         }
 
-        const { gunR, outerR } = getCombatRadii();
-        const missileMaxR = Math.max(outerR * 1.45, 560);
+        const { gunR: baseGunR, outerR } = getCombatRadii();
+        const gunR = baseGunR * _tb.gunRangeMult;
+        const missileMaxR = Math.max(outerR * 1.45, 560) * _tb.missileRangeMult;
 
-        // 1. CLOSE-IN GUNS ZONE (Inner 1/3 Screen Area: dist <= gunR)
+        // 1. CLOSE-IN GUNS ZONE (Starts meek & modest at Tier 1 -> scales into plasma-gold Overclock beams!)
         t.vulcan -= dt;
         if (t.vulcan <= 0) {
-          const samePlane = state.enemies
-            .filter(e => e.hp > 0 && e.plane === p.plane && Math.hypot(e.x - p.x, e.y - p.y) <= gunR + e.r)
-            .sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y));
+          _gunScratch.length = 0;
+          const _enList = state.enemies;
+          for (let i = 0, n = _enList.length; i < n; i++) {
+            const e = _enList[i];
+            if (e.hp <= 0 || e.plane !== p.plane) continue;
+            const dx = e.x - p.x, dy = e.y - p.y;
+            const lim = gunR + e.r;
+            const dSq = dx * dx + dy * dy;
+            if (dSq <= lim * lim) { e._tmpDistSq = dSq; _gunScratch.push(e); }
+          }
+          if (_gunScratch.length > 1) _gunScratch.sort((a, b) => a._tmpDistSq - b._tmpDistSq);
+          const samePlane = _gunScratch;
 
           if (samePlane.length > 0) {
-            t.vulcan = Math.max(0.10, 0.29 * Math.pow(0.87, w.vulcan - 1));
-            const shots = Math.min(4, 1 + Math.floor((w.vulcan - 1) / 2));
-            const dmg = (10.0 + w.vulcan * 3.1) * dmgMult; // Rewards aggressive close-in gun passes!
-            const col = p.plane === 0 ? '#fde047' : '#7dd3fc';
+            // Meek stock 0.33s rhythm -> accelerates dramatically with rank, 6,000 RPM Drive & TF30 Overclock!
+            const rawCd = Math.max(0.068, 0.33 * Math.pow(0.89, w.vulcan - 1));
+            t.vulcan = Math.max(0.052, rawCd / (_tb.gunRofMult * frenzyRofMult));
+            const shots = Math.min(7, 1 + Math.floor((w.vulcan - 1) / 2) + _tb.extraGunBeams);
+            p.gunBurstCount = (p.gunBurstCount || 0) + 1;
+            const isTcsCrit = _tb.hasTcsCrit && (p.gunBurstCount % 4 === 0);
+            const frenzyRatio = Math.min(1, (p.gunFrenzyStacks || 0) / 12);
+            const gunVfxTier = Math.min(5, Math.floor((w.vulcan - 1) / 2) + _tb.gunTierCount);
+            const baseShotDmg = (9.5 + w.vulcan * 3.3) * gunDmgMult * (isTcsCrit ? 2.2 : 1.0);
+            // Visual progression: meek pale steel -> crisp sky/amber -> blazing gold -> white-hot plasma overdrive!
+            const col = isTcsCrit ? '#fde047'
+              : (frenzyRatio >= 0.5 ? '#fbbf24'
+              : (gunVfxTier <= 0 ? '#cbd5e1' : (gunVfxTier <= 2 ? (p.plane === 0 ? '#fde047' : '#7dd3fc') : '#38bdf8')));
+            const trWidth = isTcsCrit ? 3.8 : (1.35 + Math.min(2.4, gunVfxTier * 0.36 + frenzyRatio * 0.9));
+            const trGlow = isTcsCrit ? 0.62 : (0.18 + Math.min(0.42, gunVfxTier * 0.065 + frenzyRatio * 0.16));
+
+            if (frenzyRatio >= 0.5 || isTcsCrit) {
+              spawnRing(p.x + Math.cos(p.heading) * 20, p.y + Math.sin(p.heading) * 20, isTcsCrit ? '#fde047' : '#38bdf8', 3, 18 + frenzyRatio * 12, p.plane);
+            }
 
             for (let i = 0; i < shots; i++) {
               const tgt = samePlane[i % samePlane.length];
@@ -3539,20 +4123,78 @@
               const endX = tgt.x + jx;
               const endY = tgt.y + jy;
 
-              // Instant hitscan damage + crisp glowing 20mm tracer streak & impact sparks!
-              damageEnemy(tgt, dmg);
+              const shotDmg = baseShotDmg * (_tb.hasSapheiSplash && tgt.type === 'boss' ? 1.35 : 1.0);
+              const preHp = tgt.hp;
+              damageEnemy(tgt, shotDmg);
+              if (preHp > 0 && tgt.hp <= 0 && _tb.hasGunOverclock) {
+                p.gunFrenzyStacks = Math.min(12, (p.gunFrenzyStacks || 0) + 1);
+                p.gunFrenzyTimer = 5.5;
+                if (_tb.fuelPerGunKill > 0) p.fuel = Math.min(p.maxFuel, p.fuel + _tb.fuelPerGunKill);
+                if (p.gunFrenzyStacks % 4 === 0) {
+                  addFloatingText(p.x, p.y - 28, _tb.fuelPerGunKill > 0 ? `STINGER ×${p.gunFrenzyStacks} +FUEL!` : `OVERCLOCK ×${p.gunFrenzyStacks}!`, _tb.fuelPerGunKill > 0 ? '#34d399' : '#fbbf24', 10);
+                }
+              }
+              if (isTcsCrit && i === 0) {
+                spawnRing(tgt.x, tgt.y, '#fde047', 6, 36, p.plane);
+                addFloatingText(tgt.x, tgt.y - 18, 'TCS CRIT!', '#fde047', 10);
+              }
+              // F/A-18C AN/AAS-38 NITE Hawk FLIR Cross-Plane Laser Strike (every 3rd burst!)
+              if (_tb.hasFlirCrossPlane && i === 0 && (p.gunBurstCount % 3 === 0)) {
+                const flirTgt = findTarget(p.x, p.y, p.plane, 'other', 0, gunR * 1.35);
+                if (flirTgt) {
+                  damageEnemy(flirTgt, shotDmg * 1.45, true);
+                  pushTracer({ x1: startX, y1: startY, x2: flirTgt.x, y2: flirTgt.y, plane: flirTgt.plane, color: '#4ade80', width: 2.8, glow: 0.55, life: 0.12, maxLife: 0.12 });
+                  spawnRing(flirTgt.x, flirTgt.y, '#4ade80', 5, 30, flirTgt.plane);
+                  addFloatingText(flirTgt.x, flirTgt.y - 18, 'FLIR LOCK!', '#4ade80', 9);
+                }
+              }
+              // PGU-28/B SAPHEI or Mk-20 Rockeye 20mm Explosive Shrapnel Splash
+              if (_tb.hasSapheiSplash) {
+                const spRad = _tb.splashRadius || 46;
+                spawnRing(endX, endY, _tb.groundBonusMult > 1 ? '#2dd4bf' : '#fb923c', 5, spRad, p.plane);
+                for (const other of state.enemies) {
+                  if (other !== tgt && other.hp > 0 && (other.plane === p.plane || _tb.groundBonusMult > 1) && Math.hypot(other.x - endX, other.y - endY) <= spRad) {
+                    const gMult = (other.plane === 0 || other.isSurface) ? (_tb.groundBonusMult || 1) : 1;
+                    damageEnemy(other, shotDmg * 0.45 * gMult, true);
+                  }
+                }
+              }
+              // AN/AVG-12 Lead HUD or F/A-18C JHMCS Off-Boresight Multi-Chain Sweep
+              if (_tb.hasHudChain) {
+                const maxChains = _tb.chainCount || 1;
+                const hitSet = new Set([tgt]);
+                let srcObj = tgt;
+                for (let ch = 0; ch < maxChains; ch++) {
+                  let bestChain = null, bestD = 175;
+                  for (const other of state.enemies) {
+                    if (!hitSet.has(other) && other.hp > 0 && other.plane === p.plane) {
+                      const cd = Math.hypot(other.x - srcObj.x, other.y - srcObj.y);
+                      if (cd < bestD) { bestD = cd; bestChain = other; }
+                    }
+                  }
+                  if (!bestChain) break;
+                  hitSet.add(bestChain);
+                  damageEnemy(bestChain, shotDmg * 0.65, true);
+                  pushTracer({ x1: srcObj.x, y1: srcObj.y, x2: bestChain.x, y2: bestChain.y, plane: p.plane, color: maxChains > 1 ? '#34d399' : '#22d3ee', width: 2.1, glow: 0.48, life: 0.095, maxLife: 0.095 });
+                  spawnRing(bestChain.x, bestChain.y, maxChains > 1 ? '#34d399' : '#22d3ee', 4, 22, p.plane);
+                  srcObj = bestChain;
+                }
+              }
+
               pushTracer({
                 x1: startX, y1: startY, x2: endX, y2: endY,
-                plane: p.plane, color: col, width: 2.2 + (w.vulcan >= 4 ? 0.8 : 0),
+                plane: p.plane, color: col, width: trWidth, glow: trGlow,
                 life: 0.085, maxLife: 0.085
               });
-              for (let sp = 0; sp < 3; sp++) {
+              const sparkCount = gunVfxTier <= 0 ? 1 : (isTcsCrit ? 6 : Math.min(5, 2 + Math.floor(gunVfxTier / 2)));
+              for (let sp = 0; sp < sparkCount; sp++) {
                 const sa = Math.random() * Math.PI * 2;
                 pushParticle({
                   x: endX, y: endY, plane: p.plane,
-                  vx: Math.cos(sa) * (70 + Math.random() * 90),
-                  vy: Math.sin(sa) * (70 + Math.random() * 90),
-                  life: 0.14, maxLife: 0.14, size: 2.2, color: '#fef9c3'
+                  vx: Math.cos(sa) * (65 + Math.random() * 95),
+                  vy: Math.sin(sa) * (65 + Math.random() * 95),
+                  life: 0.14, maxLife: 0.14, size: isTcsCrit ? 3.2 : (1.7 + gunVfxTier * 0.22),
+                  color: isTcsCrit ? '#fde047' : (gunVfxTier <= 0 ? '#e2e8f0' : '#fef9c3')
                 });
               }
             }
@@ -3560,25 +4202,28 @@
           }
         }
 
-        // 2. STAND-OFF MISSILES ZONE — PRIMARY HEAT-SEEKERS / ROCKETS (Outer 2/3 Area: dist > gunR)
+        // 2. STAND-OFF MISSILES ZONE — PRIMARY HEAT-SEEKERS (Meek single missile -> blazing multi-rail swarm!)
         if (w.sidewinder > 0) {
           t.sidewinder -= dt;
           if (t.sidewinder <= 0) {
-            const firstTgt = findTarget(p.x, p.y, p.plane, 'same', gunR, missileMaxR);
+            const firstTgt = findTarget(p.x, p.y, p.plane, 'same', baseGunR * 0.85, missileMaxR);
             if (firstTgt) {
-              t.sidewinder = Math.max(0.62, 1.65 - w.sidewinder * 0.16);
-              const count = 1 + Math.floor(w.sidewinder / 2) + (w.sidewinder >= 5 ? 1 : 0);
+              t.sidewinder = Math.max(0.36, (1.72 - w.sidewinder * 0.12) * _tb.missileCdMult);
+              const count = 1 + Math.floor(w.sidewinder / 2) + (w.sidewinder >= 6 ? 1 : 0) + _tb.extraTwsSalvo;
+              const mslTrailCol = _tb.hasSixShooter ? '#fde047' : (_tb.hasSeamPlume ? '#fb923c' : '#cbd5e1');
               for (let i = 0; i < count; i++) {
-                const target = i === 0 ? firstTgt : findTarget(p.x, p.y, p.plane, 'same', gunR, missileMaxR);
+                const target = i === 0 ? firstTgt : findTarget(p.x, p.y, p.plane, 'same', baseGunR * 0.85, missileMaxR);
                 if (!target) break;
+                if (_tb.extraTwsSalvo > 0) spawnRing(target.x, target.y, '#4ade80', 18, 6, target.plane);
                 const side = i % 2 === 0 ? -1 : 1;
                 const perp = p.heading + (Math.PI / 2) * side;
                 state.bullets.push({
-                  kind: 'sidewinder',
+                  kind: 'sidewinder', isMissile: true, speedMult: _tb.missileSpeedMult,
+                  trailColor: mslTrailCol, vfxTier: _tb.missileTierCount,
                   x: p.x + Math.cos(perp) * 16, y: p.y + Math.sin(perp) * 16,
                   vx: Math.cos(p.heading) * 240 + Math.cos(perp) * 110,
                   vy: Math.sin(p.heading) * 240 + Math.sin(perp) * 110,
-                  plane: p.plane, target, dmg: (20 + w.sidewinder * 6.5) * dmgMult, r: 5.5, color: '#fb923c', life: 2.6
+                  plane: p.plane, target, dmg: (21 + w.sidewinder * 7.2) * mslDmgMult, r: 5.5, color: '#fb923c', life: 2.8
                 });
               }
               AudioFX.foxTwo();
@@ -3586,23 +4231,27 @@
           }
         }
 
-        // 3. STAND-OFF MISSILES ZONE — CROSS-PLANE RADAR / MAVERICK (Outer 2/3 Area: dist > gunR)
+        // 3. STAND-OFF MISSILES ZONE — CROSS-PLANE RADAR SPARROW
         if (w.sparrow > 0) {
           t.sparrow -= dt;
           if (t.sparrow <= 0) {
-            const firstTgt = findTarget(p.x, p.y, p.plane, 'other', gunR, missileMaxR) || findTarget(p.x, p.y, p.plane, 'same', gunR, missileMaxR);
+            const firstTgt = findTarget(p.x, p.y, p.plane, 'other', baseGunR * 0.85, missileMaxR) || findTarget(p.x, p.y, p.plane, 'same', baseGunR * 0.85, missileMaxR);
             if (firstTgt) {
-              t.sparrow = Math.max(0.75, 1.85 - w.sparrow * 0.2);
-              const count = 1 + Math.floor(w.sparrow / 2);
+              t.sparrow = Math.max(0.42, (1.88 - w.sparrow * 0.135) * _tb.missileCdMult);
+              const count = 1 + Math.floor(w.sparrow / 2) + _tb.extraTwsSalvo;
               const otherPlane = p.plane === 0 ? 1 : 0;
+              const spTrailCol = _tb.hasSixShooter ? '#fde047' : (_tb.hasSeamPlume ? '#38bdf8' : '#cbd5e1');
               for (let i = 0; i < count; i++) {
-                const target = i === 0 ? firstTgt : (findTarget(p.x, p.y, p.plane, 'other', gunR, missileMaxR) || findTarget(p.x, p.y, p.plane, 'same', gunR, missileMaxR));
+                const target = i === 0 ? firstTgt : (findTarget(p.x, p.y, p.plane, 'other', baseGunR * 0.85, missileMaxR) || findTarget(p.x, p.y, p.plane, 'same', baseGunR * 0.85, missileMaxR));
                 if (!target) break;
+                if (_tb.extraTwsSalvo > 0) spawnRing(target.x, target.y, '#38bdf8', 20, 6, target.plane);
                 state.bullets.push({
-                  kind: 'sparrow', x: p.x, y: p.y,
+                  kind: 'sparrow', isMissile: true, speedMult: _tb.missileSpeedMult,
+                  trailColor: spTrailCol, vfxTier: _tb.missileTierCount,
+                  x: p.x, y: p.y,
                   vx: Math.cos(p.heading) * 280, vy: Math.sin(p.heading) * 280,
-                  plane: target.plane, target, dmg: (32 + w.sparrow * 10) * dmgMult, r: 6,
-                  color: otherPlane === 1 ? '#38bdf8' : '#f59e0b', life: 2.8
+                  plane: target.plane, target, dmg: (33 + w.sparrow * 11.2) * mslDmgMult, r: 6,
+                  color: otherPlane === 1 ? '#38bdf8' : '#f59e0b', life: 3.0
                 });
               }
               AudioFX.foxTwo();
@@ -3610,23 +4259,39 @@
           }
         }
 
-        // 4. STAND-OFF MISSILES ZONE — HEAVY BVR / HARM / HARPOON SALVO (Outer 2/3 Area: dist > gunR)
+        // 4. STAND-OFF MISSILES ZONE — HEAVY BVR PHOENIX SALVO
         if (w.phoenix > 0) {
           t.phoenix -= dt;
           if (t.phoenix <= 0) {
-            const count = 1 + w.phoenix;
-            const targets = state.enemies
-              .filter(e => e.hp > 0 && Math.hypot(e.x - p.x, e.y - p.y) > gunR && Math.hypot(e.x - p.x, e.y - p.y) <= missileMaxR * 1.15)
-              .sort(() => Math.random() - 0.5)
-              .slice(0, count);
+            const count = 1 + w.phoenix + (_tb.hasSixPallet ? 2 : 0);
+            _mslScratch.length = 0;
+            const _minMSq = (baseGunR * 0.75) * (baseGunR * 0.75);
+            const _maxMSq = (missileMaxR * 1.2) * (missileMaxR * 1.2);
+            for (let i = 0, n = state.enemies.length; i < n; i++) {
+              const e = state.enemies[i];
+              if (e.hp <= 0) continue;
+              const dx = e.x - p.x, dy = e.y - p.y;
+              const dSq = dx * dx + dy * dy;
+              if (dSq > _minMSq && dSq <= _maxMSq) _mslScratch.push(e);
+            }
+            for (let i = Math.min(count, _mslScratch.length) - 1; i >= 0; i--) {
+              const j = i + Math.floor(Math.random() * (_mslScratch.length - i));
+              const tmp = _mslScratch[i]; _mslScratch[i] = _mslScratch[j]; _mslScratch[j] = tmp;
+            }
+            const targets = _mslScratch.slice(0, count);
             if (targets.length > 0) {
-              t.phoenix = Math.max(1.4, 3.2 - w.phoenix * 0.34);
+              t.phoenix = Math.max(0.90, (3.1 - w.phoenix * 0.21) * _tb.missileCdMult);
+              const bRad = (68 + w.phoenix * 11) * (_tb.hasSixPallet ? 1.35 : 1.0);
               targets.forEach((target) => {
+                spawnRing(target.x, target.y, '#facc15', 24, 8, target.plane);
                 state.bullets.push({
-                  kind: 'phoenix', x: p.x, y: p.y,
-                  vx: Math.cos(p.heading) * 220, vy: Math.sin(p.heading) * 220,
-                  plane: target.plane, target, dmg: (44 + w.phoenix * 12) * dmgMult,
-                  blastR: 64 + w.phoenix * 10, r: 7.5, color: '#facc15', life: 2.9
+                  kind: 'phoenix', isMissile: true, speedMult: _tb.missileSpeedMult,
+                  trailColor: _tb.hasSixPallet ? '#facc15' : '#fb923c', vfxTier: Math.max(2, _tb.missileTierCount),
+                  spawnSubs: _tb.hasSixPallet,
+                  x: p.x, y: p.y,
+                  vx: Math.cos(p.heading) * 230, vy: Math.sin(p.heading) * 230,
+                  plane: target.plane, target, dmg: (48 + w.phoenix * 14) * mslDmgMult,
+                  blastR: bRad, r: 7.5, color: '#facc15', life: 3.1
                 });
               });
               AudioFX.phoenix();
@@ -3686,6 +4351,26 @@
         const roleMult = ((e.plane === 0 || e.isSurface) ? (ac.groundDmgMult || 1) : (ac.airDmgMult || 1)) * synMult;
         const finalDmg = amount * (isSplash ? 1 : roleMult);
         e.hp -= finalDmg; e.hitFlash = 0.09;
+        if (e.type === 'boss' && e.hp > 0) {
+          const hpFrac = e.hp / Math.max(1, e.maxHp);
+          const curPh = e.bossPhase || 1;
+          if (curPh === 1 && hpFrac <= 0.66) {
+            e.bossPhase = 2;
+            e.speed *= 1.14;
+            e.fireRate *= 0.86;
+            spawnBossBreakoffDebris(e, 10, '#cbd5e1');
+            const p2Msg = e.isSurface ? 'TURRET DESTROYED — PHASE 2!' : 'ENGINES / ARMOR SHEARED — PHASE 2!';
+            showBanner(`🔥 ${e.bossCfg ? e.bossCfg.shortName : 'BOSS'}: ${p2Msg}`, 'border-amber-400 text-amber-200');
+            addFloatingText(e.x, e.y - 44, '★ PHASE 2 • ARMOR BREACHED! ★', '#fbbf24', 13);
+          } else if (curPh === 2 && hpFrac <= 0.33) {
+            e.bossPhase = 3;
+            e.speed *= 1.18;
+            e.fireRate *= 0.82;
+            spawnBossBreakoffDebris(e, 14, '#f43f5e');
+            showBanner(`☠ ${e.bossCfg ? e.bossCfg.shortName : 'BOSS'}: CRITICAL OVERDRIVE — PHASE 3!`, 'border-rose-500 text-rose-200');
+            addFloatingText(e.x, e.y - 48, '☠ PHASE 3 • CRITICAL OVERDRIVE! ☠', '#f43f5e', 14);
+          }
+        }
         // A-6E Intruder signature Air-to-Ground HE splash on Hard Deck surface targets!
         if (!isSplash && ac.hasGroundSplash && (e.plane === 0 || e.isSurface) && finalDmg >= 6) {
           const spRad = Math.round(46 * (syn ? syn.splashR : 1));
@@ -3706,7 +4391,7 @@
         state.score += Math.round(e.score * mult);
         state.kills++; sessionSplashes++;
 
-        const isBig = e.type === 'bomber' || e.type === 'boss' || e.type === 'tank' || e.type === 'frigate';
+        const isBig = e.type === 'bomber' || e.type === 'boss' || e.type === 'tank' || e.type === 'frigate' || e.type === 'berkut' || e.type === 'freestyle' || e.type === 'blackjack' || e.type === 'ekranoplan' || e.type === 'frogfoot';
         if (e.type !== 'boss') {
           const zLvl = getThreatInfo(Math.hypot(p.x, p.y) / 140).lvl;
           if (zLvl >= 1) {
@@ -3728,6 +4413,9 @@
         } else if (e.bossStageLvl) {
           if (e.isSurface) state.surfaceBossDefeatedStages[e.bossStageLvl] = true;
           else state.bossDefeatedStages[e.bossStageLvl] = true;
+          if (!state.enemies.some(en => en !== e && en.type === 'boss' && en.hp > 0)) {
+            AudioFX.playTrack(getCurrentMap().theme, false, null);
+          }
           if (!e.isSurface && e.bossStageLvl === 1) {
             const firstMissileUnlock = !profile.missilesTreeUnlocked;
             profile.missilesTreeUnlocked = true;
@@ -3783,18 +4471,20 @@
           addFloatingText(e.x, e.y - 20, 'SPLASH ONE!', '#fde047', 12);
         }
 
-        state.pickups.push({ kind: 'xp', x: e.x, y: e.y, plane: e.plane, val: Math.round(e.xp * (p.superActive ? 2 : 1)), r: isBig ? 9 : 6, life: 22 });
+        if (isBig || e.type === 'boss' || Math.random() < 0.72) {
+          state.pickups.push({ kind: 'xp', x: e.x, y: e.y, plane: e.plane, val: Math.round(e.xp * (p.superActive ? 2 : 1)), r: isBig ? 9 : 6, life: 22 });
+        }
 
-        // Further out = juicier Credits, Intel & Experimental Parts!
+        // Balanced drop rates for higher enemy swarm density (bosses still drop full jackpots!)
         const scan = 1 + profile.upgrades.salvageRig * 0.22;
         const lm = e.lootMult || 1;
-        if (Math.random() < Math.min(0.95, (isBig ? 0.95 : 0.28 * scan * Math.sqrt(lm)))) {
-          state.pickups.push({ kind: 'credit', x: e.x + (Math.random() * 24 - 12), y: e.y - 8, plane: e.plane, val: Math.round((isBig ? 35 : 14) * lm), r: 8, life: 25 });
+        if (Math.random() < Math.min(0.90, (isBig ? 0.62 : 0.17 * scan * Math.sqrt(lm)))) {
+          state.pickups.push({ kind: 'credit', x: e.x + (Math.random() * 24 - 12), y: e.y - 8, plane: e.plane, val: Math.round((isBig ? 24 : 10) * lm), r: 8, life: 25 });
         }
-        if (Math.random() < Math.min(0.95, (e.type === 'boss' ? 1.0 : (e.type === 'bomber' ? 0.55 : 0.06 * scan * lm)))) {
+        if (Math.random() < Math.min(0.90, (e.type === 'boss' ? 1.0 : (isBig ? 0.30 : 0.035 * scan * lm)))) {
           state.pickups.push({ kind: 'intel', x: e.x - 14, y: e.y + 8, plane: e.plane, val: 1, r: 9, life: 25 });
         }
-        if (Math.random() < Math.min(0.95, (e.type === 'boss' ? 1.0 : (e.type === 'ace' ? 0.42 : 0.04 * scan * lm)))) {
+        if (Math.random() < Math.min(0.90, (e.type === 'boss' ? 1.0 : ((e.type === 'ace' || e.type === 'berkut' || e.type === 'blackjack') ? 0.24 : 0.024 * scan * lm)))) {
           state.pickups.push({ kind: 'part', x: e.x + 14, y: e.y + 8, plane: e.plane, val: e.type === 'boss' ? 2 : 1, r: 9, life: 25 });
         }
         if (Math.random() < e.emblemDrop) {
@@ -3822,6 +4512,17 @@
         state.screenShake = 11; AudioFX.playerHit();
         spawnExplosion(p.x, p.y, p.plane, '#ef4444', 14, false);
         addFloatingText(p.x, p.y - 24, `-${amount}`, '#fb7185', 11);
+        if (p.hp > 0 && !profile.damageBriefed) {
+          profile.damageBriefed = true;
+          saveProfile();
+          queueInstructorNote(
+            'hollywood',
+            'UHF 255.4 • LCDR "JESTER" — DAMAGE CONTROL',
+            `"Taking fire! Watch your HULL BAR—your jet will visibly spark, trail smoke, and burn as airframe integrity drops. Grab Airframe repair cards on level-up or swing back to base to patch up before you go down!"`,
+            '★ HULL INTEGRITY & BATTLE DAMAGE SYSTEM ★',
+            true
+          );
+        }
         if (p.hp <= 0) startCsarRescue();
       }
 
@@ -4007,7 +4708,27 @@
           fl.classList.add('launch-flash-active');
         }
         AudioFX.catapult();
-        AudioFX.playTrack(getCurrentMap().theme, true);
+        const _mTheme = getCurrentMap().theme;
+        if (_mTheme === 'ocean') {
+          AudioFX.playTrack('dangerzone', true, 'ocean');
+        } else {
+          AudioFX.playTrack(_mTheme, true, null);
+          if (_mTheme === 'coronado' && !profile.coronadoBriefed) {
+            profile.coronadoBriefed = true;
+            saveProfile();
+            setTimeout(() => {
+              if (state && state.mode === 'playing') {
+                queueInstructorNote(
+                  'viper',
+                  'UHF 243.0 • CDR "VIPER" — NASNI CORONADO',
+                  `"Welcome home to NAS North Island! You pulled Iceman out of the Indian Ocean—now train up in the F/A-18C Hornet. San Diego Bay and the coast are a 50/50 mix of MiGs and surface armor. Own both altitudes!"`,
+                  '★ LEVEL 2: CORONADO • F/A-18C HORNET HYBRID TRAINING ★',
+                  true
+                );
+              }
+            }, 950);
+          }
+        }
         state.mode = 'playing';
         if (!tutorialWelcomeSent && !sessionUnlocks.altitude) {
           tutorialWelcomeSent = true;
@@ -4252,6 +4973,25 @@
         }
         if (state.mode !== 'playing') {
           state.time += dt;
+          if (state.mode === 'radiocomm' && state.radioCamFocus) {
+            const rf = state.radioCamFocus;
+            if (rf.type === 'vertrep') {
+              // Pan smoothly back to Carrier / NASNI and animate SH-3H Sea King lifting off deck onto station!
+              state.camX += (rf.x - state.camX) * Math.min(1, dt * 4.5);
+              state.camY += (rf.y - state.camY) * Math.min(1, dt * 4.5);
+              if (state.vertrepPos && state.vertrepPos.t < 1) {
+                state.vertrepPos.t = Math.min(1, state.vertrepPos.t + dt * 0.42);
+                const ease = 1 - Math.pow(1 - state.vertrepPos.t, 3);
+                state.vertrepPos.x = 0 + (250 - 0) * ease;
+                state.vertrepPos.y = 18 + (-95 - 18) * ease;
+              }
+            } else if (rf.type === 'skyhook' && state.skyhook) {
+              const midX = (state.player.x + state.skyhook.x) * 0.5;
+              const midY = (state.player.y + state.skyhook.y) * 0.5;
+              state.camX += (midX - state.camX) * Math.min(1, dt * 3.8);
+              state.camY += (midY - state.camY) * Math.min(1, dt * 3.8);
+            }
+          }
           return;
         }
 
@@ -4269,6 +5009,40 @@
           state.lastThreatLvl = threat.lvl;
           if (deeper) {
             showBanner(`⚠ ENTERING ${threat.name} • LOOT ${threat.lootMult.toFixed(1)}×! ⚠`, 'border-rose-400 text-amber-300');
+            // ZONE 2 UNLOCK: SH-3H Sea King VERTREP launches off the Carrier / NASNI deck onto starboard station!
+            if (threat.lvl >= 2 && !sessionUnlocks.vertrep) {
+              sessionUnlocks.vertrep = true;
+              state.vertrepPos = { x: 0, y: 18, t: 0 };
+              state.radioCamFocus = { type: 'vertrep', x: 115, y: -35, savedCamX: state.camX, savedCamY: state.camY };
+              const _cs = getSelectedPilotCfg().callsign;
+              const _baseNm = getCurrentMap().baseCall;
+              queueInstructorNote(
+                'hollywood',
+                `UHF 277.8 • AIR BOSS (${_baseNm})`,
+                `"${_cs}, Air Boss! Plane Guard 61 Sea King just lifted off the deck onto starboard VERTREP station. Swing over its emerald ring at any altitude to bank cargo and grab fuel mid-flight—no landing required!"`,
+                '★ UNLOCKED: SEA KING VERTREP FLYOVER BANKING (NEAR BASE) ★',
+                true
+              );
+            }
+            // ZONE 4 (FINAL ZONE) UNLOCK: KC-130F "SKYKING 01" Mid-Air Extraction!
+            if (threat.lvl >= 4 && !sessionUnlocks.skyhook) {
+              sessionUnlocks.skyhook = true;
+              const crossAng = p.heading + 0.45;
+              state.skyhook = {
+                x: p.x + Math.cos(p.heading) * 145 - Math.cos(crossAng) * 90,
+                y: p.y + Math.sin(p.heading) * 145 - Math.sin(crossAng) * 90,
+                angle: crossAng, speed: 122, plane: p.plane, life: 26, extracted: false
+              };
+              state.skyhookCd = 0;
+              state.radioCamFocus = { type: 'skyhook', savedCamX: state.camX, savedCamY: state.camY };
+              queueInstructorNote(
+                'viper',
+                'UHF 311.0 • KC-130F "SKYKING 01"',
+                `"Skyking 01 checking in over Black-Ops airspace! You're too deep to RTB—press R or tap SKYHOOK anytime you're hauling cargo. Fly through our trailing gold Fulton ring to bank loot and refuel mid-air!"`,
+                '★ UNLOCKED: KC-130F SKYKING MID-AIR EXTRACTION (PRESS R) ★',
+                true
+              );
+            }
           } else if (threat.lvl === 0) {
             showBanner(sessionUnlocks.altitude ? '⚓ HOME PERIMETER — DROP TO HARD DECK TO LAND!' : '⚓ HOME PERIMETER — FLY OVER BASE TO BANK CARGO!', 'border-emerald-400 text-emerald-300');
           }
@@ -4557,13 +5331,76 @@
 
         updateWeapons(dt);
 
-        // Radial Distance-Scaled Enemy Spawning (Stops once all bosses cleared & bogeys bug out!)
-        if (threat.spawnMult > 0 && !state.allBossesCleared) {
+        // Update Carrier-Zone SH-3H Sea King VERTREP Flyover Drop-Off & Deep-Zone KC-130F Skyhook!
+        if (state.vertrepCd > 0) state.vertrepCd = Math.max(0, state.vertrepCd - dt);
+        if (state.skyhookCd > 0) state.skyhookCd = Math.max(0, state.skyhookCd - dt);
+        if (sessionUnlocks.vertrep && state.vertrepPos && state.vertrepPos.t >= 0.95) {
+          const vx = state.vertrepPos.x, vy = state.vertrepPos.y;
+          if (Math.hypot(p.x - vx, p.y - vy) < 96 && state.vertrepCd <= 0) {
+            const banked = bankCargoInFlight('⚓ SEA KING VERTREP', 25, 15);
+            if (banked) state.vertrepCd = 8.0;
+          }
+        }
+        if (state.skyhook) {
+          const sk = state.skyhook;
+          sk.life -= dt;
+          sk.x += Math.cos(sk.angle) * sk.speed * dt;
+          sk.y += Math.sin(sk.angle) * sk.speed * dt;
+          const rx = sk.x - Math.cos(sk.angle) * 95;
+          const ry = sk.y - Math.sin(sk.angle) * 95;
+          if (!sk.extracted && Math.hypot(p.x - rx, p.y - ry) < 98) {
+            sk.extracted = true;
+            bankCargoInFlight('✈ KC-130F SKYHOOK', 28, 0);
+            sk.speed = 235;
+            sk.life = Math.min(sk.life, 3.2);
+          }
+          if (sk.life <= 0) state.skyhook = null;
+        }
+
+        // Radial Distance-Scaled Enemy Spawning (PAUSED during active Boss encounters & once all bosses cleared!)
+        const hpRatio = p.hp / Math.max(1, p.maxHp);
+        if (hpRatio < 0.70) {
+          const dmgProb = hpRatio < 0.20 ? 0.85 : (hpRatio < 0.40 ? 0.52 : 0.26);
+          if (Math.random() < dmgProb) {
+            const backX = p.x - Math.cos(p.heading) * 14 + (Math.random() - 0.5) * 12;
+            const backY = p.y - Math.sin(p.heading) * 14 + (Math.random() - 0.5) * 12;
+            const dCol = hpRatio < 0.20 ? (Math.random() < 0.55 ? '#f97316' : '#1e293b')
+              : (hpRatio < 0.40 ? (Math.random() < 0.35 ? '#fbbf24' : '#475569')
+              : (Math.random() < 0.25 ? '#fef08a' : '#94a3b8'));
+            pushParticle({
+              x: backX, y: backY, plane: p.plane,
+              vx: -Math.cos(p.heading) * 45 + (Math.random() - 0.5) * 28,
+              vy: -Math.sin(p.heading) * 45 + (Math.random() - 0.5) * 28,
+              life: hpRatio < 0.20 ? 0.55 : 0.42, maxLife: 0.55,
+              size: hpRatio < 0.20 ? (4.5 + Math.random() * 4) : (3 + Math.random() * 3),
+              color: dCol
+            });
+          }
+        }
+
+        let activeBossObj = null;
+        for (let i = 0, n = state.enemies.length; i < n; i++) {
+          const en = state.enemies[i];
+          if (en.type === 'boss' && en.hp > 0) { activeBossObj = en; break; }
+        }
+        const bossActiveNow = !!activeBossObj;
+        state._hasActiveBoss = bossActiveNow;
+        if (bossActiveNow) {
+          const beat = AudioFX.sampleBossBeat(dt);
+          state.bossBeatPulse = beat.pulse;
+          if (beat.hit) {
+            const bCol = (activeBossObj.bossPhase || 1) >= 3 ? '#f43f5e' : (activeBossObj.isSurface ? '#38bdf8' : '#fbbf24');
+            spawnRing(activeBossObj.x, activeBossObj.y, bCol, activeBossObj.r * 0.9, activeBossObj.r * 2.35, activeBossObj.plane);
+          }
+        } else {
+          state.bossBeatPulse = Math.max(0, (state.bossBeatPulse || 0) - dt * 4);
+        }
+        if (threat.spawnMult > 0 && !state.allBossesCleared && !bossActiveNow) {
           state.spawnTimer -= dt;
-          const maxCap = Math.min(48, 30 + Math.floor((threat.deepFactor || 0) * 6));
+          const maxCap = Math.min(72, 46 + threat.lvl * 4 + Math.floor((threat.deepFactor || 0) * 6));
           if (state.spawnTimer <= 0 && state.enemies.length < maxCap) {
-            state.spawnTimer = Math.max(0.22, 1.42 / threat.spawnMult);
-            const pack = threat.lvl >= 4 ? (threat.deepFactor >= 1.5 ? 3 : 2) : (threat.lvl >= 3 ? 2 : 1);
+            state.spawnTimer = Math.max(0.16, 0.92 / threat.spawnMult);
+            const pack = threat.lvl >= 4 ? (threat.deepFactor >= 1.5 ? 4 : 3) : (threat.lvl >= 2 ? 2 : (Math.random() < 0.45 ? 2 : 1));
             for (let i = 0; i < pack; i++) spawnEnemy();
           }
         }
@@ -4593,6 +5430,14 @@
           }
           if (e.type === 'boss') {
             const bk = e.bossKey || 'bear';
+            if ((e.bossPhase || 1) >= 2 && Math.random() < ((e.bossPhase || 1) >= 3 ? 0.65 : 0.35)) {
+              pushParticle({
+                x: e.x + (Math.random() - 0.5) * e.r * 1.1, y: e.y + (Math.random() - 0.5) * e.r * 1.1,
+                plane: e.plane, vx: (Math.random() - 0.5) * 28, vy: (Math.random() - 0.5) * 28,
+                life: 0.65, maxLife: 0.65, size: 5 + Math.random() * 5,
+                color: (e.bossPhase || 1) >= 3 ? (Math.random() < 0.5 ? '#f97316' : '#334155') : '#475569'
+              });
+            }
             if (e.isSurface) {
               // Naval Capital Ships & Heavy Armored Ground Bosses stay locked on Hard Deck (plane 0)
               e.plane = 0;
@@ -4722,46 +5567,99 @@
               e.fireTimer = e.fireRate;
               if (e.type === 'boss') {
                 const bk = e.bossKey || 'bear';
+                const ph = e.bossPhase || 1;
+                e.attackSeq = (e.attackSeq || 0) + 1;
+                const baseAng = Math.atan2(dy, dx);
                 if (e.isSurface) {
-                  // Naval Capital Ship SAM Broadside / Super-Heavy Tank Twin-Cannon Barrage!
-                  const spreadN = (bk === 'redOctober' || bk === 'kremlin86') ? 4 : ((bk === 'kirov' || bk === 'mamont') ? 3 : 2);
-                  const baseAng = Math.atan2(dy, dx);
-                  const bSpd = e.isNaval ? 235 : 220;
+                  const spreadN = ((bk === 'redOctober' || bk === 'kremlin86') ? 4 : ((bk === 'kirov' || bk === 'mamont') ? 3 : 2)) + (ph >= 3 ? 2 : (ph === 2 ? 1 : 0));
+                  const bSpd = (e.isNaval ? 235 : 225) + ph * 16;
                   const bCol = e.isNaval ? '#38bdf8' : '#fb923c';
                   for (let k = -spreadN; k <= spreadN; k++) {
-                    const a = baseAng + k * 0.21;
-                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * bSpd, vy: Math.sin(a) * bSpd, plane: 0, r: 6, color: bCol, life: 4.4 });
+                    const a = baseAng + k * 0.18;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * bSpd, vy: Math.sin(a) * bSpd, plane: 0, r: 6, color: bCol, life: 4.5 });
+                  }
+                  if (ph >= 2 && e.attackSeq % 2 === 0) {
+                    for (let k = -1; k <= 1; k++) {
+                      const a = baseAng + k * 0.22;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * (bSpd + 35), vy: Math.sin(a) * (bSpd + 35), plane: 1, r: 6.2, color: '#facc15', life: 4.2 });
+                    }
+                  }
+                  if (ph >= 3 && e.attackSeq % 3 === 0) {
+                    for (let k = 0; k < 10; k++) {
+                      const a = e.phaseTimer + (k / 10) * Math.PI * 2;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 195, vy: Math.sin(a) * 195, plane: k % 2, r: 5.8, color: '#f43f5e', life: 4.4 });
+                    }
                   }
                 } else if (bk === 'kosmos') {
-                  // 12-way rotating crimson orbital plasma ring across BOTH planes!
-                  for (let k = 0; k < 12; k++) {
-                    const a = (e.spinAngle || 0) + (k / 12) * Math.PI * 2;
-                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 220, vy: Math.sin(a) * 220, plane: k % 2, r: 6.5, color: k % 2 === 0 ? '#f43f5e' : '#38bdf8', life: 4.6 });
+                  const spokes = ph >= 3 ? 16 : (ph === 2 ? 12 : 10);
+                  const spd = 215 + ph * 22;
+                  for (let k = 0; k < spokes; k++) {
+                    const a = (e.spinAngle || 0) + (k / spokes) * Math.PI * 2;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: k % 2, r: 6.5, color: k % 2 === 0 ? '#f43f5e' : '#38bdf8', life: 4.8 });
                   }
                 } else if (bk === 'buran') {
-                  // Buran-X Secret Space Plane: sweeping cyan orbital plasma arc!
-                  for (let k = -4; k <= 4; k++) {
-                    const a = Math.atan2(dy, dx) + k * 0.17;
-                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 265, vy: Math.sin(a) * 265, plane: e.plane, r: 6, color: '#22d3ee', life: 4.2 });
+                  if (ph >= 2 && e.attackSeq % 2 === 0) {
+                    const cnt = ph >= 3 ? 14 : 10;
+                    for (let k = 0; k < cnt; k++) {
+                      const a = e.phaseTimer * 1.4 + (k / cnt) * Math.PI * 2;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 235, vy: Math.sin(a) * 235, plane: e.plane, r: 6, color: '#c084fc', life: 4.4 });
+                    }
+                  } else {
+                    const half = ph >= 3 ? 5 : 3;
+                    for (let k = -half; k <= half; k++) {
+                      const a = baseAng + k * 0.16;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * (265 + ph * 18), vy: Math.sin(a) * (265 + ph * 18), plane: e.plane, r: 6, color: '#22d3ee', life: 4.2 });
+                    }
                   }
                 } else if (bk === 'foxbat') {
-                  // MiG-25 Foxbat: blistering Mach-3 twin-spread bursts!
-                  for (let k = -2; k <= 2; k++) {
-                    const a = Math.atan2(dy, dx) + k * 0.14;
-                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 320, vy: Math.sin(a) * 320, plane: e.plane, r: 5.5, color: '#fb923c', life: 3.8 });
+                  const half = ph >= 3 ? 3 : 2;
+                  const spd = 315 + ph * 25;
+                  for (let k = -half; k <= half; k++) {
+                    const a = baseAng + k * 0.13;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 5.6, color: ph >= 3 ? '#f43f5e' : '#fb923c', life: 3.8 });
+                  }
+                  if (ph >= 2 && e.attackSeq % 2 === 0) {
+                    for (const off of [-0.28, 0.28]) {
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(baseAng + off) * 255, vy: Math.sin(baseAng + off) * 255, plane: e.plane === 0 ? 1 : 0, r: 5.5, color: '#38bdf8', life: 3.6 });
+                    }
                   }
                 } else {
-                  // Tu-95 Bear: heavy 7-way flak carpet spread!
-                  for (let k = -3; k <= 3; k++) {
-                    const a = Math.atan2(dy, dx) + k * 0.24;
-                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 205, vy: Math.sin(a) * 205, plane: e.plane, r: 6.5, color: '#facc15', life: 4.4 });
+                  const half = ph >= 3 ? 5 : 3;
+                  for (let k = -half; k <= half; k++) {
+                    const a = baseAng + k * 0.21;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * (205 + ph * 15), vy: Math.sin(a) * (205 + ph * 15), plane: e.plane, r: 6.4, color: '#facc15', life: 4.5 });
+                  }
+                  if (e.attackSeq % 2 === 0) {
+                    const mAng = baseAng + (Math.random() - 0.5) * 1.4;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(mAng) * 70, vy: Math.sin(mAng) * 70, plane: e.plane, r: 8.5, color: '#fb923c', life: 6.5 });
+                  }
+                  if (ph >= 2 && e.attackSeq % 3 === 0) {
+                    for (let k = 0; k < 8; k++) {
+                      const a = e.phaseTimer + (k / 8) * Math.PI * 2;
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 185, vy: Math.sin(a) * 185, plane: e.plane, r: 5.8, color: '#f97316', life: 4.2 });
+                    }
                   }
                 }
-              } else if (e.type === 'bomber' || e.type === 'frigate') {
+              } else if (e.type === 'berkut' || e.type === 'blackjack') {
+                // High-tier Soviet prototypes: focused 3-way fan (trimmed from 5-way for swarm balance!)
+                const col = e.type === 'blackjack' ? '#e2e8f0' : '#f43f5e';
                 for (let k = -1; k <= 1; k++) {
-                  const a = Math.atan2(dy, dx) + k * 0.22;
-                  state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 205, vy: Math.sin(a) * 205, plane: e.plane, r: 5, color: e.type === 'frigate' ? '#38bdf8' : '#fb923c', life: 3.6 });
+                  const a = Math.atan2(dy, dx) + k * 0.18;
+                  state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 275, vy: Math.sin(a) * 275, plane: e.plane, r: 5.2, color: col, life: 3.6 });
                 }
+              } else if (e.type === 'freestyle' || e.type === 'ekranoplan' || e.type === 'frogfoot') {
+                // Heavy gunships / Caspian Sea Monster: crisp twin-shot salvo
+                const baseA = Math.atan2(dy, dx);
+                const col = e.type === 'ekranoplan' ? '#38bdf8' : (e.type === 'frogfoot' ? '#fb923c' : '#facc15');
+                for (const off of [-0.11, 0.11]) {
+                  const a = baseA + off;
+                  state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 235, vy: Math.sin(a) * 235, plane: e.plane, r: 5, color: col, life: 3.5 });
+                }
+              } else if (e.type === 'foxhound' || e.type === 'flanker' || e.type === 'hind' || e.type === 'bomber' || e.type === 'frigate') {
+                // Single crisp aimed shot (keeps denser swarms super fun to weave through!)
+                const spd = e.type === 'foxhound' ? 305 : (e.type === 'flanker' ? 265 : 220);
+                const col = e.type === 'foxhound' ? '#c084fc' : (e.type === 'flanker' || e.type === 'frigate' ? '#38bdf8' : (e.type === 'hind' ? '#a3e635' : '#fb923c'));
+                state.enemyBullets.push({ x: e.x, y: e.y, vx: (dx / dist) * spd, vy: (dy / dist) * spd, plane: e.plane, r: 4.8, color: col, life: 3.5 });
               } else if (e.type === 'tank') {
                 const a = Math.atan2(dy, dx);
                 state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 245, vy: Math.sin(a) * 245, plane: 0, r: 6, color: '#fb923c', life: 3.8 });
@@ -4786,28 +5684,91 @@
             if (!b.target || b.target.hp <= 0) b.target = findTarget(b.x, b.y, b.plane, b.kind === 'sidewinder' ? 'same' : 'any');
             if (b.target) {
               const dx = b.target.x - b.x, dy = b.target.y - b.y, d = Math.hypot(dx, dy) || 1;
-              const spd = b.kind === 'superPhoenix' ? 600 : (b.kind === 'phoenix' ? 490 : 440);
-              b.vx += ((dx / d) * spd - b.vx) * Math.min(1, dt * 8.5);
-              b.vy += ((dy / d) * spd - b.vy) * Math.min(1, dt * 8.5);
+              const sm = b.speedMult || 1;
+              const spd = (b.kind === 'superPhoenix' ? 620 : (b.kind === 'phoenix' ? 500 : 450)) * sm;
+              const turnK = 8.5 * sm;
+              b.vx += ((dx / d) * spd - b.vx) * Math.min(1, dt * turnK);
+              b.vy += ((dy / d) * spd - b.vy) * Math.min(1, dt * turnK);
               b.plane = b.target.plane;
             }
-            if (Math.random() < 0.65) {
-              pushParticle({ x: b.x, y: b.y, plane: b.plane, vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 20, life: 0.22, maxLife: 0.22, size: b.kind === 'superPhoenix' ? 4 : 2.4, color: b.kind === 'superPhoenix' ? '#fde047' : '#e2e8f0' });
+            const trailProb = b.kind === 'superPhoenix' ? 0.92 : (0.48 + Math.min(0.42, (b.vfxTier || 0) * 0.08));
+            if (Math.random() < trailProb) {
+              const tCol = b.kind === 'superPhoenix' ? '#fde047' : (b.trailColor || '#cbd5e1');
+              const tSize = b.kind === 'superPhoenix' ? 4.4 : (1.9 + Math.min(2.0, (b.vfxTier || 0) * 0.35));
+              pushParticle({ x: b.x, y: b.y, plane: b.plane, vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 20, life: 0.24, maxLife: 0.24, size: tSize, color: tCol });
             }
           }
           b.x += b.vx * dt; b.y += b.vy * dt;
           if (b.life <= 0) { swapRemove(state.bullets, i); continue; }
 
           let hit = false;
-          for (const e of state.enemies) {
+          for (let ei = 0, enLen = state.enemies.length; ei < enLen; ei++) {
+            const e = state.enemies[ei];
             if (!b.hitsAllPlanes && e.plane !== b.plane) continue;
-            if (Math.hypot(e.x - b.x, e.y - b.y) < e.r + b.r) {
-              damageEnemy(e, b.dmg);
+            const _hdx = e.x - b.x, _hdy = e.y - b.y, _hr = e.r + b.r;
+            if (_hdx * _hdx + _hdy * _hdy < _hr * _hr) {
+              const preHp = e.hp;
+              const _tbMsl = getAircraftTreeBonuses(getSelectedAircraftCfg().id);
+              const mslGndMult = (b.isMissile && (e.plane === 0 || e.isSurface)) ? (_tbMsl.missileGroundBonusMult || 1) : 1;
+              damageEnemy(e, b.dmg * mslGndMult);
               if (b.kind === 'phoenix' || b.kind === 'superPhoenix') {
                 const splash = b.blastR || 72;
                 spawnRing(b.x, b.y, '#fde047', 10, splash, e.plane);
-                for (const other of state.enemies) {
-                  if (other !== e && (b.hitsAllPlanes || other.plane === e.plane) && Math.hypot(other.x - b.x, other.y - b.y) < splash) damageEnemy(other, b.dmg * 0.55);
+                if (b.spawnSubs || b.kind === 'superPhoenix') {
+                  spawnRing(b.x, b.y, '#fb923c', 18, splash * 1.28, e.plane);
+                }
+                const splashSq = splash * splash;
+                for (let oi = 0, oLen = state.enemies.length; oi < oLen; oi++) {
+                  const other = state.enemies[oi];
+                  if (other !== e && (b.hitsAllPlanes || other.plane === e.plane)) {
+                    const sdx = other.x - b.x, sdy = other.y - b.y;
+                    if (sdx * sdx + sdy * sdy < splashSq) damageEnemy(other, b.dmg * 0.55);
+                  }
+                }
+                // 6-Rail Belly Pallet (2) or AGM-154 JSOW Cluster Bus (3) sub-seekers!
+                if (b.spawnSubs) {
+                  const nSubs = _tbMsl.subSeekerCount || 2;
+                  for (let sk = 0; sk < nSubs; sk++) {
+                    const subTgt = findTarget(b.x, b.y, e.plane, 'any');
+                    const sa = Math.random() * Math.PI * 2;
+                    state.bullets.push({
+                      kind: 'sidewinder', isMissile: true, speedMult: (b.speedMult || 1) * 1.18,
+                      trailColor: '#fde047', vfxTier: 4,
+                      x: b.x, y: b.y, vx: Math.cos(sa) * 260, vy: Math.sin(sa) * 260,
+                      plane: subTgt ? subTgt.plane : e.plane, target: subTgt,
+                      dmg: b.dmg * 0.42, r: 4.5, color: '#fde047', life: 1.9
+                    });
+                  }
+                }
+              }
+              // RIO Ripple Fire CD Shave & AWG-9 Six-Shooter Alpha Strike!
+              if (b.isMissile && preHp > 0 && e.hp <= 0) {
+                const _tbHit = getAircraftTreeBonuses(getSelectedAircraftCfg().id);
+                if (_tbHit.hasRioRipple && p.timers) {
+                  p.timers.sidewinder = Math.max(0, p.timers.sidewinder - 0.35);
+                  p.timers.sparrow = Math.max(0, p.timers.sparrow - 0.35);
+                  p.timers.phoenix = Math.max(0, p.timers.phoenix - 0.35);
+                  spawnRing(p.x, p.y, '#38bdf8', 14, 58, p.plane);
+                }
+                if (_tbHit.hasSixShooter) {
+                  p.missileKillCounter = (p.missileKillCounter || 0) + 1;
+                  const trigEvery = _tbHit.alphaStrikeKills || 10;
+                  const stormCount = _tbHit.alphaStrikeCount || 3;
+                  if (p.missileKillCounter % trigEvery === 0) {
+                    const isHornet = getSelectedAircraftCfg().id === 'f18';
+                    addFloatingText(p.x, p.y - 34, isHornet ? '★ CVW-14 ALPHA STORM! ★' : '★ AWG-9 ALPHA BARRAGE! ★', isHornet ? '#38bdf8' : '#fde047', 12);
+                    spawnRing(p.x, p.y, isHornet ? '#38bdf8' : '#fde047', 16, 115, p.plane);
+                    const bTargets = state.enemies.filter(en => en.hp > 0).slice(0, stormCount);
+                    bTargets.forEach(bt => {
+                      state.bullets.push({
+                        kind: 'superPhoenix', hitsAllPlanes: true, speedMult: 1.28,
+                        trailColor: '#fde047', vfxTier: 5,
+                        x: p.x, y: p.y, vx: Math.cos(p.heading) * 260, vy: Math.sin(p.heading) * 260,
+                        plane: bt.plane, target: bt, dmg: b.dmg * 1.4, blastR: 96, r: 8, color: '#fde047', life: 2.6
+                      });
+                    });
+                    AudioFX.phoenix();
+                  }
                 }
               }
               hit = true; break;
@@ -4816,47 +5777,54 @@
           if (hit) swapRemove(state.bullets, i);
         }
 
-        // Update Enemy Bullets
+        // Update Enemy Bullets (capped for smooth late-game FPS)
+        while (state.enemyBullets.length > ENGINE_CFG.maxEnemyBullets) swapRemove(state.enemyBullets, 0);
         for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
           const b = state.enemyBullets[i];
           b.life -= dt; b.x += b.vx * dt; b.y += b.vy * dt;
           if (b.life <= 0) { swapRemove(state.enemyBullets, i); continue; }
-          if (!p.superActive && b.plane === p.plane && Math.hypot(b.x - p.x, b.y - p.y) < b.r + 12) {
-            damagePlayer(12);
-            swapRemove(state.enemyBullets, i);
+          if (!p.superActive && b.plane === p.plane) {
+            const edx = b.x - p.x, edy = b.y - p.y, er = b.r + 12;
+            if (edx * edx + edy * edy < er * er) {
+              damagePlayer(12);
+              swapRemove(state.enemyBullets, i);
+            }
           }
         }
 
-        // Update Pickups
+        // Update Pickups (capped + squared-distance cull)
+        while (state.pickups.length > ENGINE_CFG.maxPickups) swapRemove(state.pickups, 0);
         const magnetR = (130 + p.weapons.sweep * 34 + (p.superActive ? 150 : 0)) * (1 + profile.upgrades.salvageRig * 0.25);
+        const magnetRSq = magnetR * magnetR;
         for (let i = state.pickups.length - 1; i >= 0; i--) {
           const g = state.pickups[i];
           g.life -= dt;
           if (g.life <= 0) { swapRemove(state.pickups, i); continue; }
-          const dx = p.x - g.x, dy = p.y - g.y, dist = Math.hypot(dx, dy) || 1;
-          if (dist < magnetR) {
-            const pull = 440 + (magnetR - dist) * 2.2;
-            g.x += (dx / dist) * pull * dt; g.y += (dy / dist) * pull * dt;
-          }
+          const dx = p.x - g.x, dy = p.y - g.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq >= magnetRSq) continue;
+          const dist = Math.sqrt(distSq) || 1;
+          const pull = 440 + (magnetR - dist) * 2.2;
+          g.x += (dx / dist) * pull * dt; g.y += (dy / dist) * pull * dt;
           if (dist < 28) {
             if (g.kind === 'emblem') {
               const boost = 1 + p.weapons.afterburner * 0.3 + profile.upgrades.engines * 0.15;
               p.burnCharge = Math.min(100, p.burnCharge + (g.val * 0.6) * boost);
               p.aceStreak += 3;
               addFloatingText(p.x, p.y - 24, 'TOMCAT EMBLEM ★ +BURN!', '#fde047', 11);
-              AudioFX.coinLoot(); checkSuperArmed();
+              AudioFX.coinLoot(true); checkSuperArmed();
             } else if (g.kind === 'credit') {
               state.cargo.credits += g.val;
               addFloatingText(p.x, p.y - 22, `+${g.val} CR`, '#fde047', 10);
-              AudioFX.coinLoot();
+              AudioFX.coinLoot(false);
             } else if (g.kind === 'intel') {
               state.cargo.intel += g.val;
               addFloatingText(p.x, p.y - 24, '+CLASSIFIED INTEL', '#38bdf8', 11);
-              AudioFX.coinLoot();
+              AudioFX.coinLoot(true);
             } else if (g.kind === 'part') {
               state.cargo.parts += g.val;
               addFloatingText(p.x, p.y - 24, '+ORDNANCE PART', '#c084fc', 11);
-              AudioFX.coinLoot();
+              AudioFX.coinLoot(true);
             } else {
               gainXP(g.val);
             }
@@ -4936,6 +5904,22 @@
         const s = _hudSlot(el);
         if (s.col !== val) { s.col = val; el.style.color = val; }
       }
+      function setHudShadow(el, val) {
+        if (!el) return;
+        const s = _hudSlot(el);
+        if (s.sh !== val) { s.sh = val; el.style.boxShadow = val; }
+      }
+      function setHudHidden(el, hidden) {
+        if (!el) return;
+        const s = _hudSlot(el);
+        if (s.hid !== hidden) { s.hid = hidden; el.classList.toggle('hidden', hidden); }
+      }
+      function setHudClassFlag(el, cls, active) {
+        if (!el) return;
+        const s = _hudSlot(el);
+        const k = 'f_' + cls;
+        if (s[k] !== active) { s[k] = active; el.classList.toggle(cls, active); }
+      }
 
       function getPrimaryBoss() {
         if (!state || !state.enemies) return null;
@@ -4982,6 +5966,23 @@
         if (holdRowEl) holdRowEl.classList.toggle('hidden', !hasHold);
         if (hasHold) {
           setHudText(cargoSummary, `+${c.credits} CR • +${c.intel} INT • +${c.parts} PRT`);
+        }
+        if (skyhookBtn && skyhookFill && skyhookStatus) {
+          const showSk = !!sessionUnlocks.skyhook && (hasHold || !!state.skyhook || state.skyhookCd > 0);
+          skyhookBtn.classList.toggle('hidden', !showSk);
+          if (showSk) {
+            if (state.skyhook) {
+              setHudWidth(skyhookFill, '100%');
+              setHudText(skyhookStatus, state.skyhook.extracted ? 'BANKED ✓' : 'ON STATION!');
+            } else if (state.skyhookCd > 0) {
+              const pct = Math.max(0, Math.min(100, ((36 - state.skyhookCd) / 36) * 100));
+              setHudWidth(skyhookFill, pct.toFixed(0) + '%');
+              setHudText(skyhookStatus, `RTB ${Math.ceil(state.skyhookCd)}s`);
+            } else {
+              setHudWidth(skyhookFill, '100%');
+              setHudText(skyhookStatus, 'READY [R]');
+            }
+          }
         }
 
         const distStr = `⚓ ${distNM.toFixed(1)} NM`;
@@ -5060,44 +6061,44 @@
         }
 
         const streakReady = p.aceStreak >= 10 || p.superArmed;
-        streakPill.textContent = streakReady ? `★ ${p.aceStreak}× ACE` : `STREAK ${p.aceStreak}/10`;
-        streakPill.className = streakReady
+        setHudText(streakPill, streakReady ? `★ ${p.aceStreak}× ACE` : `STREAK ${p.aceStreak}/10`);
+        setHudClass(streakPill, streakReady
           ? 'px-2 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-400/70 font-arcade text-[10px] font-black text-emerald-300'
-          : 'px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 font-arcade text-[10px] font-black text-slate-300';
+          : 'px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 font-arcade text-[10px] font-black text-slate-300');
 
         const _acHud = getSelectedAircraftCfg();
         const _sName = _acHud.superName || '★ INVERTED';
         if (p.superActive) {
-          superFill.style.width = Math.max(0, (p.superTimer / p.superMaxDuration) * 100).toFixed(1) + '%';
-          superLabel.textContent = `${_sName} ACTIVE!`;
-          condCharge.textContent = _acHud.reversesControls ? `FLIPPED • ${p.superTimer.toFixed(1)}s` : `${p.superTimer.toFixed(1)}s`;
-          condCharge.className = 'text-amber-200';
-          condStreak.textContent = 'SPACE: EXIT'; condStreak.className = 'text-sky-300';
-          superKeyHint.textContent = 'EXIT'; superBtn.classList.add('super-pulse');
+          setHudWidth(superFill, Math.max(0, (p.superTimer / p.superMaxDuration) * 100).toFixed(1) + '%');
+          setHudText(superLabel, `${_sName} ACTIVE!`);
+          setHudText(condCharge, _acHud.reversesControls ? `FLIPPED • ${p.superTimer.toFixed(1)}s` : `${p.superTimer.toFixed(1)}s`);
+          setHudClass(condCharge, 'text-amber-200');
+          setHudText(condStreak, 'SPACE: EXIT'); setHudClass(condStreak, 'text-sky-300');
+          setHudText(superKeyHint, 'EXIT'); setHudClassFlag(superBtn, 'super-pulse', true);
         } else if (p.superCooldown > 0) {
           const cdPct = Math.max(0, (p.superCooldown / (p.superCooldownMax || 24)) * 100);
-          superFill.style.width = cdPct.toFixed(1) + '%';
-          superLabel.textContent = `${_sName} CD`;
-          condCharge.textContent = `⏱ ${Math.ceil(p.superCooldown)}s`;
-          condCharge.className = 'text-amber-300';
-          condStreak.textContent = streakReady ? '✓ STREAK' : `${p.aceStreak}/10`;
-          condStreak.className = streakReady ? 'text-emerald-300' : 'text-slate-400';
-          superKeyHint.textContent = `${Math.ceil(p.superCooldown)}s`; superBtn.classList.remove('super-pulse');
+          setHudWidth(superFill, cdPct.toFixed(1) + '%');
+          setHudText(superLabel, `${_sName} CD`);
+          setHudText(condCharge, `⏱ ${Math.ceil(p.superCooldown)}s`);
+          setHudClass(condCharge, 'text-amber-300');
+          setHudText(condStreak, streakReady ? '✓ STREAK' : `${p.aceStreak}/10`);
+          setHudClass(condStreak, streakReady ? 'text-emerald-300' : 'text-slate-400');
+          setHudText(superKeyHint, `${Math.ceil(p.superCooldown)}s`); setHudClassFlag(superBtn, 'super-pulse', false);
         } else if (p.superArmed) {
-          superFill.style.width = '100%';
-          superLabel.textContent = `${_sName} READY!`;
-          condCharge.textContent = '✓ 100%'; condCharge.className = 'text-emerald-300';
-          condStreak.textContent = '✓ ARMED'; condStreak.className = 'text-emerald-300';
-          superKeyHint.textContent = 'SPACE'; superBtn.classList.add('super-pulse');
+          setHudWidth(superFill, '100%');
+          setHudText(superLabel, `${_sName} READY!`);
+          setHudText(condCharge, '✓ 100%'); setHudClass(condCharge, 'text-emerald-300');
+          setHudText(condStreak, '✓ ARMED'); setHudClass(condStreak, 'text-emerald-300');
+          setHudText(superKeyHint, 'SPACE'); setHudClassFlag(superBtn, 'super-pulse', true);
         } else {
-          superFill.style.width = p.burnCharge.toFixed(1) + '%';
-          superLabel.textContent = _sName;
+          setHudWidth(superFill, p.burnCharge.toFixed(1) + '%');
+          setHudText(superLabel, _sName);
           const burnOk = p.burnCharge >= 100;
-          condCharge.textContent = burnOk ? '✓ BURN 100%' : `⚡ BURN ${Math.floor(p.burnCharge)}%`;
-          condCharge.className = burnOk ? 'text-emerald-300' : 'text-amber-200';
-          condStreak.textContent = streakReady ? '✓ 10× STREAK' : `★ ${p.aceStreak}/10 STREAK`;
-          condStreak.className = streakReady ? 'text-emerald-300' : 'text-slate-300';
-          superKeyHint.textContent = 'LOCKED'; superBtn.classList.remove('super-pulse');
+          setHudText(condCharge, burnOk ? '✓ BURN 100%' : `⚡ BURN ${Math.floor(p.burnCharge)}%`);
+          setHudClass(condCharge, burnOk ? 'text-emerald-300' : 'text-amber-200');
+          setHudText(condStreak, streakReady ? '✓ 10× STREAK' : `★ ${p.aceStreak}/10 STREAK`);
+          setHudClass(condStreak, streakReady ? 'text-emerald-300' : 'text-slate-300');
+          setHudText(superKeyHint, 'LOCKED'); setHudClassFlag(superBtn, 'super-pulse', false);
         }
         if (altInlineBadge) {
           setHudText(altInlineBadge, p.superActive ? _sName : (p.plane === 1 ? 'ANGELS 20' : 'HARD DECK'));
@@ -5107,13 +6108,17 @@
         updateNextUnlockPill();
         const activeBoss = getPrimaryBoss();
         if (activeBoss && activeBoss.bossCfg) {
-          bossHudBar.classList.remove('hidden');
-          setHudText(bossNameLabel, '⚠ ' + activeBoss.bossCfg.title);
+          setHudHidden(bossHudBar, false);
+          const _bp = activeBoss.bossPhase || 1;
+          const _bpTag = _bp >= 3 ? ' • PHASE 3/3 [CRITICAL]' : (_bp === 2 ? ' • PHASE 2/3 [BREACHED]' : ' • PHASE 1/3');
+          setHudText(bossNameLabel, '⚠ ' + activeBoss.bossCfg.title + _bpTag);
+          const _glow = Math.round((state.bossBeatPulse || 0) * 11) * 2;
+          setHudShadow(bossHudBar, _glow > 3 ? `0 0 ${_glow}px rgba(244, 63, 94, 0.72)` : 'none');
           setHudText(bossPlaneLabel, PLANE_CFG[activeBoss.plane].name);
           setHudColor(bossPlaneLabel, PLANE_CFG[activeBoss.plane].color);
           setHudWidth(bossHpFill, Math.max(0, (activeBoss.hp / activeBoss.maxHp) * 100).toFixed(1) + '%');
         } else {
-          bossHudBar.classList.add('hidden');
+          setHudHidden(bossHudBar, true);
         }
 
 
@@ -5249,9 +6254,19 @@
           drawIm = SPRITES[e.bossCfg.sprite];
           drawH = e.bossCfg.drawSize || 130;
           drawW = drawH * (drawIm.naturalWidth / Math.max(1, drawIm.naturalHeight));
-          if (e.bossKey === 'redOctober' || e.bossKey === 'kremlin86') {
-            ctx.fillStyle = 'rgba(244, 63, 94, 0.20)';
-            ctx.beginPath(); ctx.arc(0, 0, drawH * 0.48, 0, Math.PI * 2); ctx.fill();
+          {
+            const ph = e.bossPhase || 1;
+            const bp = state.bossBeatPulse || 0;
+            const pulseA = (ph >= 3 ? 0.30 : (ph === 2 ? 0.24 : 0.16)) + bp * 0.28;
+            ctx.fillStyle = ph >= 3 ? `rgba(239, 68, 68, ${pulseA})` : (ph === 2 ? `rgba(245, 158, 11, ${pulseA})` : (e.isSurface ? `rgba(56, 189, 248, ${pulseA})` : `rgba(244, 63, 94, ${pulseA})`));
+            ctx.beginPath(); ctx.arc(0, 0, drawH * (0.48 + bp * 0.16 + (ph >= 3 ? 0.06 : 0)), 0, Math.PI * 2); ctx.fill();
+            if (ph >= 2 || bp > 0.35) {
+              ctx.strokeStyle = ph >= 3 ? '#f43f5e' : (ph === 2 ? '#fbbf24' : '#38bdf8');
+              ctx.lineWidth = (ph >= 3 ? 3 : 2) + bp * 2.2;
+              ctx.setLineDash([8, 6]);
+              ctx.beginPath(); ctx.arc(0, 0, drawH * (0.44 + bp * 0.14), 0, Math.PI * 2); ctx.stroke();
+              ctx.setLineDash([]);
+            }
           }
         } else if ((e.type === 'bmp' || e.type === 'tank' || e.type === 'frigate') && spriteReady(e.type)) {
           drawIm = SPRITES[e.type];
@@ -5261,6 +6276,141 @@
           drawIm = SPRITES.boss;
           drawH = e.type === 'boss' ? 106 : 64;
           drawW = drawH;
+        } else if (['berkut','freestyle','foxhound','flanker','fishbed','flogger','frogfoot','blackjack','hind','ekranoplan'].includes(e.type)) {
+          // Layered 16-bit Top-Down Cold War Soviet Hardware Sprites (shaded wings, canopies, red stars, animated afterburners & rotors!)
+          const flk = 0.72 + Math.sin(state.time * 42 + e.id * 10) * 0.28;
+          const drawRedStars = (sx, sy, r = 2.6) => {
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath(); ctx.arc(-sx, sy, r, 0, Math.PI * 2); ctx.arc(sx, sy, r, 0, Math.PI * 2); ctx.fill();
+          };
+          const drawBurner = (bx, by, len, col1 = '#fb923c', col2 = '#fef08a') => {
+            ctx.fillStyle = col1;
+            ctx.beginPath(); ctx.moveTo(bx - 2.6, by); ctx.lineTo(bx + 2.6, by); ctx.lineTo(bx, by + len * flk); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = col2;
+            ctx.beginPath(); ctx.moveTo(bx - 1.3, by); ctx.lineTo(bx + 1.3, by); ctx.lineTo(bx, by + len * 0.55 * flk); ctx.closePath(); ctx.fill();
+          };
+          if (e.type === 'berkut') {
+            // Su-47 "Berkut" Forward-Swept Stealth Prototype (Carbon-black shaded hull, crimson trim, gold stealth canopy)
+            drawBurner(-4.5, 22, 13, '#f43f5e', '#fde047'); drawBurner(4.5, 22, 13, '#f43f5e', '#fde047');
+            ctx.fillStyle = '#1e293b'; ctx.beginPath();
+            ctx.moveTo(0, -32); ctx.lineTo(6, -12); ctx.lineTo(30, -24); ctx.lineTo(25, -7); ctx.lineTo(9, 4);
+            ctx.lineTo(15, 23); ctx.lineTo(6, 19); ctx.lineTo(0, 26); ctx.lineTo(-6, 19); ctx.lineTo(-15, 23);
+            ctx.lineTo(-9, 4); ctx.lineTo(-25, -7); ctx.lineTo(-30, -24); ctx.lineTo(-6, -12); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(7, 20); ctx.lineTo(-7, 20); ctx.closePath(); ctx.fill();
+            ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 1.4;
+            ctx.beginPath(); ctx.moveTo(-28, -22); ctx.lineTo(-8, -10); ctx.moveTo(28, -22); ctx.lineTo(8, -10); ctx.stroke();
+            ctx.fillStyle = '#f59e0b'; ctx.beginPath(); ctx.ellipse(0, -13, 2.8, 6.5, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#fef3c7'; ctx.fillRect(-1, -17, 1.5, 4);
+            drawRedStars(18, -13, 2.8);
+          } else if (e.type === 'blackjack') {
+            // Tu-160 "Blackjack" White Swan Supersonic Swing-Wing Bomber (Pearl-white hull + 4 roaring burners!)
+            [-9, -4, 4, 9].forEach(bx => drawBurner(bx, 24, 14, '#38bdf8', '#fef08a'));
+            ctx.fillStyle = '#f1f5f9'; ctx.beginPath();
+            ctx.moveTo(0, -36); ctx.lineTo(5, -14); ctx.lineTo(34, 8); ctx.lineTo(31, 16); ctx.lineTo(10, 10);
+            ctx.lineTo(14, 28); ctx.lineTo(0, 24); ctx.lineTo(-14, 28); ctx.lineTo(-10, 10);
+            ctx.lineTo(-31, 16); ctx.lineTo(-34, 8); ctx.lineTo(-5, -14); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#cbd5e1'; ctx.fillRect(-4, -18, 8, 42);
+            ctx.fillStyle = '#334155'; ctx.fillRect(-10, 10, 6, 14); ctx.fillRect(4, 10, 6, 14);
+            ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.ellipse(0, -21, 3, 5, 0, 0, Math.PI * 2); ctx.fill();
+            drawRedStars(21, 9, 3.0);
+          } else if (e.type === 'frogfoot') {
+            // Su-25 "Frogfoot" Armored Ground-Attack Flying Tank (Olive-drab + sand camo + 4 underwing rocket pods)
+            drawBurner(-5, 18, 9, '#f97316', '#fde047'); drawBurner(5, 18, 9, '#f97316', '#fde047');
+            ctx.fillStyle = '#4d5d42'; ctx.beginPath();
+            ctx.moveTo(0, -25); ctx.lineTo(6, -10); ctx.lineTo(27, -2); ctx.lineTo(25, 8); ctx.lineTo(7, 8);
+            ctx.lineTo(12, 22); ctx.lineTo(0, 19); ctx.lineTo(-12, 22); ctx.lineTo(-7, 8);
+            ctx.lineTo(-25, 8); ctx.lineTo(-27, -2); ctx.lineTo(-6, -10); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#a18c5f'; ctx.fillRect(-20, 0, 10, 5); ctx.fillRect(10, -2, 10, 6); ctx.fillRect(-4, -6, 8, 16);
+            ctx.fillStyle = '#1e293b'; [-20, -13, 13, 20].forEach(px => ctx.fillRect(px - 1.5, -4, 3, 10));
+            ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.ellipse(0, -12, 2.5, 5, 0, 0, Math.PI * 2); ctx.fill();
+            drawRedStars(17, 3, 2.4);
+          } else if (e.type === 'flogger') {
+            // MiG-23 "Flogger" Variable-Sweep Fighter (Soviet camo gray + swept wings + cheek intakes)
+            drawBurner(0, 21, 11, '#fb923c', '#fef08a');
+            ctx.fillStyle = '#64748b'; ctx.beginPath();
+            ctx.moveTo(0, -26); ctx.lineTo(5, -10); ctx.lineTo(22, 6); ctx.lineTo(18, 12); ctx.lineTo(6, 9);
+            ctx.lineTo(11, 21); ctx.lineTo(0, 19); ctx.lineTo(-11, 21); ctx.lineTo(-6, 9);
+            ctx.lineTo(-18, 12); ctx.lineTo(-22, 6); ctx.lineTo(-5, -10); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#94a3b8'; ctx.fillRect(-3.5, -20, 7, 38);
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(-6, -8, 2.5, 9); ctx.fillRect(3.5, -8, 2.5, 9);
+            ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.ellipse(0, -12, 2.2, 5, 0, 0, Math.PI * 2); ctx.fill();
+            drawRedStars(13, 7, 2.2);
+          } else if (e.type === 'fishbed') {
+            // MiG-21bis "Fishbed" Polished Silver-Aluminum Delta Interceptor with Red Nose Cone!
+            drawBurner(0, 20, 10, '#f97316', '#fef08a');
+            ctx.fillStyle = '#cbd5e1'; ctx.beginPath();
+            ctx.moveTo(0, -24); ctx.lineTo(4, -8); ctx.lineTo(18, 10); ctx.lineTo(4, 11); ctx.lineTo(9, 19);
+            ctx.lineTo(0, 18); ctx.lineTo(-9, 19); ctx.lineTo(-4, 11); ctx.lineTo(-18, 10); ctx.lineTo(-4, -8); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#f8fafc'; ctx.fillRect(-2.5, -18, 5, 34);
+            ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(3, -18); ctx.lineTo(-3, -18); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#0284c7'; ctx.beginPath(); ctx.ellipse(0, -9, 2, 4.5, 0, 0, Math.PI * 2); ctx.fill();
+            drawRedStars(11, 7, 2.1);
+          } else if (e.type === 'flanker') {
+            // Su-27 "Flanker" Blue-Gray Air-Superiority Twin-Tail Fighter!
+            drawBurner(-4.5, 22, 12, '#38bdf8', '#fef08a'); drawBurner(4.5, 22, 12, '#38bdf8', '#fef08a');
+            ctx.fillStyle = '#60a5fa'; ctx.beginPath();
+            ctx.moveTo(0, -29); ctx.lineTo(6, -10); ctx.lineTo(25, 6); ctx.lineTo(22, 13); ctx.lineTo(8, 12);
+            ctx.lineTo(13, 23); ctx.lineTo(4, 20); ctx.lineTo(0, 24); ctx.lineTo(-4, 20); ctx.lineTo(-13, 23);
+            ctx.lineTo(-8, 12); ctx.lineTo(-22, 13); ctx.lineTo(-25, 6); ctx.lineTo(-6, -10); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#93c5fd'; ctx.fillRect(-4, -20, 8, 36);
+            ctx.fillStyle = '#1e3a8a'; ctx.fillRect(-7, 10, 2.5, 11); ctx.fillRect(4.5, 10, 2.5, 11);
+            ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.ellipse(0, -14, 2.5, 5.5, 0, 0, Math.PI * 2); ctx.fill();
+            drawRedStars(16, 8, 2.4);
+          } else if (e.type === 'foxhound') {
+            // MiG-31 "Foxhound" Mach-2.8 Heavy Steel Interceptor with Violet Afterburners!
+            drawBurner(-5, 23, 15, '#c084fc', '#f5d0fe'); drawBurner(5, 23, 15, '#c084fc', '#f5d0fe');
+            ctx.fillStyle = '#475569'; ctx.beginPath();
+            ctx.moveTo(0, -30); ctx.lineTo(7, -8); ctx.lineTo(24, 9); ctx.lineTo(20, 16); ctx.lineTo(9, 15);
+            ctx.lineTo(12, 24); ctx.lineTo(0, 21); ctx.lineTo(-12, 24); ctx.lineTo(-9, 15);
+            ctx.lineTo(-20, 16); ctx.lineTo(-24, 9); ctx.lineTo(-7, -8); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#94a3b8'; ctx.fillRect(-5, -22, 10, 40);
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(-8, -7, 3, 14); ctx.fillRect(5, -7, 3, 14);
+            ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.ellipse(0, -14, 2.6, 6, 0, 0, Math.PI * 2); ctx.fill();
+            drawRedStars(15, 10, 2.4);
+          } else if (e.type === 'freestyle') {
+            // Yak-141 "Freestyle" Armored Twin-Boom VTOL Gunship
+            drawBurner(0, 18, 12, '#f59e0b', '#fef08a');
+            ctx.fillStyle = '#334155'; ctx.beginPath();
+            ctx.moveTo(0, -28); ctx.lineTo(9, -10); ctx.lineTo(26, 2); ctx.lineTo(23, 11); ctx.lineTo(11, 11);
+            ctx.lineTo(12, 26); ctx.lineTo(6, 26); ctx.lineTo(6, 13); ctx.lineTo(-6, 13); ctx.lineTo(-6, 26);
+            ctx.lineTo(-12, 26); ctx.lineTo(-11, 11); ctx.lineTo(-23, 11); ctx.lineTo(-26, 2); ctx.lineTo(-9, -10); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#64748b'; ctx.fillRect(-6, -16, 12, 26);
+            ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(0, -4, 4.5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.ellipse(0, -15, 2.6, 5, 0, 0, Math.PI * 2); ctx.fill();
+            drawRedStars(17, 6, 2.4);
+          } else if (e.type === 'hind') {
+            // Mi-24 "Hind" Soviet Attack Helicopter (Tandem bubble canopy + weaponized stub wings + spinning 5-blade rotor!)
+            ctx.fillStyle = '#4d5d42';
+            ctx.beginPath(); ctx.ellipse(0, -2, 7.5, 18, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillRect(-2.5, 10, 5, 19); // tail boom
+            ctx.fillStyle = '#78716c'; ctx.fillRect(-19, -2, 38, 6); // stub weapon wings
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(-17, -4, 4, 8); ctx.fillRect(13, -4, 4, 8); // rocket pods
+            ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.ellipse(0, -12, 3.8, 5.5, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = 'rgba(226, 232, 240, 0.18)'; ctx.beginPath(); ctx.arc(0, -1, 24, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = 'rgba(226, 232, 240, 0.72)'; ctx.lineWidth = 2.0;
+            const hr = state.time * 28 + e.id * 6;
+            for (let b = 0; b < 5; b++) {
+              const a = hr + b * (Math.PI * 2 / 5);
+              ctx.beginPath(); ctx.moveTo(0, -1); ctx.lineTo(Math.cos(a) * 24, -1 + Math.sin(a) * 24); ctx.stroke();
+            }
+          } else if (e.type === 'ekranoplan') {
+            // KM "Caspian Sea Monster" Soviet 8-Engine Ekranoplan (Ground-Effect Wing-in-Ground Monster + Sea Spray Wake!)
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.34)';
+            ctx.beginPath(); ctx.moveTo(-18, 12); ctx.lineTo(-34, 46); ctx.lineTo(34, 46); ctx.lineTo(18, 12); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(-26, -6, 52, 16); // massive short stubby WIG wing
+            ctx.fillStyle = '#94a3b8';
+            ctx.beginPath(); ctx.ellipse(0, 2, 8.5, 32, 0, 0, Math.PI * 2); ctx.fill(); // huge hull
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(-20, -24, 40, 7); // iconic forward 8-jet engine rack!
+            ctx.fillRect(-18, 25, 36, 7); // high T-tail
+            ctx.fillStyle = '#0284c7'; ctx.fillRect(-4, -16, 8, 5);
+            drawRedStars(18, 2, 2.8);
+          }
+          if (e.hitFlash > 0) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+            ctx.beginPath(); ctx.arc(0, 0, e.r * 1.05, 0, Math.PI * 2); ctx.fill();
+          }
         } else if (spriteReady('mig28')) {
           drawIm = SPRITES.mig28;
           drawH = e.type === 'scout' ? 44 : (e.type === 'ace' ? 58 : 52);
@@ -5315,13 +6465,15 @@
         const _pal = getActivePalette();
         ctx.strokeStyle = _pal.swell;
         ctx.lineWidth = 1.8;
+        const swellDrift = ((state.time * 14) % tile) * 0.3;
+        const swellPhase = state.time * 1.6;
         ctx.beginPath();
         for (let y = startY; y <= endY; y += tile) {
           for (let x = startX; x <= endX; x += tile) {
-            const drift = (state.time * 14) % tile;
-            const wy = y + Math.sin(state.time * 1.6 + x * 0.012) * 5;
-            ctx.moveTo(x + drift * 0.3, wy);
-            ctx.quadraticCurveTo(x + 18 + drift * 0.3, wy - 6, x + 38 + drift * 0.3, wy);
+            const wy = y + Math.sin(swellPhase + x * 0.012) * 5;
+            const sx = x + swellDrift;
+            ctx.moveTo(sx, wy);
+            ctx.quadraticCurveTo(sx + 18, wy - 6, sx + 38, wy);
           }
         }
         ctx.stroke();
@@ -5360,13 +6512,18 @@
           }
         }
 
-        // Subtle Nautical Threat Ring Markers centered on USS Enterprise (0, 0)
-        [5.5 * 140, 16 * 140, 36 * 140, 76 * 140].forEach((rad, idx) => {
-          const cols = ['rgba(74,222,128,0.16)', 'rgba(56,189,248,0.15)', 'rgba(250,204,21,0.16)', 'rgba(244,63,94,0.2)'];
-          ctx.strokeStyle = cols[idx];
-          ctx.setLineDash([14, 14]); ctx.lineWidth = 2;
+        // Subtle Nautical Threat Ring Markers centered on USS Enterprise (0, 0) — viewport culled
+        const _camDist = Math.hypot(state.camX, state.camY);
+        const _viewDiag = Math.hypot(W, H) * 0.6 + 40;
+        const _ringRads = [770, 2240, 5040, 10640];
+        const _ringCols = ['rgba(74,222,128,0.16)', 'rgba(56,189,248,0.15)', 'rgba(250,204,21,0.16)', 'rgba(244,63,94,0.2)'];
+        ctx.setLineDash([14, 14]); ctx.lineWidth = 2;
+        for (let idx = 0; idx < 4; idx++) {
+          const rad = _ringRads[idx];
+          if (Math.abs(_camDist - rad) > _viewDiag) continue;
+          ctx.strokeStyle = _ringCols[idx];
           ctx.beginPath(); ctx.arc(0, 0, rad, 0, Math.PI * 2); ctx.stroke();
-        });
+        }
         ctx.setLineDash([]);
 
         const curMap = getCurrentMap();
@@ -5546,6 +6703,82 @@
             fillOutlinedText(msg, 0, -142, canTrap ? '#4ade80' : '#fde047', '#000000', 3.4);
           }
           ctx.restore();
+
+        }
+
+        // SH-3H SEA KING "PLANE GUARD" VERTREP STATION (Launches off deck on Zone 2 unlock!)
+        if (sessionUnlocks.vertrep) {
+          const vp = state.vertrepPos || { x: 250, y: -95, t: 1 };
+          ctx.save();
+          const vx = vp.x, vy = vp.y + Math.sin(state.time * 2.4) * (vp.t >= 0.98 ? 7 : 2);
+          ctx.translate(vx, vy);
+          if (vp.t >= 0.75) {
+            const ringAlpha = Math.min(1, (vp.t - 0.75) / 0.25);
+            const vPulse = (0.55 + Math.sin(state.time * 6) * 0.3) * ringAlpha;
+            ctx.strokeStyle = `rgba(52, 211, 153, ${vPulse})`;
+            ctx.fillStyle = `rgba(16, 185, 129, ${0.08 * ringAlpha})`;
+            ctx.lineWidth = 2.2; ctx.setLineDash([7, 5]);
+            ctx.beginPath(); ctx.arc(0, 0, 86, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            ctx.setLineDash([]);
+          }
+          if (spriteReady('seaking')) {
+            const sc = 0.85 + Math.sin(Math.min(1, vp.t) * Math.PI) * 0.22 + (vp.t >= 1 ? 0.15 : 0);
+            ctx.drawImage(SPRITES.seaking, -34 * sc, -34 * sc, 68 * sc, 68 * sc);
+          }
+          ctx.strokeStyle = 'rgba(226, 232, 240, 0.58)'; ctx.lineWidth = 2.2;
+          const rAng = state.time * 26;
+          for (let rb = 0; rb < 2; rb++) {
+            const a = rAng + rb * Math.PI * 0.5;
+            ctx.beginPath(); ctx.moveTo(-Math.cos(a) * 34, -Math.sin(a) * 34); ctx.lineTo(Math.cos(a) * 34, Math.sin(a) * 34); ctx.stroke();
+          }
+          ctx.font = '800 9px Orbitron, sans-serif'; ctx.textAlign = 'center';
+          fillOutlinedText(vp.t < 0.95 ? '⚓ PLANE GUARD 61 LAUNCHING!' : '⚓ VERTREP FLYOVER BANK', 0, -52, '#6ee7b7', '#000000', 3);
+          ctx.restore();
+        }
+
+        // KC-130F HERCULES "SKYHOOK" AIRBORNE EXTRACTION AIRCRAFT
+        if (state.skyhook) {
+          const sk = state.skyhook;
+          ctx.save();
+          ctx.translate(sk.x, sk.y);
+          ctx.rotate(sk.angle + Math.PI / 2);
+          if (!sk.extracted) {
+            ctx.strokeStyle = 'rgba(250, 204, 21, 0.75)'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+            ctx.beginPath(); ctx.moveTo(0, 32); ctx.lineTo(0, 95); ctx.stroke(); ctx.setLineDash([]);
+            const skPulse = 0.6 + Math.sin(state.time * 9) * 0.35;
+            ctx.strokeStyle = `rgba(250, 204, 21, ${skPulse})`;
+            ctx.fillStyle = 'rgba(250, 204, 21, 0.14)';
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(0, 95, 76, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          }
+          // Detailed Shaded U.S. Navy KC-130F Hercules "SKYKING 01"
+          ctx.fillStyle = '#94a3b8';
+          ctx.beginPath(); ctx.moveTo(-62, -6); ctx.lineTo(62, -6); ctx.lineTo(54, 9); ctx.lineTo(-54, 9); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = '#cbd5e1'; ctx.fillRect(-54, -4, 108, 6);
+          ctx.fillStyle = '#1d4ed8'; ctx.fillRect(-46, -1, 7, 3); ctx.fillRect(39, -1, 7, 3); // US Navy wing bars
+          ctx.fillStyle = '#e2e8f0';
+          ctx.beginPath(); ctx.ellipse(0, 2, 11, 42, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#f8fafc';
+          ctx.beginPath(); ctx.ellipse(0, 0, 6, 36, 0, 0, Math.PI * 2); ctx.fill(); // top fuselage highlight
+          ctx.fillStyle = '#94a3b8';
+          ctx.beginPath(); ctx.moveTo(-24, 32); ctx.lineTo(24, 32); ctx.lineTo(19, 41); ctx.lineTo(-19, 41); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = '#475569'; ctx.fillRect(-2, 24, 4, 19); // vertical tail fin
+          [-42, -21, 21, 42].forEach(px => {
+            ctx.fillStyle = '#334155'; ctx.fillRect(px - 3.5, -16, 7, 14);
+            ctx.fillStyle = '#64748b'; ctx.fillRect(px - 2, -16, 4, 10);
+            ctx.fillStyle = 'rgba(226,232,240,0.45)';
+            ctx.beginPath(); ctx.ellipse(px, -17, 9, 2.2, 0, 0, Math.PI * 2); ctx.fill(); // spinning prop blur disc
+          });
+          ctx.fillStyle = '#0284c7'; ctx.beginPath(); ctx.ellipse(0, -28, 6, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#bae6fd'; ctx.fillRect(-3, -30, 6, 1.8);
+          ctx.restore();
+          if (!sk.extracted) {
+            const rx = sk.x - Math.cos(sk.angle) * 95;
+            const ry = sk.y - Math.sin(sk.angle) * 95;
+            ctx.save(); ctx.font = '800 10px Orbitron, sans-serif'; ctx.textAlign = 'center';
+            fillOutlinedText('✈ FLY THROUGH SKYHOOK TO BANK!', rx, ry - 86, '#fde047', '#000000', 3.2);
+            ctx.restore();
+          }
         }
 
         ctx.restore(); // Exit World Space
@@ -5563,44 +6796,29 @@
         const cullY = H * 0.62 + 90;
         const camX = state.camX, camY = state.camY;
 
-        for (const g of state.pickups) {
+        const _pAlpha = Math.min(1, alpha + 0.38);
+        const _intelBlink = Math.floor(state.time * 8) % 2 === 0 ? FXCache.pickupIntelA : FXCache.pickupIntelB;
+        const _bobT = state.time * 5;
+        ctx.save();
+        ctx.globalAlpha = _pAlpha;
+        for (let i = 0, n = state.pickups.length; i < n; i++) {
+          const g = state.pickups[i];
           if (g.plane !== planeIdx || Math.abs(g.x - camX) > cullX || Math.abs(g.y - camY) > cullY) continue;
-          ctx.save(); ctx.globalAlpha = Math.min(1, alpha + 0.38); ctx.translate(g.x, g.y + Math.sin(state.time * 5 + g.x) * 2);
-          if (g.kind === 'emblem') {
-            ctx.fillStyle = 'rgba(245, 158, 11, 0.25)'; ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#fde047'; ctx.strokeStyle = '#92400e'; ctx.lineWidth = 1.2;
-            ctx.beginPath();
-            ctx.moveTo(-16, -2); ctx.lineTo(-4, -6); ctx.lineTo(0, -10); ctx.lineTo(4, -6); ctx.lineTo(16, -2);
-            ctx.lineTo(13, 3); ctx.lineTo(4, 2); ctx.lineTo(0, 7); ctx.lineTo(-4, 2); ctx.lineTo(-13, 3);
-            ctx.closePath(); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#1e3a8a'; ctx.beginPath(); ctx.arc(0, -1, 3.2, 0, Math.PI * 2); ctx.fill();
-          } else if (g.kind === 'credit') {
-            ctx.fillStyle = 'rgba(250, 204, 21, 0.24)'; ctx.beginPath(); ctx.arc(0, 0, g.r + 5, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#1e3a8a'; ctx.strokeStyle = '#fde047'; ctx.lineWidth = 2.2;
-            ctx.beginPath(); ctx.arc(0, 0, g.r + 1, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#fde047'; ctx.font = '900 8px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('★', 0, 3);
-          } else if (g.kind === 'intel') {
-            ctx.fillStyle = 'rgba(249, 115, 22, 0.24)'; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#ea580c'; ctx.strokeStyle = '#fed7aa'; ctx.lineWidth = 1.4;
-            ctx.fillRect(-9, -6, 18, 12); ctx.strokeRect(-9, -6, 18, 12);
-            ctx.fillStyle = '#0f172a'; ctx.fillRect(-6, -3, 12, 6);
-            ctx.fillStyle = Math.floor(state.time * 8) % 2 === 0 ? '#ef4444' : '#fde047';
-            ctx.beginPath(); ctx.arc(5, -3, 2, 0, Math.PI * 2); ctx.fill();
-          } else if (g.kind === 'part') {
+          const gy = g.y + Math.sin(_bobT + g.x) * 2;
+          if (g.kind === 'part') {
+            ctx.save();
+            ctx.translate(g.x, gy);
             ctx.rotate(state.time * 2.2);
-            ctx.fillStyle = 'rgba(192, 132, 252, 0.24)'; ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#a855f7'; ctx.strokeStyle = '#f3e8ff'; ctx.lineWidth = 1.2;
-            for (let t = 0; t < 6; t++) { ctx.rotate(Math.PI / 3); ctx.fillRect(-2.5, -10, 5, 20); }
-            ctx.beginPath(); ctx.arc(0, 0, 6.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI * 2); ctx.fill();
+            ctx.drawImage(FXCache.pickupPart, -22, -22);
+            ctx.restore();
           } else {
-            ctx.fillStyle = '#94a3b8'; ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
-            ctx.fillRect(-6, -7, 7, 11); ctx.strokeRect(-6, -7, 7, 11);
-            ctx.fillStyle = '#cbd5e1'; ctx.fillRect(-1, -4, 7, 11); ctx.strokeRect(-1, -4, 7, 11);
-            ctx.fillStyle = '#38bdf8'; ctx.fillRect(1, -1, 3, 2);
+            const spr = g.kind === 'emblem' ? FXCache.pickupEmblem
+              : (g.kind === 'credit' ? FXCache.pickupCredit
+              : (g.kind === 'intel' ? _intelBlink : FXCache.pickupXp));
+            ctx.drawImage(spr, g.x - 22, gy - 22);
           }
-          ctx.restore();
         }
+        ctx.restore();
 
         ctx.save();
         ctx.lineWidth = 3;
@@ -5612,24 +6830,46 @@
         }
         ctx.restore();
 
-        for (const e of state.enemies) {
+        // Batched enemy ground shadows (1 path + 1 fill per plane!)
+        ctx.save();
+        ctx.globalAlpha = 0.24 * alpha;
+        ctx.fillStyle = '#020617';
+        ctx.beginPath();
+        for (let i = 0, n = state.enemies.length; i < n; i++) {
+          const e = state.enemies[i];
+          if (e.isSurface || e.plane !== planeIdx || Math.abs(e.x - camX) > cullX + 120 || Math.abs(e.y - camY) > cullY + 120) continue;
+          const rx = e.r * scale * 0.8, ry = e.r * scale * 0.6;
+          ctx.moveTo(e.x + 14 + rx, e.y + 16);
+          ctx.ellipse(e.x + 14, e.y + 16, rx, ry, 0, 0, Math.PI * 2);
+        }
+        ctx.fill();
+        ctx.restore();
+
+        for (let i = 0, n = state.enemies.length; i < n; i++) {
+          const e = state.enemies[i];
           if (e.plane !== planeIdx || Math.abs(e.x - camX) > cullX + 120 || Math.abs(e.y - camY) > cullY + 120) continue;
-          if (!e.isSurface) {
-            ctx.save(); ctx.globalAlpha = 0.24 * alpha; ctx.fillStyle = '#020617';
-            ctx.beginPath(); ctx.ellipse(e.x + 14, e.y + 16, e.r * scale * 0.8, e.r * scale * 0.6, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-          }
           drawMiG28(e, alpha, scale);
         }
 
         ctx.save();
         const ebAlpha = (!p.superActive && planeIdx === p.plane) ? 1.0 : 0.25;
         ctx.globalAlpha = ebAlpha;
-        for (const b of state.enemyBullets) {
+        for (let i = 0, n = state.enemyBullets.length; i < n; i++) {
+          const b = state.enemyBullets[i];
           if (b.plane !== planeIdx || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
-          const rr = b.r * scale;
-          ctx.fillStyle = b.color; ctx.beginPath(); ctx.arc(b.x, b.y, rr, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(b.x, b.y, rr * 0.45, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = b.color;
+          ctx.beginPath(); ctx.arc(b.x, b.y, b.r * scale, 0, Math.PI * 2); ctx.fill();
         }
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        for (let i = 0, n = state.enemyBullets.length; i < n; i++) {
+          const b = state.enemyBullets[i];
+          if (b.plane !== planeIdx || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
+          const cr = b.r * scale * 0.45;
+          ctx.moveTo(b.x + cr, b.y);
+          ctx.arc(b.x, b.y, cr, 0, Math.PI * 2);
+        }
+        ctx.fill();
         ctx.restore();
 
         // Hitscan 20mm Vulcan Tracer Streaks (fast dual-stroke glow, zero shadowBlur!)
@@ -5638,7 +6878,7 @@
         for (const tr of state.tracers) {
           if (tr.plane !== planeIdx) continue;
           const a = Math.max(0, tr.life / tr.maxLife);
-          ctx.globalAlpha = a * alpha * 0.38;
+          ctx.globalAlpha = a * alpha * (tr.glow !== undefined ? tr.glow : 0.38);
           ctx.strokeStyle = tr.color;
           ctx.lineWidth = tr.width * 3.4;
           ctx.beginPath(); ctx.moveTo(tr.x1, tr.y1); ctx.lineTo(tr.x2, tr.y2); ctx.stroke();
@@ -5668,9 +6908,9 @@
             const im = SPRITES[spKey];
             const mh = spKey === 'phoenix' ? 38 : (spKey === 'sparrow' ? 32 : 28);
             const mw = mh * (im.naturalWidth / Math.max(1, im.naturalHeight));
-            if (b.kind === 'superPhoenix') {
-              ctx.fillStyle = 'rgba(253, 224, 71, 0.32)';
-              ctx.beginPath(); ctx.arc(0, 0, mh * 0.45, 0, Math.PI * 2); ctx.fill();
+            if (b.kind === 'superPhoenix' || (b.vfxTier && b.vfxTier >= 3)) {
+              ctx.fillStyle = b.kind === 'superPhoenix' ? 'rgba(253, 224, 71, 0.38)' : 'rgba(251, 146, 60, 0.24)';
+              ctx.beginPath(); ctx.arc(0, 0, mh * (b.kind === 'superPhoenix' ? 0.52 : 0.38), 0, Math.PI * 2); ctx.fill();
             }
             ctx.drawImage(im, -mw / 2, -mh / 2, mw, mh);
           } else {
@@ -5746,7 +6986,7 @@
         let fg = '#bbf7d0';
 
         if (state.allBossesCleared) {
-          text = '☕ PERMISSION TO BUZZ THE TOWER — HIT AFTERBURNER (C) PAST BASE! ☕';
+          text = '☕ PERMISSION TO BUZZ THE TOWER — HIT AFTERBURNER (SHIFT) PAST BASE! ☕';
           bg = 'rgba(120, 53, 15, 0.94)';
           border = '#fde047';
           fg = '#fef08a';
@@ -6120,6 +7360,11 @@
         // PLANE 2: ANGELS 20
         renderCombatPlaneWorld(1);
 
+        // Boss Fight Beat-Synced Tactical Edge Vignette Pulse (pre-baked offscreen blit)
+        if (state.bossBeatPulse > 0.08 && state._hasActiveBoss) {
+          BgCache.blitBossVignette(state.bossBeatPulse * 0.24);
+        }
+
         // PLANE 3: ★ MACH 2+ SUPER PLANE
         if (p.superActive) {
           renderCombatPlaneWorld(2);
@@ -6249,9 +7494,43 @@
       // ============================================================
       // LIFECYCLE & INPUT BINDINGS
       // ============================================================
+      let _preflightAnimTimer = null;
+      function launchIntoCatapult1() {
+        const pfOv = document.getElementById('preflightOverlay');
+        if (pfOv) { pfOv.classList.add('hidden'); pfOv.classList.remove('flex'); }
+        if (_preflightAnimTimer) { clearInterval(_preflightAnimTimer); _preflightAnimTimer = null; }
+        if (state && state.mode === 'preflight') {
+          state.mode = 'catshot';
+          AudioFX.armed();
+        }
+      }
+      const _confirmPfBtn = document.getElementById('confirmPreflightBtn');
+      if (_confirmPfBtn) {
+        _confirmPfBtn.addEventListener('click', () => { AudioFX.unlock(); launchIntoCatapult1(); });
+      }
+
       function startGame() {
         AudioFX.unlock();
-        state = createInitialState('catshot');
+        const showPreflight = !profile.preflightBriefed;
+        state = createInitialState(showPreflight ? 'preflight' : 'catshot');
+        if (showPreflight) {
+          profile.preflightBriefed = true;
+          saveProfile();
+          const pfOv = document.getElementById('preflightOverlay');
+          const pfBar = document.getElementById('preflightFuelBar');
+          const pfPct = document.getElementById('preflightFuelPct');
+          if (pfOv) { pfOv.classList.remove('hidden'); pfOv.classList.add('flex'); }
+          let pct = 0;
+          if (pfBar) pfBar.style.width = '0%';
+          if (pfPct) pfPct.textContent = '0%';
+          if (_preflightAnimTimer) clearInterval(_preflightAnimTimer);
+          _preflightAnimTimer = setInterval(() => {
+            pct = Math.min(100, pct + 4);
+            if (pfBar) pfBar.style.width = pct + '%';
+            if (pfPct) pfPct.textContent = pct < 100 ? `${pct}% PUMPING...` : '100% FULL JP-5 ✓';
+            if (pct >= 100) { clearInterval(_preflightAnimTimer); _preflightAnimTimer = null; AudioFX.armed(); }
+          }, 45);
+        }
         titleOverlay.classList.add('hidden');
         hangarOverlay.classList.add('hidden'); hangarOverlay.classList.remove('flex');
         upgradeOverlay.classList.add('hidden'); upgradeOverlay.classList.remove('flex');
@@ -6333,6 +7612,13 @@
           }
           return;
         }
+        if (state.mode === 'preflight') {
+          if (!e.repeat && (e.code === 'Space' || e.code === 'Enter')) {
+            e.preventDefault();
+            launchIntoCatapult1();
+          }
+          return;
+        }
         if (state.mode === 'catshot') {
           if (!e.repeat && (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyW' || e.code === 'ArrowUp')) {
             triggerCatapultShot();
@@ -6344,6 +7630,8 @@
         if (e.repeat) return;
         if (e.code === 'KeyE') {
           swapPlane();
+        } else if (e.code === 'KeyR') {
+          callSkyhook();
         } else if (e.code === 'Space' || e.code === 'KeyF') {
           igniteSuperState();
         }
@@ -6434,6 +7722,7 @@
         // Reset in-memory profileStore & active pilot back to factory zero
         profileStore.selectedPilot = 'maverick';
         profileStore.ownedAircraft = ['f14'];
+        profileStore.level2Unlocked = false;
         profileStore.customPilots = [];
         profileStore.profiles = {};
         BUILTIN_PILOTS.forEach(pl => { profileStore.profiles[pl.id] = defaultPilotRecord(); });
@@ -6446,6 +7735,8 @@
         sessionUnlocks.missiles = false;
         sessionUnlocks.altitude = false;
         sessionUnlocks.superState = false;
+        sessionUnlocks.vertrep = false;
+        sessionUnlocks.skyhook = false;
         sessionSplashes = 0;
         sessionCombatSec = 0;
         tutorialWelcomeSent = false;
@@ -6541,13 +7832,14 @@
         const createBox = document.getElementById('createPilotBox');
         const descEl = document.getElementById('pilotSelectDesc');
         const swPilotBtn = document.getElementById('switchPilotBtn');
-        if (createBtn) createBtn.classList.toggle('hidden', LEVEL1_PILOT_ONLY);
-        if (LEVEL1_PILOT_ONLY && createBox) createBox.classList.add('hidden');
-        if (swPilotBtn) swPilotBtn.classList.toggle('hidden', LEVEL1_PILOT_ONLY);
+        const l2Open = isLevel2Unlocked();
+        if (createBtn) createBtn.classList.add('hidden');
+        if (createBox) createBox.classList.add('hidden');
+        if (swPilotBtn) swPilotBtn.classList.toggle('hidden', !l2Open);
         if (descEl) {
-          descEl.textContent = LEVEL1_PILOT_ONLY
-            ? 'Level 1 Deployment: LTJG MAVERICK assigned to VF-1. Additional squadron pilots unlock in later theaters.'
-            : 'Each pilot saves their own Career Level, Credits, Hangar upgrades, and Theater progress independently.';
+          descEl.textContent = l2Open
+            ? 'Squadron Active: LTJG MAVERICK & rescued LT ICEMAN cleared for Indian Ocean & NASNI Coronado.'
+            : 'Level 1 Deployment: LTJG MAVERICK assigned to VF-1.';
         }
 
         if (!roster) return;
@@ -6587,7 +7879,7 @@
         });
         if (summary) summary.textContent = `ACTIVE: ${cur.callsign} (LV.${curData.level}) • ${cur.perk}`;
         const cpb = document.getElementById('confirmPilotBtn');
-        if (cpb) cpb.textContent = (!LEVEL1_F14_ONLY && getOwnedAircraft().length > 1) ? 'CHOOSE AIRFRAME ▶' : 'REPORT TO CATAPULT 1 ▶';
+        if (cpb) cpb.textContent = (isLevel2Unlocked() && getOwnedAircraft().length > 1) ? 'CHOOSE AIRFRAME ▶' : 'REPORT TO CATAPULT 1 ▶';
       }
 
       // ============================================================
@@ -6766,7 +8058,7 @@
           AudioFX.unlock();
           pilotSelectOverlay.classList.add('hidden');
           pilotSelectOverlay.classList.remove('flex');
-          if (!LEVEL1_F14_ONLY && getOwnedAircraft().length > 1) {
+          if (isLevel2Unlocked() && getOwnedAircraft().length > 1) {
             AudioFX.playTrack('menu', false);
             aircraftSelectOverlay.classList.remove('hidden');
             aircraftSelectOverlay.classList.add('flex');
@@ -7010,29 +8302,41 @@
       }
 
       function renderMapSelector() {
-        // Focus solely on Level 1 (Indian Ocean Tutorial Theater) while dialing in core progression!
-        selectedMapIdx = 0;
-        profile.currentCampaignIdx = 0;
+        const l2Open = isLevel2Unlocked();
+        const panel = document.getElementById('theaterSelectorPanel');
+        if (panel) panel.classList.toggle('hidden', !l2Open);
+        if (!l2Open) {
+          selectedMapIdx = 0;
+          profile.currentCampaignIdx = 0;
+          return;
+        }
+        if (selectedMapIdx > 1) selectedMapIdx = 1;
         const grid = document.getElementById('mapSelectorGrid');
         const desc = document.getElementById('mapDescLine');
         if (!grid) return;
+        grid.className = 'grid grid-cols-2 gap-2';
         grid.innerHTML = '';
-        MAPS.forEach((m, idx) => {
-          const isLvl1 = idx === 0;
+        MAPS.slice(0, 2).forEach((m, idx) => {
+          const isSelected = idx === selectedMapIdx;
           const cleared = !!profile.clearedMaps[m.id];
           const btn = document.createElement('button');
-          btn.disabled = !isLvl1;
-          btn.className = `rounded-lg py-1.5 px-1 text-center border font-arcade text-[9px] font-black transition ${
-            isLvl1
-              ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md cursor-pointer'
-              : 'bg-slate-950/60 text-slate-500 border-slate-800/80 opacity-60 cursor-not-allowed'
+          btn.className = `rounded-lg py-2 px-2 text-center border font-arcade text-[10px] font-black transition cursor-pointer ${
+            isSelected
+              ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md'
+              : 'bg-slate-900/90 text-sky-200 border-sky-400/50 hover:border-amber-300'
           }`;
-          btn.innerHTML = isLvl1
-            ? `<div>${cleared ? '✓ ' : ''}M1</div><div class="text-[8px] opacity-90 truncate">${m.short}</div>`
-            : `<div>M${m.num}</div><div class="text-[7px] opacity-75 truncate">SOON</div>`;
+          btn.innerHTML = `<div>${cleared ? '✓ ' : ''}LEVEL ${m.num}</div><div class="text-[9px] opacity-90 truncate">${m.short}</div>`;
+          btn.addEventListener('click', () => {
+            AudioFX.unlock();
+            selectedMapIdx = idx;
+            profile.currentCampaignIdx = idx;
+            saveProfile();
+            renderMapSelector();
+            refreshRecordLine();
+          });
           grid.appendChild(btn);
         });
-        if (desc) desc.textContent = 'Level 1: Indian Ocean — USS Enterprise (CVN-65) • Active Deployment';
+        if (desc) desc.textContent = getCurrentMap().name;
       }
 
       window.onload = () => {
