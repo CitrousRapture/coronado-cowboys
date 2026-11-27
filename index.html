@@ -143,8 +143,10 @@
         <span id="bossNameLabel" class="text-rose-300 tracking-wider truncate">⚠ STAGE BOSS</span>
         <span id="bossPlaneLabel" class="text-amber-300 ml-2 whitespace-nowrap">ANGELS 20</span>
       </div>
-      <div class="w-full h-2 bg-slate-950/95 rounded-full overflow-hidden border border-rose-500/50">
+      <div class="relative w-full h-2.5 bg-slate-950/95 rounded-full overflow-hidden border border-rose-500/50">
         <div id="bossHpFill" class="h-full bg-gradient-to-r from-red-600 via-orange-500 to-amber-300 transition-all duration-100" style="width: 100%"></div>
+        <div class="pointer-events-none absolute top-0 bottom-0 left-[33.3%] w-[2px] bg-slate-950/90 shadow-[0_0_4px_#fff]"></div>
+        <div class="pointer-events-none absolute top-0 bottom-0 left-[66.6%] w-[2px] bg-slate-950/90 shadow-[0_0_4px_#fff]"></div>
       </div>
     </div>
   </div>
@@ -946,21 +948,31 @@
           return oceanC;
         }
 
-        function ensureSun(w, h, pal, weirdHueDeg) {
+        const ZONE_SUN_THEMES = {
+          0: null, // Safe Zone: default warm golden Pacific sunset
+          1: { sunInner: 'rgba(253, 224, 71, 0.55)', sunMid: 'rgba(249, 115, 22, 0.28)', disc0: '#fef08a', disc1: '#f97316', disc2: '#dc2626', stripe: 'rgba(69, 10, 10, 0.42)' },
+          2: { sunInner: 'rgba(56, 189, 248, 0.62)', sunMid: 'rgba(37, 99, 235, 0.30)', disc0: '#e0f2fe', disc1: '#38bdf8', disc2: '#1d4ed8', stripe: 'rgba(15, 23, 42, 0.48)' },
+          3: { sunInner: 'rgba(232, 121, 249, 0.64)', sunMid: 'rgba(147, 51, 234, 0.32)', disc0: '#fae8ff', disc1: '#e879f9', disc2: '#7e22ce', stripe: 'rgba(30, 10, 56, 0.50)' },
+          4: { sunInner: 'rgba(244, 63, 94, 0.72)', sunMid: 'rgba(159, 18, 57, 0.36)', disc0: '#ffe4e6', disc1: '#f43f5e', disc2: '#881337', stripe: 'rgba(24, 5, 12, 0.56)' },
+          super: { sunInner: 'rgba(254, 249, 195, 0.78)', sunMid: 'rgba(251, 146, 60, 0.38)', disc0: '#ffffff', disc1: '#fde047', disc2: '#ea580c', stripe: 'rgba(67, 20, 7, 0.42)' }
+        };
+
+        function ensureSun(w, h, pal, weirdHueDeg, zoneLvl = 0, isSuper = false) {
           const sh = Math.max(1, Math.ceil(h * 0.55));
-          const k = `${w}x${sh}|${pal.sunInner}|${pal.disc0}|${weirdHueDeg}`;
+          const zKey = isSuper ? 'super' : Math.min(4, Math.max(0, zoneLvl || 0));
+          const zTheme = ZONE_SUN_THEMES[zKey] || pal;
+          const k = `${w}x${sh}|${zKey}|${zTheme.disc0}|${zTheme.disc2}`;
           if (sunKey === k) return sunC;
           sunC.width = Math.max(1, w);
           sunC.height = sh;
           const g = sunC.getContext('2d');
           g.clearRect(0, 0, w, sh);
           g.save();
-          if (weirdHueDeg !== 0) g.filter = `hue-rotate(${Math.round(weirdHueDeg * 1.15)}deg) saturate(${(1 + Math.abs(weirdHueDeg) / 360).toFixed(2)})`;
           const sunX = w * 0.5;
           const sunR = Math.min(w, h) * 0.21;
-          const sunGlow = g.createRadialGradient(sunX, -10, sunR * 0.15, sunX, -10, sunR * 2.1);
-          sunGlow.addColorStop(0, pal.sunInner);
-          sunGlow.addColorStop(0.45, pal.sunMid);
+          const sunGlow = g.createRadialGradient(sunX, -10, sunR * 0.15, sunX, -10, sunR * 2.15);
+          sunGlow.addColorStop(0, zTheme.sunInner);
+          sunGlow.addColorStop(0.45, zTheme.sunMid);
           sunGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
           g.fillStyle = sunGlow;
           g.fillRect(0, 0, w, sh);
@@ -968,12 +980,12 @@
           g.save();
           g.beginPath(); g.arc(sunX, 12, sunR * 0.5, 0, Math.PI * 2); g.clip();
           const discGrad = g.createLinearGradient(0, 0, 0, sunR * 0.7);
-          discGrad.addColorStop(0, pal.disc0);
-          discGrad.addColorStop(0.6, pal.disc1);
-          discGrad.addColorStop(1, pal.disc2);
+          discGrad.addColorStop(0, zTheme.disc0);
+          discGrad.addColorStop(0.6, zTheme.disc1);
+          discGrad.addColorStop(1, zTheme.disc2);
           g.fillStyle = discGrad;
           g.fillRect(sunX - sunR, 0, sunR * 2, sunR);
-          g.fillStyle = pal.stripe;
+          g.fillStyle = zTheme.stripe;
           for (let sy = 16; sy < sunR * 0.65; sy += 10) g.fillRect(sunX - sunR, sy, sunR * 2, 2.8);
           g.restore();
           g.restore();
@@ -1023,7 +1035,7 @@
             const topCol = isSuper ? '#1e1038' : (threat.lvl >= 3 ? threat.seaTop : pal.seaTop);
             const botCol = isSuper ? '#091632' : (threat.lvl >= 3 ? threat.seaBot : pal.seaBot);
             ctx.drawImage(ensureOcean(W, H, topCol, botCol, weirdHueDeg), 0, 0, W, H);
-            ctx.drawImage(ensureSun(W, H, pal, weirdHueDeg), 0, 0, W, Math.ceil(H * 0.55));
+            ctx.drawImage(ensureSun(W, H, pal, weirdHueDeg, threat.lvl, isSuper), 0, 0, W, Math.ceil(H * 0.55));
           },
           blitSuperVignette() {
             ctx.drawImage(ensureVig(W, H), 0, 0, W, H);
@@ -1125,7 +1137,13 @@
         tank: "assets/sprite_tank.png",
         groundBoss: "assets/sprite_ground_boss.png",
         frigate: "assets/sprite_frigate.png",
-        moskva: "assets/sprite_moskva.png"
+        moskva: "assets/sprite_moskva.png",
+        flanker: "assets/sprite_flanker.png",
+        foxhound: "assets/sprite_foxhound.png",
+        berkut: "assets/sprite_berkut.png",
+        freestyle: "assets/sprite_freestyle.png",
+        skyking: "assets/sprite_skyking.png",
+        escort: "assets/sprite_escort.png"
       };
       const PORTRAIT_URLS = {
         maverick:  "assets/portrait_maverick.png",
@@ -1295,31 +1313,52 @@
         return {
           unlock, setMuted, isMuted,
           sampleBossBeat(dt = 0.016) {
+            if (!this._bands) this._bands = new Float32Array(16);
+            const bands = this._bands;
+            const now = performance.now();
             let energy = 0;
             let hit = false;
+            let gotRealSignal = false;
             if (bgmAnalyser && bgmFreqData && !muted && bgmEl && !bgmEl.paused) {
               try {
                 bgmAnalyser.getByteFrequencyData(bgmFreqData);
-                let sum = 0;
-                for (let i = 0; i < 10; i++) sum += bgmFreqData[i];
-                energy = sum / (10 * 255);
-                const now = performance.now();
-                if (energy > beatAvg * 1.24 && energy > 0.34 && (now - lastBeatDropMs) > 260) {
-                  beatPulseVal = 1.0;
-                  lastBeatDropMs = now;
-                  hit = true;
+                let lowSum = 0;
+                for (let i = 0; i < 14; i++) lowSum += bgmFreqData[i];
+                energy = lowSum / (14 * 255);
+                if (energy > 0.025) {
+                  gotRealSignal = true;
+                  for (let b = 0; b < 16; b++) {
+                    const start = b * 4;
+                    let s = 0;
+                    for (let j = 0; j < 4; j++) s += (bgmFreqData[start + j] || 0);
+                    const target = Math.min(1, (s / (4 * 255)) * 1.28);
+                    bands[b] = Math.max(target, bands[b] - dt * 3.2);
+                  }
+                  if ((energy > beatAvg * 1.07 && energy > 0.24 && (now - lastBeatDropMs) > 220) || (now - lastBeatDropMs) > 480) {
+                    beatPulseVal = 1.0;
+                    lastBeatDropMs = now;
+                    hit = true;
+                  }
+                  beatAvg = beatAvg * 0.90 + energy * 0.10;
                 }
-                beatAvg = beatAvg * 0.94 + energy * 0.06;
               } catch (_) {}
-            } else {
-              const cyc = ((performance.now() * 0.001) * (132 / 60)) % 1;
-              energy = Math.pow(Math.max(0, 1 - cyc * 2.2), 2) * 0.65;
-              if (cyc < 0.05 && (performance.now() - lastBeatDropMs) > 400) {
-                beatPulseVal = 0.85; lastBeatDropMs = performance.now(); hit = true;
+            }
+            if (!gotRealSignal) {
+              // Crisp 136 BPM fallback clock if muted or analyser is silent
+              const tSec = now * 0.001;
+              const cyc = (tSec * (136 / 60)) % 1;
+              energy = Math.pow(Math.max(0, 1 - cyc * 2.0), 1.8) * 0.85;
+              if (cyc < 0.08 && (now - lastBeatDropMs) > 360) {
+                beatPulseVal = 1.0; lastBeatDropMs = now; hit = true;
+              }
+              for (let b = 0; b < 16; b++) {
+                const wave = 0.25 + 0.75 * Math.abs(Math.sin(tSec * (4.2 + b * 0.55) + b * 0.7));
+                const target = Math.min(1, (b < 4 ? energy * 1.15 : energy * 0.72 * wave + 0.12));
+                bands[b] = Math.max(target, bands[b] - dt * 3.0);
               }
             }
-            beatPulseVal = Math.max(energy * 0.85, beatPulseVal - dt * 3.4);
-            return { energy, pulse: Math.min(1, beatPulseVal), hit };
+            beatPulseVal = Math.max(energy * 0.92, beatPulseVal - dt * 2.9);
+            return { energy, pulse: Math.min(1, beatPulseVal), hit, bands };
           },
           catapult() {
             playNoise(0.62, 0.26, 650);
@@ -1914,7 +1953,7 @@
           title: 'STAGE 1 BOSS • Tu-95 "BEAR" HEAVY BOMBER',
           shortName: 'Tu-95 "BEAR"',
           sprite: 'bear',
-          hp: 3600, speed: 70, r: 54, drawSize: 148, fireRate: 1.15,
+          hp: 2400, speed: 68, r: 54, drawSize: 148, fireRate: 1.35,
           killsNeeded: 38, score: 2400, xp: 110, crDrop: 135, intelDrop: 1, partDrop: 2
         },
         2: {
@@ -2032,6 +2071,18 @@
         if (cm.theme === 'coronado') return RealWorldGeo.isWaterAt(x, y);
         if (cm.theme === 'pax') return !RealWorldGeo.pointInPoly(x, y, PAX_LAND_POLY);
         return false;
+      }
+
+      // AWACS ROE Cleared-Airspace Corridor: locks outer zones until current zone's Air & Naval bosses are splashed!
+      function getClearedAirspaceInfo() {
+        if (!state) return { maxZone: 1, maxNM: 15.6, maxPx: 15.6 * 140, lockedNext: 2 };
+        const z1Done = !!(state.bossDefeatedStages[1] && state.surfaceBossDefeatedStages[1]);
+        if (!z1Done) return { maxZone: 1, maxNM: 15.6, maxPx: 15.6 * 140, lockedNext: 2 };
+        const z2Done = !!(state.bossDefeatedStages[2] && state.surfaceBossDefeatedStages[2]);
+        if (!z2Done) return { maxZone: 2, maxNM: 35.6, maxPx: 35.6 * 140, lockedNext: 3 };
+        const z3Done = !!(state.bossDefeatedStages[3] && state.surfaceBossDefeatedStages[3]);
+        if (!z3Done) return { maxZone: 3, maxNM: 75.6, maxPx: 75.6 * 140, lockedNext: 4 };
+        return { maxZone: 4, maxNM: Infinity, maxPx: Infinity, lockedNext: null };
       }
 
       function getSurfaceBossCfg(stageLvl, x, y) {
@@ -3700,9 +3751,14 @@
         const surfaceProb = (selectedMapIdx === 0) ? 0.18 : 0.50;
         const plane = planeOverride !== null ? planeOverride : (sessionUnlocks.altitude ? (Math.random() < surfaceProb ? 0 : 1) : 1);
 
-        // Spawn ahead/around the player's perimeter off-screen
-        const ang = p.heading + (Math.random() - 0.5) * Math.PI * 1.4;
-        const spawnR = Math.max(W, H) * 0.56 + 60;
+        // Bias 68% of spawns into a forward CAP intercept cone ahead of the player's flight vector!
+        const forwardIntercept = Math.random() < 0.68;
+        const ang = forwardIntercept
+          ? p.heading + (Math.random() - 0.5) * 0.96
+          : p.heading + (Math.random() - 0.5) * Math.PI * 1.5;
+        const spawnR = forwardIntercept
+          ? Math.max(W, H) * 0.48 + 45
+          : Math.max(W, H) * 0.56 + 60;
         const x = p.x + Math.cos(ang) * spawnR;
         const y = p.y + Math.sin(ang) * spawnR;
 
@@ -4353,22 +4409,30 @@
         e.hp -= finalDmg; e.hitFlash = 0.09;
         if (e.type === 'boss' && e.hp > 0) {
           const hpFrac = e.hp / Math.max(1, e.maxHp);
-          const curPh = e.bossPhase || 1;
-          if (curPh === 1 && hpFrac <= 0.66) {
+          if ((e.bossPhase || 1) < 2 && hpFrac <= 0.66) {
             e.bossPhase = 2;
-            e.speed *= 1.14;
-            e.fireRate *= 0.86;
-            spawnBossBreakoffDebris(e, 10, '#cbd5e1');
-            const p2Msg = e.isSurface ? 'TURRET DESTROYED — PHASE 2!' : 'ENGINES / ARMOR SHEARED — PHASE 2!';
+            e.speed *= 1.15;
+            e.fireRate *= 0.85;
+            e.fireTimer = Math.max(e.fireTimer, 0.75);
+            state.enemyBullets.length = 0; // Dramatic phase-break bullet clear!
+            spawnBossBreakoffDebris(e, 14, '#cbd5e1');
+            spawnRing(e.x, e.y, '#fbbf24', 24, 240, e.plane);
+            AudioFX.superIgnite();
+            const p2Msg = e.isSurface ? 'TURRET DESTROYED — PHASE 2!' : 'ARMOR SHEARED & ENGINE ON FIRE — PHASE 2!';
             showBanner(`🔥 ${e.bossCfg ? e.bossCfg.shortName : 'BOSS'}: ${p2Msg}`, 'border-amber-400 text-amber-200');
-            addFloatingText(e.x, e.y - 44, '★ PHASE 2 • ARMOR BREACHED! ★', '#fbbf24', 13);
-          } else if (curPh === 2 && hpFrac <= 0.33) {
+            addFloatingText(e.x, e.y - 52, '★ PHASE 2/3 • ARMOR BREACHED! ★', '#fbbf24', 15);
+          }
+          if ((e.bossPhase || 1) < 3 && hpFrac <= 0.33) {
             e.bossPhase = 3;
             e.speed *= 1.18;
-            e.fireRate *= 0.82;
-            spawnBossBreakoffDebris(e, 14, '#f43f5e');
+            e.fireRate *= 0.80;
+            e.fireTimer = Math.max(e.fireTimer, 0.75);
+            state.enemyBullets.length = 0; // Dramatic phase-break bullet clear!
+            spawnBossBreakoffDebris(e, 18, '#f43f5e');
+            spawnRing(e.x, e.y, '#f43f5e', 28, 280, e.plane);
+            AudioFX.superIgnite();
             showBanner(`☠ ${e.bossCfg ? e.bossCfg.shortName : 'BOSS'}: CRITICAL OVERDRIVE — PHASE 3!`, 'border-rose-500 text-rose-200');
-            addFloatingText(e.x, e.y - 48, '☠ PHASE 3 • CRITICAL OVERDRIVE! ☠', '#f43f5e', 14);
+            addFloatingText(e.x, e.y - 56, '☠ PHASE 3/3 • CRITICAL OVERDRIVE! ☠', '#f43f5e', 16);
           }
         }
         // A-6E Intruder signature Air-to-Ground HE splash on Hard Deck surface targets!
@@ -4402,12 +4466,21 @@
               state.surfaceBossSpawnedStages[zLvl] = true;
               spawnSurfaceBoss(zLvl);
             }
-            const bCfg = STAGE_BOSSES[zLvl];
-            if (bCfg && !state.bossSpawnedStages[zLvl] && state.zoneKills[zLvl] >= bCfg.killsNeeded && !state.enemies.some(en => en.type === 'boss' && !en.isSurface)) {
-              const zoneKey = [null, 'altitude', 'missiles', 'afterburner', 'superState'][zLvl];
-              if (zoneKey) checkSessionUnlocks(zLvl, zoneKey);
-              state.bossSpawnedStages[zLvl] = true;
-              spawnStageBoss(zLvl);
+            // Guarantee Zone 1 Bear never gets skipped and bosses progress cleanly in order!
+            const z1BearCfg = STAGE_BOSSES[1];
+            const noAirBossActive = !state.enemies.some(en => en.type === 'boss' && !en.isSurface);
+            if (z1BearCfg && !state.bossSpawnedStages[1] && !state.bossDefeatedStages[1] && state.kills >= z1BearCfg.killsNeeded && noAirBossActive) {
+              checkSessionUnlocks(1, 'altitude');
+              state.bossSpawnedStages[1] = true;
+              spawnStageBoss(1);
+            } else {
+              const bCfg = STAGE_BOSSES[zLvl];
+              if (bCfg && !state.bossSpawnedStages[zLvl] && state.zoneKills[zLvl] >= bCfg.killsNeeded && noAirBossActive) {
+                const zoneKey = [null, 'altitude', 'missiles', 'afterburner', 'superState'][zLvl];
+                if (zoneKey) checkSessionUnlocks(zLvl, zoneKey);
+                state.bossSpawnedStages[zLvl] = true;
+                spawnStageBoss(zLvl);
+              }
             }
           }
         } else if (e.bossStageLvl) {
@@ -4572,7 +4645,7 @@
           // Strict Guns-Only in-flight cards until Missiles Tree is unlocked & first pylon is fitted at base!
           const missilesFitted = hasFittedMissileTree(ac.id);
           if (!missilesFitted) {
-            if (u.id !== 'vulcan' && u.id !== 'hull') return false;
+            if (u.id !== 'vulcan' && u.id !== 'hull' && u.id !== 'flares' && u.id !== 'sweep') return false;
           }
           if (u.id === 'sidewinder' && !getAircraftTreeOwned(ac.id).m1_sidewinder) return false;
           if (u.id === 'sparrow' && !getAircraftTreeOwned(ac.id).m1_sparrow) return false;
@@ -4590,9 +4663,10 @@
           const curLvl = u.id === 'hull' ? 0 : (p.weapons[u.id] || 0);
           const tagCls = u.tagClass || 'bg-amber-500/20 text-amber-300 border-amber-400/30';
           const card = document.createElement('button');
-          card.className = 'mfd-card text-left rounded-xl p-4 transition flex flex-col justify-between gap-3 cursor-pointer active:scale-[0.98]';
+          card.type = 'button';
+          card.className = 'mfd-card w-full text-left rounded-xl p-4 transition flex flex-col justify-between gap-3 cursor-pointer select-none';
           card.innerHTML = `
-            <div>
+            <div class="pointer-events-none">
               <div class="flex items-center justify-between mb-2">
                 <span class="mfd-icon-badge">${getUiIcon(u.icon)}</span>
                 <span class="font-arcade text-[9px] font-bold px-2 py-0.5 rounded border ${tagCls} tracking-wider">${u.tag}</span>
@@ -4600,11 +4674,12 @@
               <div class="font-arcade text-sm font-black text-white tracking-wide mb-1">${u.name}</div>
               <p class="text-xs text-slate-300 leading-relaxed">${u.desc(curLvl)}</p>
             </div>
-            <div class="font-arcade text-[10px] font-bold text-amber-300 pt-2 border-t border-slate-700/70 tracking-wider">
+            <div class="pointer-events-none font-arcade text-[10px] font-bold text-amber-300 pt-2 border-t border-slate-700/70 tracking-wider">
               ${u.id === 'hull' ? 'REPAIR & FORTIFY ▶' : (curLvl === 0 ? 'EQUIP ORDNANCE ▶' : `UPGRADE → LVL ${curLvl + 1} ▶`)}
             </div>
           `;
-          card.addEventListener('click', () => applyUpgrade(u.id));
+          card.addEventListener('pointerup', (ev) => { ev.preventDefault(); ev.stopPropagation(); applyUpgrade(u.id); });
+          card.addEventListener('click', (ev) => { if (ev.detail === 0) applyUpgrade(u.id); });
           upgradeCards.appendChild(card);
         });
         upgradeOverlay.classList.remove('hidden'); upgradeOverlay.classList.add('flex');
@@ -4693,9 +4768,10 @@
       // ============================================================
       // MAIN UPDATE LOOP (OPEN-PACIFIC WORLD + CATAPULT LAUNCH)
       // ============================================================
-      function triggerCatapultShot() {
+      function triggerCatapultShot(forceAuto = false) {
         if (!state || state.mode !== 'catshot' || !state.catShot || state.catShot.fired) return;
         const cs = state.catShot;
+        if (!forceAuto && cs.timer < 0.40) return;
         const p = state.player;
         cs.fired = true;
         cs.shooterPose = 1; // Shooter drops to one knee & points down the bow!
@@ -4807,7 +4883,7 @@
           pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.life -= dt;
           if (pt.life <= 0) swapRemove(state.particles, i);
         }
-        if (cs.timer >= 5.2) triggerCatapultShot();
+        if (cs.timer >= 5.2) triggerCatapultShot(true);
       }
 
       function drawCatShotDeckCrewWorld() {
@@ -4846,10 +4922,10 @@
         const cs = state.catShot;
         const cm = getCurrentMap();
         const isCarrier = cm.baseType !== 'airbase';
-        const gw = Math.min(340, W - 36);
-        const gh = 86;
+        const gw = Math.min(380, W - 32);
+        const gh = 92;
         const gx = W * 0.5 - gw * 0.5;
-        const gy = H - gh - 28;
+        const gy = Math.min(H - gh - 120, Math.max(H * 0.58, H * 0.64));
 
         ctx.save();
         ctx.fillStyle = 'rgba(6, 15, 32, 0.92)';
@@ -5156,6 +5232,29 @@
             p._moveMult = p.abActive ? (2.15 * (_ac.abFuelMult || 1.0)) : (0.42 * (_ac.abFuelMult || 1.0));
           }
 
+          // 🛑 AWACS ROE CLEARED-AIRSPACE BOUNDARY (Walls off locked outer zones until current zone's bosses are cleared!)
+          const _roe = getClearedAirspaceInfo();
+          if (_roe.maxPx < Infinity) {
+            const _pDist = Math.hypot(p.x, p.y);
+            if (_pDist > _roe.maxPx) {
+              const _scaleBack = _roe.maxPx / Math.max(1, _pDist);
+              p.x *= _scaleBack;
+              p.y *= _scaleBack;
+              // Gently bank nose inward toward cleared airspace
+              const _inwardAng = Math.atan2(-p.y, -p.x);
+              let _rDiff = _inwardAng - p.heading;
+              while (_rDiff > Math.PI) _rDiff -= Math.PI * 2;
+              while (_rDiff < -Math.PI) _rDiff += Math.PI * 2;
+              p.heading += _rDiff * Math.min(1, dt * 4.2);
+              if (!state.roeWarnCd || state.roeWarnCd <= 0) {
+                state.roeWarnCd = 3.5;
+                AudioFX.dodgeBonus();
+                showBanner(`⚠ AWACS ROE LIMIT (${_roe.maxNM.toFixed(0)} NM) — CLEAR ZONE ${_roe.maxZone} BOSSES TO UNLOCK ZONE ${_roe.lockedNext}!`, 'border-rose-400 text-rose-200');
+              }
+            }
+          }
+          if (state.roeWarnCd > 0) state.roeWarnCd = Math.max(0, state.roeWarnCd - dt);
+
           // ⛽ SPEED-BASED FUEL CONSUMPTION (Paused during ★ Inverted Mode!)
           if (!p.superActive) {
             const _fMult = (getSelectedPilotCfg().fuelMult || 1.0) * Math.max(0.65, 1 - Math.max(0, (getSelectedPilotData().level || 1) - 1) * 0.02);
@@ -5388,16 +5487,25 @@
         if (bossActiveNow) {
           const beat = AudioFX.sampleBossBeat(dt);
           state.bossBeatPulse = beat.pulse;
+          state.bossBeatHit = beat.hit;
+          state.bossBeatBands = beat.bands;
           if (beat.hit) {
-            const bCol = (activeBossObj.bossPhase || 1) >= 3 ? '#f43f5e' : (activeBossObj.isSurface ? '#38bdf8' : '#fbbf24');
-            spawnRing(activeBossObj.x, activeBossObj.y, bCol, activeBossObj.r * 0.9, activeBossObj.r * 2.35, activeBossObj.plane);
+            const ph = activeBossObj.bossPhase || 1;
+            const bCol = ph >= 3 ? '#f43f5e' : (ph === 2 ? '#fb923c' : (activeBossObj.isSurface ? '#38bdf8' : '#fde047'));
+            spawnRing(activeBossObj.x, activeBossObj.y, bCol, activeBossObj.r * 0.85, activeBossObj.r * 3.2, activeBossObj.plane);
+            state.screenShake = Math.max(state.screenShake, ph >= 3 ? 4.2 : 2.8);
+            // Snap almost-ready boss salvos right onto the beat!
+            if (activeBossObj.fireTimer > 0 && activeBossObj.fireTimer <= 0.16) {
+              activeBossObj.fireTimer = 0;
+            }
           }
         } else {
           state.bossBeatPulse = Math.max(0, (state.bossBeatPulse || 0) - dt * 4);
+          state.bossBeatHit = false;
         }
         if (threat.spawnMult > 0 && !state.allBossesCleared && !bossActiveNow) {
           state.spawnTimer -= dt;
-          const maxCap = Math.min(72, 46 + threat.lvl * 4 + Math.floor((threat.deepFactor || 0) * 6));
+          const maxCap = threat.lvl <= 1 ? 28 : Math.min(72, 34 + threat.lvl * 8 + Math.floor((threat.deepFactor || 0) * 6));
           if (state.spawnTimer <= 0 && state.enemies.length < maxCap) {
             state.spawnTimer = Math.max(0.16, 0.92 / threat.spawnMult);
             const pack = threat.lvl >= 4 ? (threat.deepFactor >= 1.5 ? 4 : 3) : (threat.lvl >= 2 ? 2 : (Math.random() < 0.45 ? 2 : 1));
@@ -5624,19 +5732,22 @@
                     }
                   }
                 } else {
-                  const half = ph >= 3 ? 5 : 3;
+                  // Tu-95 "Bear": readable 5-way Phase 1 fan -> 7-way + radial Phase 2 -> 9-way Phase 3!
+                  const half = ph >= 3 ? 4 : (ph === 2 ? 3 : 2);
+                  const gap = ph === 1 ? 0.25 : 0.21;
+                  const spd = 175 + ph * 16;
                   for (let k = -half; k <= half; k++) {
-                    const a = baseAng + k * 0.21;
-                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * (205 + ph * 15), vy: Math.sin(a) * (205 + ph * 15), plane: e.plane, r: 6.4, color: '#facc15', life: 4.5 });
+                    const a = baseAng + k * gap;
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 6.2, color: '#facc15', life: 4.5 });
                   }
                   if (e.attackSeq % 2 === 0) {
                     const mAng = baseAng + (Math.random() - 0.5) * 1.4;
-                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(mAng) * 70, vy: Math.sin(mAng) * 70, plane: e.plane, r: 8.5, color: '#fb923c', life: 6.5 });
+                    state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(mAng) * 65, vy: Math.sin(mAng) * 65, plane: e.plane, r: 8.2, color: '#fb923c', life: 6.0 });
                   }
                   if (ph >= 2 && e.attackSeq % 3 === 0) {
                     for (let k = 0; k < 8; k++) {
                       const a = e.phaseTimer + (k / 8) * Math.PI * 2;
-                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 185, vy: Math.sin(a) * 185, plane: e.plane, r: 5.8, color: '#f97316', life: 4.2 });
+                      state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 175, vy: Math.sin(a) * 175, plane: e.plane, r: 5.8, color: '#f97316', life: 4.2 });
                     }
                   }
                 }
@@ -5786,7 +5897,8 @@
           if (!p.superActive && b.plane === p.plane) {
             const edx = b.x - p.x, edy = b.y - p.y, er = b.r + 12;
             if (edx * edx + edy * edy < er * er) {
-              damagePlayer(12);
+              const bDmg = threat.lvl <= 1 ? 7 : (threat.lvl === 2 ? 9 : (threat.lvl === 3 ? 11 : 12));
+              damagePlayer(bDmg);
               swapRemove(state.enemyBullets, i);
             }
           }
@@ -6226,7 +6338,8 @@
         }
 
         ctx.save();
-        ctx.globalAlpha = alpha; ctx.translate(e.x, e.y); ctx.scale(scale, scale);
+        const _bossThump = (e.type === 'boss' && state.bossBeatPulse > 0.05) ? (1 + state.bossBeatPulse * 0.11) : 1;
+        ctx.globalAlpha = alpha; ctx.translate(e.x, e.y); ctx.scale(scale * _bossThump, scale * _bossThump);
         ctx.rotate(e.bossKey === 'kosmos' ? (e.spinAngle || 0) : (e.angle + Math.PI / 2));
 
         if (e.isNaval) {
@@ -6260,18 +6373,32 @@
             const pulseA = (ph >= 3 ? 0.30 : (ph === 2 ? 0.24 : 0.16)) + bp * 0.28;
             ctx.fillStyle = ph >= 3 ? `rgba(239, 68, 68, ${pulseA})` : (ph === 2 ? `rgba(245, 158, 11, ${pulseA})` : (e.isSurface ? `rgba(56, 189, 248, ${pulseA})` : `rgba(244, 63, 94, ${pulseA})`));
             ctx.beginPath(); ctx.arc(0, 0, drawH * (0.48 + bp * 0.16 + (ph >= 3 ? 0.06 : 0)), 0, Math.PI * 2); ctx.fill();
-            if (ph >= 2 || bp > 0.35) {
-              ctx.strokeStyle = ph >= 3 ? '#f43f5e' : (ph === 2 ? '#fbbf24' : '#38bdf8');
-              ctx.lineWidth = (ph >= 3 ? 3 : 2) + bp * 2.2;
-              ctx.setLineDash([8, 6]);
-              ctx.beginPath(); ctx.arc(0, 0, drawH * (0.44 + bp * 0.14), 0, Math.PI * 2); ctx.stroke();
-              ctx.setLineDash([]);
+            // Bold rotating beat-synced radar reticle around the boss!
+            ctx.save();
+            ctx.rotate(state.time * (ph >= 3 ? 2.4 : 1.35));
+            ctx.strokeStyle = ph >= 3 ? '#f43f5e' : (ph === 2 ? '#fbbf24' : '#38bdf8');
+            ctx.lineWidth = (ph >= 3 ? 3.5 : 2.5) + bp * 3.0;
+            ctx.setLineDash([14, 10]);
+            ctx.beginPath(); ctx.arc(0, 0, drawH * (0.46 + bp * 0.18), 0, Math.PI * 2); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+          }
+        } else if ((e.type === 'bmp' || e.type === 'tank' || e.type === 'frigate' || e.type === 'flanker' || e.type === 'foxhound' || e.type === 'berkut' || e.type === 'freestyle') && spriteReady(e.type)) {
+          drawIm = SPRITES[e.type];
+          drawH = e.type === 'frigate' ? 96 : (e.type === 'tank' ? 68 : (e.type === 'bmp' ? 60 : (e.type === 'berkut' ? 74 : 68)));
+          drawW = drawH * (drawIm.naturalWidth / Math.max(1, drawIm.naturalHeight));
+          if (e.type === 'flanker' || e.type === 'foxhound' || e.type === 'berkut' || e.type === 'freestyle') {
+            const flk = 0.72 + Math.sin(state.time * 42 + e.id * 10) * 0.28;
+            const bCol = e.type === 'foxhound' ? '#c084fc' : (e.type === 'berkut' ? '#f43f5e' : (e.type === 'freestyle' ? '#f59e0b' : '#38bdf8'));
+            const nozzles = e.type === 'freestyle' ? [0] : [-5.5, 5.5];
+            const ny = drawH * 0.42;
+            for (const bx of nozzles) {
+              ctx.fillStyle = bCol;
+              ctx.beginPath(); ctx.moveTo(bx - 2.6, ny); ctx.lineTo(bx + 2.6, ny); ctx.lineTo(bx, ny + 14 * flk); ctx.closePath(); ctx.fill();
+              ctx.fillStyle = '#fef9c3';
+              ctx.beginPath(); ctx.moveTo(bx - 1.3, ny); ctx.lineTo(bx + 1.3, ny); ctx.lineTo(bx, ny + 7.5 * flk); ctx.closePath(); ctx.fill();
             }
           }
-        } else if ((e.type === 'bmp' || e.type === 'tank' || e.type === 'frigate') && spriteReady(e.type)) {
-          drawIm = SPRITES[e.type];
-          drawH = e.type === 'frigate' ? 96 : (e.type === 'tank' ? 68 : 60);
-          drawW = drawH * (drawIm.naturalWidth / Math.max(1, drawIm.naturalHeight));
         } else if ((e.type === 'boss' || e.type === 'bomber') && spriteReady('boss')) {
           drawIm = SPRITES.boss;
           drawH = e.type === 'boss' ? 106 : 64;
@@ -6422,6 +6549,25 @@
         }
         if (drawIm) {
           ctx.drawImage(drawIm, -drawW / 2, -drawH / 2, drawW, drawH);
+          // Visible persistent Phase 2 & Phase 3 battle damage / hull fires directly on Boss sprites!
+          if (e.type === 'boss' && (e.bossPhase || 1) >= 2) {
+            const ph = e.bossPhase;
+            const fl = 0.65 + Math.sin(state.time * 26 + e.id) * 0.35;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+            ctx.beginPath(); ctx.ellipse(-drawW * 0.22, -drawH * 0.06, 9, 13, 0.3, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = `rgba(249, 115, 22, ${fl})`;
+            ctx.beginPath(); ctx.arc(-drawW * 0.22, -drawH * 0.06, 6.5 + fl * 2.5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = `rgba(254, 240, 138, ${fl})`;
+            ctx.beginPath(); ctx.arc(-drawW * 0.22, -drawH * 0.06, 3.2, 0, Math.PI * 2); ctx.fill();
+            if (ph >= 3) {
+              ctx.fillStyle = 'rgba(15, 23, 42, 0.84)';
+              ctx.beginPath(); ctx.ellipse(drawW * 0.20, drawH * 0.08, 10, 14, -0.35, 0, Math.PI * 2); ctx.fill();
+              ctx.fillStyle = `rgba(239, 68, 68, ${fl})`;
+              ctx.beginPath(); ctx.arc(drawW * 0.20, drawH * 0.08, 8.5 + fl * 3, 0, Math.PI * 2); ctx.fill();
+              ctx.fillStyle = `rgba(254, 240, 138, ${fl})`;
+              ctx.beginPath(); ctx.arc(drawW * 0.20, drawH * 0.08, 4.2, 0, Math.PI * 2); ctx.fill();
+            }
+          }
           if (e.hitFlash > 0) {
             ctx.globalCompositeOperation = 'lighter';
             ctx.globalAlpha = alpha * 0.65;
@@ -6512,17 +6658,37 @@
           }
         }
 
-        // Subtle Nautical Threat Ring Markers centered on USS Enterprise (0, 0) — viewport culled
+        // Nautical Threat Rings (only show unlocked corridors!) + Glowing AWACS ROE Boundary Ring
+        const _roeVis = getClearedAirspaceInfo();
         const _camDist = Math.hypot(state.camX, state.camY);
-        const _viewDiag = Math.hypot(W, H) * 0.6 + 40;
+        const _viewDiag = Math.hypot(W, H) * 0.6 + 60;
         const _ringRads = [770, 2240, 5040, 10640];
         const _ringCols = ['rgba(74,222,128,0.16)', 'rgba(56,189,248,0.15)', 'rgba(250,204,21,0.16)', 'rgba(244,63,94,0.2)'];
         ctx.setLineDash([14, 14]); ctx.lineWidth = 2;
         for (let idx = 0; idx < 4; idx++) {
+          if (idx > _roeVis.maxZone) continue; // Keep future locked zones hidden!
           const rad = _ringRads[idx];
           if (Math.abs(_camDist - rad) > _viewDiag) continue;
           ctx.strokeStyle = _ringCols[idx];
           ctx.beginPath(); ctx.arc(0, 0, rad, 0, Math.PI * 2); ctx.stroke();
+        }
+        if (_roeVis.maxPx < Infinity && Math.abs(_camDist - _roeVis.maxPx) <= _viewDiag) {
+          const rPulse = 0.55 + Math.sin(state.time * 6) * 0.25;
+          ctx.strokeStyle = `rgba(244, 63, 94, ${rPulse.toFixed(2)})`;
+          ctx.lineWidth = 4;
+          ctx.setLineDash([22, 12]);
+          ctx.beginPath(); ctx.arc(0, 0, _roeVis.maxPx, 0, Math.PI * 2); ctx.stroke();
+          ctx.setLineDash([]);
+          const lblAng = Math.atan2(state.camY, state.camX);
+          const lx = Math.cos(lblAng) * (_roeVis.maxPx - 26);
+          const ly = Math.sin(lblAng) * (_roeVis.maxPx - 26);
+          ctx.save();
+          ctx.translate(lx, ly);
+          ctx.rotate(lblAng + Math.PI * 0.5);
+          ctx.font = '900 11px Orbitron, sans-serif';
+          ctx.textAlign = 'center';
+          fillOutlinedText(`⚠ AWACS ROE LIMIT • CLEAR ZONE ${_roeVis.maxZone} BOSSES TO ADVANCE ⚠`, 0, 0, '#fda4af', '#000', 3.0);
+          ctx.restore();
         }
         ctx.setLineDash([]);
 
@@ -6669,11 +6835,17 @@
           // ============================================================
           for (const es of escortOffsets) {
             ctx.save(); ctx.translate(es.x, es.y);
-            ctx.fillStyle = 'rgba(186, 230, 253, 0.14)';
-            ctx.beginPath(); ctx.moveTo(-6, 30); ctx.lineTo(-14, 80); ctx.lineTo(14, 80); ctx.lineTo(6, 30); ctx.fill();
-            ctx.fillStyle = 'rgba(51, 65, 85, 0.85)';
-            ctx.beginPath(); ctx.moveTo(0, -32); ctx.lineTo(7, -8); ctx.lineTo(6, 30); ctx.lineTo(-6, 30); ctx.lineTo(-7, -8); ctx.closePath(); ctx.fill();
-            ctx.fillStyle = '#94a3b8'; ctx.fillRect(-3, -10, 6, 14);
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.16)';
+            ctx.beginPath(); ctx.moveTo(-8, 48); ctx.lineTo(-18, 118); ctx.lineTo(18, 118); ctx.lineTo(8, 48); ctx.fill();
+            if (spriteReady('escort')) {
+              const im = SPRITES.escort;
+              const eh = 112;
+              const ew = eh * (im.naturalWidth / Math.max(1, im.naturalHeight));
+              ctx.drawImage(im, -ew / 2, -eh / 2, ew, eh);
+            } else {
+              ctx.fillStyle = 'rgba(51, 65, 85, 0.85)';
+              ctx.beginPath(); ctx.moveTo(0, -32); ctx.lineTo(7, -8); ctx.lineTo(6, 30); ctx.lineTo(-6, 30); ctx.lineTo(-7, -8); ctx.closePath(); ctx.fill();
+            }
             ctx.restore();
           }
 
@@ -6751,26 +6923,16 @@
             ctx.lineWidth = 3;
             ctx.beginPath(); ctx.arc(0, 95, 76, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
           }
-          // Detailed Shaded U.S. Navy KC-130F Hercules "SKYKING 01"
-          ctx.fillStyle = '#94a3b8';
-          ctx.beginPath(); ctx.moveTo(-62, -6); ctx.lineTo(62, -6); ctx.lineTo(54, 9); ctx.lineTo(-54, 9); ctx.closePath(); ctx.fill();
-          ctx.fillStyle = '#cbd5e1'; ctx.fillRect(-54, -4, 108, 6);
-          ctx.fillStyle = '#1d4ed8'; ctx.fillRect(-46, -1, 7, 3); ctx.fillRect(39, -1, 7, 3); // US Navy wing bars
-          ctx.fillStyle = '#e2e8f0';
-          ctx.beginPath(); ctx.ellipse(0, 2, 11, 42, 0, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#f8fafc';
-          ctx.beginPath(); ctx.ellipse(0, 0, 6, 36, 0, 0, Math.PI * 2); ctx.fill(); // top fuselage highlight
-          ctx.fillStyle = '#94a3b8';
-          ctx.beginPath(); ctx.moveTo(-24, 32); ctx.lineTo(24, 32); ctx.lineTo(19, 41); ctx.lineTo(-19, 41); ctx.closePath(); ctx.fill();
-          ctx.fillStyle = '#475569'; ctx.fillRect(-2, 24, 4, 19); // vertical tail fin
-          [-42, -21, 21, 42].forEach(px => {
-            ctx.fillStyle = '#334155'; ctx.fillRect(px - 3.5, -16, 7, 14);
-            ctx.fillStyle = '#64748b'; ctx.fillRect(px - 2, -16, 4, 10);
-            ctx.fillStyle = 'rgba(226,232,240,0.45)';
-            ctx.beginPath(); ctx.ellipse(px, -17, 9, 2.2, 0, 0, Math.PI * 2); ctx.fill(); // spinning prop blur disc
-          });
-          ctx.fillStyle = '#0284c7'; ctx.beginPath(); ctx.ellipse(0, -28, 6, 3.5, 0, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#bae6fd'; ctx.fillRect(-3, -30, 6, 1.8);
+          // 16-bit Pixel-Art U.S. Navy KC-130F Hercules "SKYKING 01"
+          if (spriteReady('skyking')) {
+            const im = SPRITES.skyking;
+            const sh = 112;
+            const sw = sh * (im.naturalWidth / Math.max(1, im.naturalHeight));
+            ctx.drawImage(im, -sw / 2, -sh / 2, sw, sh);
+          } else {
+            ctx.fillStyle = '#cbd5e1'; ctx.fillRect(-54, -4, 108, 10);
+            ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.ellipse(0, 2, 11, 42, 0, 0, Math.PI * 2); ctx.fill();
+          }
           ctx.restore();
           if (!sk.extracted) {
             const rx = sk.x - Math.cos(sk.angle) * 95;
@@ -6854,18 +7016,19 @@
         ctx.save();
         const ebAlpha = (!p.superActive && planeIdx === p.plane) ? 1.0 : 0.25;
         ctx.globalAlpha = ebAlpha;
+        const _bBeatScale = (state._hasActiveBoss && state.bossBeatPulse > 0.05) ? (1 + state.bossBeatPulse * 0.30) : 1;
         for (let i = 0, n = state.enemyBullets.length; i < n; i++) {
           const b = state.enemyBullets[i];
           if (b.plane !== planeIdx || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
           ctx.fillStyle = b.color;
-          ctx.beginPath(); ctx.arc(b.x, b.y, b.r * scale, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(b.x, b.y, b.r * scale * _bBeatScale, 0, Math.PI * 2); ctx.fill();
         }
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = (state._hasActiveBoss && state.bossBeatPulse > 0.62) ? '#fef08a' : '#ffffff';
         ctx.beginPath();
         for (let i = 0, n = state.enemyBullets.length; i < n; i++) {
           const b = state.enemyBullets[i];
           if (b.plane !== planeIdx || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
-          const cr = b.r * scale * 0.45;
+          const cr = b.r * scale * _bBeatScale * 0.48;
           ctx.moveTo(b.x + cr, b.y);
           ctx.arc(b.x, b.y, cr, 0, Math.PI * 2);
         }
@@ -7360,9 +7523,29 @@
         // PLANE 2: ANGELS 20
         renderCombatPlaneWorld(1);
 
-        // Boss Fight Beat-Synced Tactical Edge Vignette Pulse (pre-baked offscreen blit)
-        if (state.bossBeatPulse > 0.08 && state._hasActiveBoss) {
-          BgCache.blitBossVignette(state.bossBeatPulse * 0.24);
+        // Boss Fight Beat-Synced Tactical Edge Vignette + Live 16-Band Retro Spectrum Equalizer!
+        if (state._hasActiveBoss) {
+          const bp = state.bossBeatPulse || 0;
+          if (bp > 0.05) BgCache.blitBossVignette(bp * 0.44);
+          if (state.bossBeatBands) {
+            const bands = state.bossBeatBands;
+            ctx.save();
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+            const eqW = Math.min(440, W * 0.62);
+            const barW = (eqW / 16) - 4;
+            const startX = (W - eqW) * 0.5 + 2;
+            const baseY = H - 10;
+            for (let b = 0; b < 16; b++) {
+              const v = bands[b] || 0;
+              const bh = Math.max(4, v * 46);
+              const bx = startX + b * (barW + 4);
+              ctx.fillStyle = v > 0.72 ? 'rgba(244, 63, 94, 0.72)' : (v > 0.42 ? 'rgba(251, 191, 36, 0.64)' : 'rgba(56, 189, 248, 0.52)');
+              ctx.fillRect(bx, baseY - bh, barW, bh);
+              ctx.fillStyle = '#fef9c3';
+              ctx.fillRect(bx, baseY - bh - 3, barW, 2.5);
+            }
+            ctx.restore();
+          }
         }
 
         // PLANE 3: ★ MACH 2+ SUPER PLANE
