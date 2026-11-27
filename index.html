@@ -2965,7 +2965,7 @@
 
           cargo: { credits: 0, intel: 0, parts: 0 },
           // Interactive Catapult Shot Mini-Game state + post-launch boost!
-          catShot: mode === 'catshot' ? { rpm: 0.15, dir: 1, timer: 0, fired: false, shooterPose: 0, grade: null } : null,
+          catShot: (mode === 'catshot' || mode === 'preflight') ? { rpm: 0.15, dir: 1, timer: 0, fired: false, shooterPose: 0, grade: null } : null,
           catBoostTimer: 0,
           catBoostMult: 1.0,
           // Catapult launch boost timer (prevents immediate re-landing for 3.5s after launch!)
@@ -7500,6 +7500,7 @@
         if (pfOv) { pfOv.classList.add('hidden'); pfOv.classList.remove('flex'); }
         if (_preflightAnimTimer) { clearInterval(_preflightAnimTimer); _preflightAnimTimer = null; }
         if (state && state.mode === 'preflight') {
+          if (!state.catShot) state.catShot = { rpm: 0.15, dir: 1, timer: 0, fired: false, shooterPose: 0, grade: null };
           state.mode = 'catshot';
           AudioFX.armed();
         }
