@@ -12011,8 +12011,14 @@
       // Completely decoupled from Arcade Mode — zero zones, scripted beats!
       // ============================================================
       function getStoryProgress() {
-        if (!profileStore.storyProgress) profileStore.storyProgress = { m1Cleared: false, mg1Best: null };
+        if (!profileStore.storyProgress) profileStore.storyProgress = { m1Cleared: false, mg1Best: null, m1Checkpoint: null };
         return profileStore.storyProgress;
+      }
+
+      function saveStoryM1Checkpoint(phase, cougarLanded) {
+        const sp = getStoryProgress();
+        sp.m1Checkpoint = { phase, cougarLanded: !!cougarLanded };
+        saveProfile();
       }
 
       function hideAllMajorOverlays() {
@@ -12076,8 +12082,15 @@
             desc: 'Scramble off USS Enterprise CVN-65 to investigate unidentified bogeys closing on Cougar\'s wing in the Indian Ocean.',
             unlocked: true,
             cleared: !!sp.m1Cleared,
-            btnText: sp.m1Cleared ? 'REPLAY MISSION 1 ▶' : 'LAUNCH MISSION 1 ▶',
-            onStart: () => startStoryMission1()
+            btnText: sp.m1Cleared ? 'REPLAY MISSION 1 ▶' : ((sp.m1Checkpoint && sp.m1Checkpoint.phase >= 4) ? 'RESUME ESCORT ▶' : 'LAUNCH MISSION 1 ▶'),
+            onStart: () => {
+              if (sp.m1Cleared) {
+                const prog = getStoryProgress();
+                prog.m1Checkpoint = null;
+                saveProfile();
+              }
+              startStoryMission1();
+            }
           },
           {
             id: 'mg1',
@@ -12231,6 +12244,12 @@
         sessionUnlocks.superState = true;
         if (typeof applySessionUnlockHUD === 'function') applySessionUnlockHUD();
 
+        const _ck = getStoryProgress().m1Checkpoint;
+        if (_ck && _ck.phase >= 4 && !getStoryProgress().m1Cleared) {
+          resumeStoryMission1Escort(_ck);
+          return;
+        }
+
         state = createInitialState('story_cutscene');
         const p = state.player;
         p.weapons.vulcan = 2;
@@ -12273,6 +12292,58 @@
         const sk = document.getElementById('skipCutsceneBtn');
         if (sk) sk.classList.remove('hidden');
         AudioFX.playTrack(getCurrentMap().theme, false);
+      }
+
+      function resumeStoryMission1Escort(ck) {
+        state = createInitialState('story_cutscene');
+        const p = state.player;
+        p.weapons.vulcan = 2;
+        p.weapons.sidewinder = 2;
+        p.weapons.sparrow = Math.max(p.weapons.sparrow || 0, 2);
+        p.weapons.phoenix = 0;
+        p.weapons.flares = Math.max(p.weapons.flares || 0, 1);
+        p.weapons.afterburner = Math.max(p.weapons.afterburner || 0, 1);
+        p.hp = p.maxHp;
+        p.fuel = p.maxFuel * 0.4;
+        p.invuln = 2.4;
+        p.plane = 1; p.visualPlane = 1; p.savedPlane = 1;
+        p.x = 0;
+        p.y = ck.cougarLanded ? -980 : -1540;
+        p.heading = Math.PI / 2;
+        state.camX = p.x;
+        state.camY = p.y;
+        state.launchTimer = 0;
+        state.trapGrace = 1.4;
+        state.mode = 'playing';
+        state.storyMode = {
+          active: true,
+          missionId: 'm1',
+          phase: 4,
+          phaseKills: 0,
+          phaseTarget: 1,
+          spawnTimer: 0,
+          completed: false,
+          cougar: ck.cougarLanded ? null : { x: 90, y: p.y + 70, heading: Math.PI / 2 },
+          cougarLanded: !!ck.cougarLanded
+        };
+        hudLayer.classList.remove('hidden'); hudLayer.classList.add('flex');
+        updateWeaponsHud();
+        updateStoryObjHud();
+        AudioFX.playTrack(getCurrentMap().theme, false);
+        const nm = (Math.abs(p.y) / 140).toFixed(1);
+        showBanner(ck.cougarLanded
+          ? `★ COUGAR IS ON DECK — BRING THE TOMCAT HOME (${nm} NM) ★`
+          : `★ ESCORT RESUMES — COUGAR IS WITH YOU, ${nm} NM NORTH OF THE BOAT ★`,
+          'border-amber-400 text-amber-200');
+        queueInstructorNote(
+          'viper',
+          'UHF 243.0 • CDR "VIPER" — TOPGUN CO',
+          ck.cougarLanded
+            ? `"Cougar is already on the 3-wire. You ditched on the way in — you've got a partial bag of JP-5. Fly south and trap."`
+            : `"Red Baron is down and Cougar is still with you. You ditched short of the boat. Form up and walk him south onto Enterprise."`,
+          '★ STORY CHECKPOINT — ESCORT / RTB ★',
+          false
+        );
       }
 
       function finishStoryM1CutsceneToAlert5() {
@@ -12495,6 +12566,7 @@
           // Spawn Cougar's shaken F-14 nearby so you literally escort him back to USS Enterprise!
           sm.cougar = { x: p.x + 90, y: p.y - 60, heading: Math.atan2(-p.y, -p.x) };
           sm.cougarLanded = false;
+          saveStoryM1Checkpoint(4, false);
           updateStoryObjHud();
           AudioFX.playTrack(getCurrentMap().theme, false);
           queueInstructorNote(
@@ -12526,6 +12598,7 @@
             const dHome = Math.hypot(c.x, c.y);
             if (dHome < 120) {
               sm.cougarLanded = true;
+              saveStoryM1Checkpoint(4, true);
               updateStoryObjHud();
               AudioFX.levelUp();
               showBanner('✓ COUGAR TRAPPED THE 3-WIRE! NOW BRING YOUR F-14 HOME, MAVERICK!', 'border-emerald-400 text-emerald-200');
@@ -12551,6 +12624,7 @@
         state.mode = 'story_complete';
         const sp = getStoryProgress();
         sp.m1Cleared = true;
+        sp.m1Checkpoint = null;
         const cDebrief = flushPendingCareerXP(250);
         saveProfile();
 
