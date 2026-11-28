@@ -9326,7 +9326,14 @@
             }
           }
 
-          if (e.fireRate > 0 && dist < Math.max(W, H) * 0.65 && !((state.empJamTimer || 0) > 0)) {
+          if ((e.fanWindup || 0) > 0) {
+            e.fanWindup -= dt;
+            if (e.fanWindup <= 0) {
+              e.fanWindup = 0;
+              releaseBearFan(e);
+              e.fireTimer = e.fireRate;
+            }
+          } else if (e.fireRate > 0 && dist < Math.max(W, H) * 0.65 && !((state.empJamTimer || 0) > 0)) {
             e.fireTimer -= dt;
             // All 8 Level 1 Epic Bosses lock regular turret fire onto the live beat of their boss track!
             let _readyToFire = e.fireTimer <= 0;
@@ -9490,8 +9497,18 @@
                       state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(baseAng + off) * 255, vy: Math.sin(baseAng + off) * 255, plane: e.plane === 0 ? 1 : 0, r: 5.5, color: '#38bdf8', life: 3.6 });
                     }
                   }
+                } else if (bk === 'bear' && !e.isStoryBoss) {
+                  // Tu-95 fan is telegraphed ~0.6s before the bullets exist.
+                  e.fanAim = baseAng;
+                  e.fanHalf = ph >= 3 ? 4 : (ph === 2 ? 3 : 2);
+                  e.fanGap = ph === 1 ? 0.25 : 0.21;
+                  e.fanSpd = 175 + ph * 16;
+                  e.fanPhase = ph;
+                  e.fanSeq = e.attackSeq;
+                  e.fanWindup = 0.62;
+                  e.fireTimer = 0;
                 } else {
-                  // Tu-95 "Bear": readable 5-way Phase 1 fan -> 7-way + radial Phase 2 -> 9-way Phase 3!
+                  // Story lead and any other fallback still use the Bear fan pattern immediately.
                   const half = ph >= 3 ? 4 : (ph === 2 ? 3 : 2);
                   const gap = ph === 1 ? 0.25 : 0.21;
                   const spd = 175 + ph * 16;
@@ -9564,7 +9581,13 @@
           }
 
           if (!p.superActive && e.plane === p.plane && dist < e.r + 16) {
+            const hullBefore = p.hp;
             damagePlayer(e.type === 'boss' ? 24 : 16);
+            if (e.type === 'boss' && e.bossKey === 'bear' && !e.isStoryBoss && p.hp < hullBefore) {
+              p.invuln = Math.max(p.invuln, 1.05);
+              if ((e.fanWindup || 0) > 0) e.fanWindup = Math.max(e.fanWindup, p.invuln + 0.12);
+              else e.fireTimer = Math.max(e.fireTimer || 0, p.invuln + 0.2);
+            }
             if (e.type !== 'boss') damageEnemy(e, 32);
           }
         }
@@ -10144,7 +10167,48 @@
         }
       }
 
+      function releaseBearFan(e) {
+        const baseAng = e.fanAim || 0;
+        const half = e.fanHalf || 2;
+        const gap = e.fanGap || 0.25;
+        const spd = e.fanSpd || 191;
+        const ph = e.fanPhase || 1;
+        const seq = e.fanSeq || 0;
+        for (let k = -half; k <= half; k++) {
+          const a = baseAng + k * gap;
+          state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 6.2, color: '#facc15', life: 4.5 });
+        }
+        if (seq % 2 === 0) {
+          const mAng = baseAng + (Math.random() - 0.5) * 1.4;
+          state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(mAng) * 65, vy: Math.sin(mAng) * 65, plane: e.plane, r: 8.2, color: '#fb923c', life: 6.0 });
+        }
+        if (ph >= 2 && seq % 3 === 0) {
+          for (let k = 0; k < 8; k++) {
+            const a = (e.phaseTimer || 0) + (k / 8) * Math.PI * 2;
+            state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 175, vy: Math.sin(a) * 175, plane: e.plane, r: 5.8, color: '#f97316', life: 4.2 });
+          }
+        }
+      }
+
       function drawMiG28(e, alpha, scale) {
+        if ((e.fanWindup || 0) > 0 && e.bossKey === 'bear' && !e.isStoryBoss) {
+          const prog = 1 - Math.max(0, Math.min(1, e.fanWindup / 0.62));
+          const half = e.fanHalf || 2;
+          const gap = e.fanGap || 0.25;
+          const len = 64 + prog * 110;
+          ctx.save();
+          ctx.translate(e.x, e.y);
+          ctx.strokeStyle = `rgba(250, 204, 21, ${(0.35 + prog * 0.6).toFixed(2)})`;
+          ctx.lineWidth = 1.5 + prog * 1.8;
+          ctx.beginPath();
+          for (let k = -half; k <= half; k++) {
+            const a = (e.fanAim || 0) + k * gap;
+            ctx.moveTo(Math.cos(a) * 22, Math.sin(a) * 22);
+            ctx.lineTo(Math.cos(a) * len, Math.sin(a) * len);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
         if (!state.player.superActive && e.plane === state.player.plane) {
           const br = e.r * scale + 7 + Math.sin(state.time * 10 + e.id * 5) * 1.5;
           const corner = 5;
