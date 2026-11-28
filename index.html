@@ -945,6 +945,7 @@
         <div>
           <div class="font-arcade text-[10px] font-black text-emerald-300 tracking-widest">⚓ FLIGHT DECK TURNAROUND • 100% JP-5 &amp; HULL RESTORED</div>
           <div id="pitstopHaulLine" class="text-[11px] text-amber-200 font-semibold mt-0.5">+0 CR BANKED</div>
+          <div id="pitstopGreenie" class="mt-2"></div>
         </div>
         <div id="pitstopVaultBadge" class="px-2.5 py-1 rounded-lg bg-slate-900/90 border border-amber-400/45 font-arcade text-[10px] font-black text-amber-300">
           0 CR • 0 PRT
@@ -1147,6 +1148,7 @@
         </button>
       </div>
       <div id="goRankCallout" class="hidden mt-3 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/60 font-arcade text-[10px] font-black text-amber-300 tracking-wider"></div>
+      <div id="goGreenie" class="mt-3"></div>
     </div>
   </div>
 
@@ -4766,6 +4768,7 @@
           missilesTreeUnlocked: false,
           freeMissilePick: false,
           aircraftTrees: { f14: { g1_rotary: true } },
+          trapBoard: [],
           pilotTalents: {},
           upgrades: { engines: 0, vulcanCore: 0, titanium: 0, startSidewinder: 0, startFlares: 0, salvageRig: 0 }
         };
@@ -4800,6 +4803,7 @@
                   ownedAircraft: Array.isArray(p.ownedAircraft) && p.ownedAircraft.length ? p.ownedAircraft : ['f14'],
                   selectedAircraft: p.selectedAircraft || 'f14',
                   pilotTalents: { ...(p.pilotTalents || {}) },
+                  trapBoard: Array.isArray(p.trapBoard) ? p.trapBoard.slice(-5) : [],
                   upgrades: { ...defaultPilotRecord().upgrades, ...(p.upgrades || {}) }
                 };
               });
@@ -5909,6 +5913,7 @@
           haulLine.textContent = `BANKED: +${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS  (MAX ${haul.maxNM.toFixed(1)} NM)`;
         }
         renderPitstopRecs();
+        paintGreenieBoard(document.getElementById('pitstopGreenie'));
         if (ov) { ov.classList.remove('hidden'); ov.classList.add('flex'); }
       }
 
@@ -8041,6 +8046,7 @@
           ? `Airframe refits & sortie unlocks reset; unbanked cargo lost (${c.credits} CR, ${c.intel} Intel, ${c.parts} Parts). Banked Vault (${profile.credits} CR) & Pilot Progression remain safe!`
           : `Airframe refits & sortie unlocks reset to fresh launch. Banked Vault (${profile.credits} CR) & Pilot Progression remain safe!`;
 
+        paintGreenieBoard(document.getElementById('goGreenie'));
         document.getElementById('goScore').textContent = state.score.toLocaleString();
         document.getElementById('goMaxDist').textContent = state.maxDistNM.toFixed(1) + ' NM';
         document.getElementById('goKills').textContent = String(state.kills);
@@ -8940,6 +8946,7 @@
               const graded = gradeCarrierTrap(p);
               state.score += graded.bonus;
               state.lastTrapGrade = graded.grade;
+              recordTrapGrade(graded.grade);
               addFloatingText(p.x, p.y - 46, graded.label, graded.color, 14);
               showBanner(graded.banner, graded.bannerClass);
               const quip = graded.grade === 'BOLTER'
@@ -11273,6 +11280,30 @@
         const toSouth = Math.abs(Math.atan2(Math.sin(p.heading - Math.PI / 2), Math.cos(p.heading - Math.PI / 2)));
         const toNorth = Math.abs(Math.atan2(Math.sin(p.heading + Math.PI / 2), Math.cos(p.heading + Math.PI / 2)));
         return Math.min(toSouth, toNorth);
+      }
+
+      function recordTrapGrade(grade) {
+        if (!Array.isArray(profile.trapBoard)) profile.trapBoard = [];
+        profile.trapBoard.push(grade);
+        if (profile.trapBoard.length > 5) profile.trapBoard = profile.trapBoard.slice(-5);
+        saveProfile();
+      }
+
+      function paintGreenieBoard(el) {
+        if (!el) return;
+        const board = Array.isArray(profile.trapBoard) ? profile.trapBoard.slice(-5) : [];
+        const colorFor = (g) => {
+          if (!g) return '#1e293b';
+          if (g === 'OK' || g === 'NIGHT OK') return '#4ade80';
+          if (g === 'FAIR') return '#fde047';
+          return '#fb923c';
+        };
+        let cells = '';
+        for (let i = 0; i < 5; i++) {
+          const g = board[i] || '';
+          cells += `<span title="${g || 'open'}" style="display:inline-block;width:28px;height:14px;margin:0 3px;border-radius:2px;background:${colorFor(g)};box-shadow:inset 0 0 0 1px rgba(15,23,42,0.45)"></span>`;
+        }
+        el.innerHTML = `<div class="font-arcade text-[8px] tracking-widest text-slate-400 mb-1">GREENIE BOARD · LAST 5 TRAPS</div><div>${cells}</div>`;
       }
 
       function gradeCarrierTrap(p) {
