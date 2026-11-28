@@ -3639,12 +3639,12 @@
           sprite: 'f18', sweptSprite: null, bellySprite: null,
           hasSwingWings: false, hasAfterburner: true, hasLexVapor: false, hasGroundSplash: true,
           canHover: true,
-          superType: 'carpetBomb', superName: '★ NOZZLE STRIKE', superTag: '★ HARRIER ★', reversesControls: false,
-          superBanner: '★ NOZZLES DOWN — SHORT STRIKE FROM THE HOVER ★',
+          superType: 'viff', superName: '★ VIFF', superTag: '★ VIFF ★', reversesControls: false,
+          superBanner: '★ NOZZLES — SNAP TURN. THE SALVO GOES WIDE. ★',
           airDmgMult: 1.02, groundDmgMult: 1.22, speedMult: 0.9, turnMult: 1.05,
           hullBonus: 20, fuelMax: 96, armorMitigation: 0.06, abMult: 1.55, abFuelMult: 1.15,
-          exhausts: [-5, 5], exhaustY: 18,
-          desc: 'PLACEHOLDER ART (F/A-18 SILHOUETTE, LABELED AV-8B). Hold H for a short, thirsty hover — useful on the wires. Cruise is unchanged when H is up.',
+          exhausts: [-4.2, 4.2], exhaustY: 20,
+          desc: 'Shoulder wing, anhedral, side intakes. Hold H for a short thirsty hover. Super is VIFF: a nozzle snap that brakes, yaws, and kicks a nearby salvo aside. Cruise is unchanged when H is up and the super is dark.',
           arsenal: {
             vulcan:     { name: 'GAU-12 25mm', icon: 'vulcan', desc: (l) => `Close-In Guns Ring: Lvl ${l+1} equalizer cannon pods.` },
             sidewinder: { name: 'AIM-9M', icon: 'sidewinder', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} wingtip heaters.` },
@@ -6544,6 +6544,7 @@
         state.superCount++; state.screenShake = 14;
 
         const ac = getSelectedAircraftCfg();
+        if (ac.superType === 'viff') p.viffPulse = 0.4;
         AudioFX.superIgnite();
         showBanner(ac.superBanner || '★ SUPER STATE ENGAGED! ★', 'border-rose-400 text-amber-300');
         addFloatingText(p.x, p.y - 42, ac.superTag || '★ SUPER ★', '#38bdf8', 13);
@@ -7086,6 +7087,30 @@
                 if (dx * dx + dy * dy <= 280 * 280) swapRemove(state.enemyBullets, i);
               }
               AudioFX.sparrow();
+            }
+            return;
+          }
+          if (ac.superType === 'viff') {
+            // AV-8B HARRIER: thrust-vector snap. Brakes, yaws hard, and swats a nearby salvo out of the sky.
+            t.superPhoenix -= dt;
+            if (t.superPhoenix <= 0) {
+              t.superPhoenix = 0.55;
+              p.viffPulse = 0.34;
+              const wipeR = 210;
+              for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
+                const b = state.enemyBullets[i];
+                const dx = b.x - p.x, dy = b.y - p.y;
+                if (dx * dx + dy * dy <= wipeR * wipeR) swapRemove(state.enemyBullets, i);
+              }
+              spawnRing(p.x, p.y, '#86efac', 14, 160, p.plane);
+              const tickDmg = (22 + p.level * 3) * dmgMult;
+              for (const e of state.enemies) {
+                if (e.hp > 0 && Math.hypot(e.x - p.x, e.y - p.y) < 120) {
+                  damageEnemy(e, tickDmg, true, 'missile');
+                }
+              }
+              AudioFX.sparrow();
+              if (Math.random() < 0.55) addFloatingText(p.x, p.y - 30, 'VIFF', '#86efac', 12);
             }
             return;
           }
@@ -8622,6 +8647,25 @@
               p.hoverLeft = 2.3;
               addFloatingText(p.x, p.y - 24, 'HOVER EMPTY', '#fb923c', 11);
             }
+          } else if (p.superActive && _ac.superType === 'viff') {
+            // Nozzles slammed. The jet brakes and yaws much harder than a cruise turn. Cruise itself is untouched.
+            p.hovering = false;
+            let diff = 0;
+            if (ix !== 0 || iy !== 0) {
+              const targetAngle = Math.atan2(iy, ix);
+              diff = targetAngle - p.heading;
+              while (diff > Math.PI) diff -= Math.PI * 2;
+              while (diff < -Math.PI) diff += Math.PI * 2;
+            }
+            const snap = (p.viffPulse > 0) ? 24 : 9;
+            p.heading += diff * Math.min(1, dt * snap);
+            const brake = (p.viffPulse > 0) ? 0.22 : 0.55;
+            const vSpd = speed * brake;
+            p.x += Math.cos(p.heading) * vSpd * dt;
+            p.y += Math.sin(p.heading) * vSpd * dt;
+            p.bank += (Math.max(-1, Math.min(1, diff * 2.4)) - p.bank) * Math.min(1, dt * 16);
+            p._moveMult = 1.4;
+            if (p.viffPulse > 0) p.viffPulse = Math.max(0, p.viffPulse - dt);
           } else if (p.superActive && _ac.superType === 'vtolBlossom') {
             // ★ F-35B VTOL HOVER MODE: Stops forward auto-cruise completely, hovers dead-still (or gentle omnidirectional strafe), and spins in 360° Death Blossom!
             const hoverSpd = speed * 0.45;
@@ -10159,6 +10203,58 @@
       // ============================================================
       // OPEN-PACIFIC WORLD-SPACE RENDERER
       // ============================================================
+      function drawHarrierBody(nozzlePuff) {
+        // Local space: nose is -Y. Shoulder wing, anhedral tips, side intakes. Not a Hornet.
+        ctx.fillStyle = '#14532d';
+        ctx.beginPath();
+        ctx.moveTo(0, -34);
+        ctx.quadraticCurveTo(7, -16, 6.2, 8);
+        ctx.lineTo(3.4, 24);
+        ctx.lineTo(-3.4, 24);
+        ctx.lineTo(-6.2, 8);
+        ctx.quadraticCurveTo(-7, -16, 0, -34);
+        ctx.fill();
+        ctx.fillStyle = '#052e16';
+        ctx.beginPath(); ctx.ellipse(-9.5, -8, 4.2, 7.2, 0.35, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(9.5, -8, 4.2, 7.2, -0.35, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#166534';
+        ctx.beginPath();
+        ctx.moveTo(-5, -8);
+        ctx.lineTo(-36, 4);
+        ctx.lineTo(-31, 11);
+        ctx.lineTo(-4, 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(5, -8);
+        ctx.lineTo(36, 4);
+        ctx.lineTo(31, 11);
+        ctx.lineTo(4, 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#4ade80';
+        ctx.fillRect(-34, 6, 6, 2.2);
+        ctx.fillRect(28, 6, 6, 2.2);
+        ctx.fillStyle = '#15803d';
+        ctx.beginPath(); ctx.moveTo(-3, 10); ctx.lineTo(-15, 22); ctx.lineTo(-4, 18); ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(3, 10); ctx.lineTo(15, 22); ctx.lineTo(4, 18); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#bbf7d0';
+        ctx.fillRect(-1.1, -22, 2.2, 10);
+        if (nozzlePuff) {
+          const puff = 7 + Math.random() * 9;
+          ctx.fillStyle = 'rgba(125, 211, 252, 0.9)';
+          ctx.beginPath(); ctx.moveTo(-7, 6); ctx.lineTo(-11, 6 + puff); ctx.lineTo(-3, 6); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(7, 6); ctx.lineTo(11, 6 + puff); ctx.lineTo(3, 6); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = 'rgba(254, 249, 195, 0.85)';
+          ctx.beginPath(); ctx.arc(-7, 8 + puff * 0.35, 2.1, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(7, 8 + puff * 0.35, 2.1, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.fillStyle = '#dcfce7';
+        ctx.font = '700 6px Orbitron, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('AV-8B', 0, 16);
+      }
+
       function drawF14Tomcat(x, y, heading, scale, bank, rollTimer, wingSweep, isSuper, damageRatio = 0, acCfg = null) {
         const ac = acCfg || AIRCRAFT[0];
         ctx.save();
@@ -10187,7 +10283,7 @@
         const useBelly = isSuper && ac.bellySprite && spriteReady(ac.bellySprite);
         const useSwept = !isSuper && ac.hasSwingWings && wingSweep > 0.42 && ac.sweptSprite && spriteReady(ac.sweptSprite);
         const baseKey = spriteReady(ac.sprite) ? ac.sprite : 'f14';
-        if (useBelly || useSwept || spriteReady(baseKey)) {
+        if (ac.id === 'av8' || useBelly || useSwept || spriteReady(baseKey)) {
           const im = useBelly ? SPRITES[ac.bellySprite] : (useSwept ? SPRITES[ac.sweptSprite] : SPRITES[baseKey]);
           const sh = useSwept ? 72 : (ac.id === 'a6' ? 70 : (68 + (ac.hasSwingWings ? wingSweep * 4 : 0)));
           const sw = (useSwept || !ac.hasSwingWings) ? (sh * (im.naturalWidth / Math.max(1, im.naturalHeight))) : (64 - wingSweep * 10);
@@ -10217,10 +10313,15 @@
               ctx.beginPath(); ctx.arc(0, 0, sh * 0.56, 0, Math.PI * 2); ctx.fill();
             }
           }
-          ctx.drawImage(im, -sw / 2, -sh / 2, sw, sh);
+          if (ac.id === 'av8') {
+            const puff = isSuper || (state && state.player && (state.player.hovering || (state.player.viffPulse > 0)));
+            drawHarrierBody(!!puff);
+          } else {
+            ctx.drawImage(im, -sw / 2, -sh / 2, sw, sh);
+          }
 
           // Progressive Battle Damage Decals (Player F-14 only; wingmen pass damageRatio = 0)
-          if (!isSuper && damageRatio > 0.28) {
+          if (ac.id !== 'av8' && !isSuper && damageRatio > 0.28) {
             // Light-to-medium flak scorch marks & soot streaks
             ctx.fillStyle = 'rgba(15, 23, 42, 0.72)';
             ctx.beginPath(); ctx.ellipse(9, 4, 4.5, 8.5, 0.25, 0, Math.PI * 2); ctx.fill();
@@ -10229,7 +10330,7 @@
             ctx.strokeStyle = 'rgba(30, 41, 59, 0.78)'; ctx.lineWidth = 1.6;
             ctx.beginPath(); ctx.moveTo(9, 4); ctx.lineTo(10, 19); ctx.stroke();
           }
-          if (!isSuper && damageRatio > 0.58) {
+          if (ac.id !== 'av8' && !isSuper && damageRatio > 0.58) {
             // Heavy battle damage: torn wing panel, fuselage burn & glowing orange ember hotspots!
             ctx.fillStyle = 'rgba(2, 6, 23, 0.85)';
             ctx.beginPath(); ctx.ellipse(-7, -6, 4.2, 6.2, -0.15, 0, Math.PI * 2); ctx.fill();
@@ -10251,18 +10352,13 @@
           fillOutlinedText(ac.superTag || '★ INVERTED ★', x, y + 48, '#fde047', '#000000', 3.0);
           ctx.restore();
         }
-        if (ac && ac.id === 'av8') {
+        if (ac && ac.id === 'av8' && state && state.player && state.player.hovering) {
           ctx.save();
-          ctx.font = '900 8px Orbitron, sans-serif';
-          ctx.textAlign = 'center';
-          fillOutlinedText('AV-8B PLACEHOLDER', x, y + 40, '#86efac', '#000000', 2.6);
-          if (state && state.player && state.player.hovering) {
-            ctx.strokeStyle = 'rgba(74, 222, 128, 0.8)';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(x, y, 26, 0, Math.PI * 2);
-            ctx.stroke();
-          }
+          ctx.strokeStyle = 'rgba(74, 222, 128, 0.75)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(x, y, 28, 0, Math.PI * 2);
+          ctx.stroke();
           ctx.restore();
         }
       }
