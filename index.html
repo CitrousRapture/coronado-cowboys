@@ -41,54 +41,139 @@
       from { box-shadow: 0 0 14px rgba(251, 191, 36, 0.85), 0 0 28px rgba(239, 68, 68, 0.6); transform: scale(1); }
       to { box-shadow: 0 0 26px rgba(56, 189, 248, 0.95), 0 0 42px rgba(251, 191, 36, 0.95); transform: scale(1.04); }
     }
+    /* 16-BIT PIXEL-ART 1986 F-14A COCKPIT HARDWARE UI (9-SLICE BORDER-IMAGE SPRITES — ZERO CAUTION STRIPS!) */
     .cockpit-panel {
       position: relative;
-      background: linear-gradient(180deg, rgba(7, 19, 40, 0.94) 0%, rgba(3, 10, 24, 0.97) 100%);
-      border: 1px solid rgba(251, 191, 36, 0.32);
-      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.72), inset 0 1px 0 rgba(253, 224, 71, 0.14), inset 0 0 0 1px rgba(56, 189, 248, 0.08);
+      border-radius: 2px !important;
+      background-color: #061310 !important;
+      background-image: url('assets/ui_mfd_screen.webp') !important;
+      background-size: 100% 100% !important;
+      border: 6px solid transparent !important;
+      border-image-source: url('assets/ui_mfd_screen.webp') !important;
+      border-image-slice: 34 34 34 34 !important;
+      border-image-width: 10px !important;
+      border-image-repeat: stretch !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.88), inset 0 0 12px rgba(16, 185, 129, 0.16) !important;
+      image-rendering: pixelated;
     }
     .deck-modal {
       overflow: hidden;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      border-top-color: rgba(251, 191, 36, 0.55);
+      border-radius: 0 !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+      border: 22px solid transparent !important;
+      border-image-source: url('assets/ui_cockpit_frame.webp') !important;
+      border-image-slice: 46 46 46 46 fill !important;
+      border-image-width: 22px !important;
+      border-image-repeat: stretch !important;
+      padding: 1rem 1.25rem !important;
+      box-shadow: 0 26px 65px rgba(0, 0, 0, 0.92) !important;
+      image-rendering: pixelated;
     }
-    .deck-modal::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 4px;
-      background: repeating-linear-gradient(-45deg, #f59e0b 0px, #f59e0b 10px, #0f172a 10px, #0f172a 20px);
-      opacity: 0.9;
-      pointer-events: none;
+    .deck-modal::before,
+    .deck-modal::after {
+      display: none !important;
+      content: none !important;
     }
     .mfd-card {
-      background: linear-gradient(180deg, rgba(10, 23, 46, 0.92) 0%, rgba(5, 12, 26, 0.96) 100%);
-      border: 1px solid rgba(148, 163, 184, 0.24);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      position: relative;
+      border-radius: 0 !important;
+      background-color: #04110d !important;
+      background-image:
+        linear-gradient(180deg, rgba(2, 10, 8, 0.42), rgba(2, 10, 8, 0.58)),
+        url('assets/ui_mfd_screen.webp') !important;
+      background-size: cover, 100% 100% !important;
+      border: 10px solid transparent !important;
+      border-image-source: url('assets/ui_mfd_screen.webp') !important;
+      border-image-slice: 36 36 36 36 !important;
+      border-image-width: 10px !important;
+      border-image-repeat: stretch !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(16, 185, 129, 0.18) !important;
+      image-rendering: pixelated;
     }
     .mfd-card:hover {
-      border-color: rgba(251, 191, 36, 0.65);
-      box-shadow: 0 0 18px rgba(245, 158, 11, 0.16), inset 0 1px 0 rgba(253, 224, 71, 0.16);
+      filter: brightness(1.16) drop-shadow(0 0 8px rgba(251, 191, 36, 0.45));
     }
     .mfd-icon-badge {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 2.1rem; height: 2.1rem; border-radius: 0.55rem;
-      background: linear-gradient(180deg, rgba(15, 31, 61, 0.95), rgba(7, 16, 34, 0.98));
-      border: 1px solid rgba(251, 191, 36, 0.35);
-      box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.12);
+      width: 2.1rem; height: 2.1rem; border-radius: 2px !important;
+      background: linear-gradient(180deg, #1b2833, #070d12) !important;
+      border: 1.5px solid #10b981 !important;
+      box-shadow: inset 0 0 10px rgba(16, 185, 129, 0.3) !important;
     }
+    /* 16-Bit Pixel-Art Illuminated Amber Cockpit Launch Switch (9-slice!) */
     .btn-catapult {
-      background: linear-gradient(180deg, #fde047 0%, #f59e0b 48%, #ea580c 100%);
-      color: #091224;
-      border: 1px solid rgba(254, 240, 138, 0.75);
-      box-shadow: 0 6px 20px rgba(234, 88, 12, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+      position: relative;
+      border-radius: 0 !important;
+      background: transparent !important;
+      border: 12px solid transparent !important;
+      border-image-source: url('assets/ui_launch_switch.webp') !important;
+      border-image-slice: 38 38 38 38 fill !important;
+      border-image-width: 12px !important;
+      border-image-repeat: stretch !important;
+      color: #140800 !important;
+      font-weight: 900 !important;
+      text-shadow: 0 1px 0 rgba(255, 245, 200, 0.65) !important;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4) !important;
+      image-rendering: pixelated;
     }
-    .btn-catapult:hover { filter: brightness(1.08); }
+    .btn-catapult:hover { filter: brightness(1.12) drop-shadow(0 0 10px rgba(251, 191, 36, 0.6)); }
+    .btn-catapult:active { transform: translateY(2px); filter: brightness(0.95); }
+    /* 16-Bit Pixel-Art Steel-Cyan Avionics Push-Switch (9-slice!) */
     .btn-navy {
-      background: linear-gradient(180deg, rgba(20, 39, 71, 0.95) 0%, rgba(10, 21, 42, 0.98) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.42);
-      box-shadow: inset 0 1px 0 rgba(186, 230, 253, 0.15);
+      border-radius: 0 !important;
+      background: transparent !important;
+      border: 10px solid transparent !important;
+      border-image-source: url('assets/ui_navy_switch.webp') !important;
+      border-image-slice: 38 38 38 38 fill !important;
+      border-image-width: 10px !important;
+      border-image-repeat: stretch !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.75) !important;
+      image-rendering: pixelated;
     }
-    .btn-navy:hover { background: linear-gradient(180deg, rgba(28, 54, 96, 0.96) 0%, rgba(12, 27, 54, 0.98) 100%); border-color: rgba(125, 211, 252, 0.7); }
+    .btn-navy:hover { filter: brightness(1.22) drop-shadow(0 0 8px rgba(56, 189, 248, 0.5)); }
+    .btn-navy:active { transform: translateY(2px); }
+    /* Authentic Segmented 1986 Cockpit LED Bar-Graph Dividers (preserves full gradient color underneath!) */
+    #hpBar, #fuelBar, #xpBar, #abFill, #superFill, #skyhookFill {
+      position: relative;
+    }
+    #hpBar::after, #fuelBar::after, #xpBar::after, #abFill::after, #superFill::after, #skyhookFill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(90deg, transparent 0 6px, rgba(2, 6, 23, 0.62) 6px 8px);
+      pointer-events: none;
+    }
+    /* Glowing Green Fighter Canopy HUD Pitch-Ladder Brackets + Canopy Vignette during flight! */
+    #hudLayer {
+      box-shadow: inset 0 0 70px rgba(2, 8, 12, 0.5);
+    }
+    #hudLayer::before,
+    #hudLayer::after {
+      content: '';
+      position: fixed;
+      top: 26%;
+      height: 46%;
+      width: 24px;
+      pointer-events: none;
+      opacity: 0.62;
+      filter: drop-shadow(0 0 7px rgba(52, 211, 153, 0.85));
+    }
+    #hudLayer::before {
+      left: 8px;
+      border-left: 2.5px solid #34d399;
+      border-top: 2.5px solid #34d399;
+      border-bottom: 2.5px solid #34d399;
+      background: repeating-linear-gradient(180deg, transparent 0 16px, rgba(52, 211, 153, 0.72) 16px 18px);
+    }
+    #hudLayer::after {
+      right: 8px;
+      border-right: 2.5px solid #34d399;
+      border-top: 2.5px solid #34d399;
+      border-bottom: 2.5px solid #34d399;
+      background: repeating-linear-gradient(180deg, transparent 0 16px, rgba(52, 211, 153, 0.72) 16px 18px);
+    }
     .hud-ico {
       display: inline-flex; align-items: center; justify-content: center;
       vertical-align: -0.15em; flex-shrink: 0;
@@ -181,24 +266,30 @@
       #hudLayer #superBtn .font-arcade {
         font-size: 7.5px !important;
       }
+      #hudLayer #bannerToast {
+        margin-top: 56px !important;
+      }
       #hudLayer #bannerToastInner {
-        font-size: 8.5px !important;
-        padding: 2px 9px !important;
+        font-size: 9px !important;
+        padding: 3px 10px !important;
+      }
+      #storyObjHud {
+        top: calc(env(safe-area-inset-top, 0px) + 34px) !important;
       }
       #radioCommPopup {
-        top: 40px !important;
+        top: calc(env(safe-area-inset-top, 0px) + 84px) !important;
         width: 90% !important;
       }
       #radioCommPopup .deck-modal {
-        padding: 8px 10px !important;
+        padding: 9px 11px !important;
       }
       #radioCommPopup #radioCommLine {
-        font-size: 10.5px !important;
-        line-height: 1.25 !important;
+        font-size: 11px !important;
+        line-height: 1.3 !important;
       }
       #bossHudBar {
-        top: 2px !important;
-        max-width: 240px !important;
+        top: calc(env(safe-area-inset-top, 0px) + 28px) !important;
+        max-width: 235px !important;
       }
       #bossHudBar .font-arcade {
         font-size: 8px !important;
@@ -1272,6 +1363,98 @@
           return c;
         }
 
+
+        // Seamless tileable fBm ocean water texture (periodic wrap = zero seams, computed once at startup!)
+        function _pnoise(x, y, period, seed) {
+          const ix = Math.floor(x), iy = Math.floor(y);
+          const fx = x - ix, fy = y - iy;
+          const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy);
+          const x0 = ((ix % period) + period) % period;
+          const x1 = (x0 + 1) % period;
+          const y0 = ((iy % period) + period) % period;
+          const y1 = (y0 + 1) % period;
+          const a = _hash2D(x0, y0, seed), b = _hash2D(x1, y0, seed);
+          const c = _hash2D(x0, y1, seed), d = _hash2D(x1, y1, seed);
+          return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+        }
+        function _pfbm(u, v, baseFreq, seed) {
+          let sum = 0, amp = 0.52, f = baseFreq;
+          for (let o = 0; o < 4; o++) {
+            sum += _pnoise(u * f, v * f, f, seed + o * 23) * amp;
+            f *= 2; amp *= 0.48;
+          }
+          return sum;
+        }
+        function bakeOceanTile(seed, isShimmer) {
+          const sz = 256;
+          const c = document.createElement('canvas');
+          c.width = sz; c.height = sz;
+          const g = c.getContext('2d');
+          const img = g.createImageData(sz, sz);
+          const d = img.data;
+          for (let py = 0; py < sz; py++) {
+            const v = py / sz;
+            for (let px = 0; px < sz; px++) {
+              const u = px / sz;
+              // Elongated horizontal ocean swell ridges + choppy cross-wave ripples
+              const w1 = _pfbm(u, v * 2.0, 4, seed);
+              const w2 = _pfbm(u + w1 * 0.14, v * 2.0 - w1 * 0.10, 8, seed + 71);
+              const h = w1 * 0.55 + w2 * 0.45;
+              const idx = (py * sz + px) * 4;
+              if (isShimmer) {
+                // Crisp sunlit crest & turquoise caustic shimmer highlights only
+                const crest = Math.max(0, (h - 0.56) * 2.8);
+                if (crest <= 0.01) continue;
+                const a = Math.min(1, crest * crest);
+                d[idx]     = Math.round(145 + 110 * a);
+                d[idx + 1] = Math.round(225 + 30 * a);
+                d[idx + 2] = 255;
+                d[idx + 3] = Math.round(a * 115);
+              } else {
+                // Deep sunlit Pacific swell shading (indigo-cobalt troughs -> rich cerulean -> teal wave crests)
+                const t = Math.max(0, Math.min(1, (h - 0.22) * 1.65));
+                d[idx]     = Math.round(6  + t * 34);
+                d[idx + 1] = Math.round(42 + t * 88);
+                d[idx + 2] = Math.round(88 + t * 102);
+                d[idx + 3] = 148;
+              }
+            }
+          }
+          g.putImageData(img, 0, 0);
+          return c;
+        }
+
+        function bakeOceanFoam(seed) {
+          const sz = 256;
+          const c = document.createElement('canvas');
+          c.width = sz; c.height = sz;
+          const g = c.getContext('2d');
+          const img = g.createImageData(sz, sz);
+          const d = img.data;
+          for (let py = 0; py < sz; py++) {
+            const v = py / sz;
+            for (let px = 0; px < sz; px++) {
+              const u = px / sz;
+              // Wind-streaked broken sea-foam wisps & sparse organic whitecap crests (zero grid!)
+              const macro = _pfbm(u, v * 1.5, 4, seed);
+              if (macro < 0.56) continue;
+              const fine = _pfbm(u * 1.0 + macro * 0.12, v * 2.5 - macro * 0.08, 8, seed + 41);
+              const crest = Math.max(0, (macro - 0.56) * 2.2) * Math.max(0, (fine - 0.46) * 2.6);
+              if (crest <= 0.03) continue;
+              const a = Math.min(1, Math.pow(crest * 1.45, 1.15));
+              const idx = (py * sz + px) * 4;
+              d[idx]     = 236;
+              d[idx + 1] = 248;
+              d[idx + 2] = 255;
+              d[idx + 3] = Math.round(a * 165);
+            }
+          }
+          g.putImageData(img, 0, 0);
+          return c;
+        }
+        const oceanTile = bakeOceanTile(31, false);
+        const oceanShimmerTile = bakeOceanTile(89, true);
+        const oceanFoamTile = bakeOceanFoam(137);
         const CLOUD_PAL_TOP   = { hi: [255, 253, 245], sh: [155, 182, 214], maxA: 215 };
         const CLOUD_PAL_UNDER = { hi: [195, 212, 232], sh: [72, 92, 122],   maxA: 150 };
         const CLOUD_PAL_SUPER = { hi: [255, 244, 214], sh: [215, 118, 62],  maxA: 205 };
@@ -1324,6 +1507,7 @@
           cloudsUnder:  [11, 29, 47].map(s => bakeWispyCloud(s, CLOUD_PAL_UNDER, false)),
           cloudsSuper:  [11, 29, 47].map(s => bakeWispyCloud(s, CLOUD_PAL_SUPER, false)),
           cloudShadows: [11, 29, 47].map(s => bakeWispyCloud(s, CLOUD_PAL_TOP, true)),
+          oceanTile, oceanShimmerTile, oceanFoamTile,
           pickupEmblem, pickupCredit,
           pickupIntelA: bakeIntel('#ef4444'),
           pickupIntelB: bakeIntel('#fde047'),
@@ -2604,7 +2788,7 @@
           title: 'STAGE 1 BOSS • Tu-95MS "BEAR-H" COMMAND BOMBER',
           shortName: 'Tu-95 "BEAR-H"',
           sprite: 'bear',
-          hp: 6800, speed: 70, r: 58, drawSize: 162, fireRate: 1.15,
+          hp: 4600, speed: 70, r: 58, drawSize: 162, fireRate: 1.18,
           killsNeeded: 38, score: 3600, xp: 180, crDrop: 240, intelDrop: 2, partDrop: 3,
           relicId: 'bear_transponder'
         },
@@ -5708,7 +5892,7 @@
         lastTime = performance.now();
         simAccum = 0;
         AudioFX.catapult();
-        AudioFX.playTrack(getCurrentMap().theme, true, null);
+        // Keep live mission music playing seamlessly without restarting!
         showBanner('⚡ LAUNCHED OFF THE DECK — MISSION CONTINUES!', 'border-emerald-400 text-emerald-200');
       }
 
@@ -7460,7 +7644,8 @@
         }
 
         if (isBig || e.type === 'boss' || Math.random() < 0.72) {
-          state.pickups.push({ kind: 'xp', x: e.x, y: e.y, plane: e.plane, val: Math.round(e.xp * (p.superActive ? 2 : 1)), r: isBig ? 9 : 6, life: 22 });
+          const _z1XpBoost = (p.level <= 3 && !state.bossDefeatedStages[1]) ? 1.18 : 1.0;
+          state.pickups.push({ kind: 'xp', x: e.x, y: e.y, plane: e.plane, val: Math.round(e.xp * (p.superActive ? 2 : 1) * _z1XpBoost), r: isBig ? 9 : 6, life: 22 });
         }
 
         // Balanced drop rates for higher enemy swarm density (bosses still drop full jackpots!)
@@ -8241,11 +8426,13 @@
               if (eb.plane !== p.plane && !p.superActive) continue;
               const dx = p.x - eb.x, dy = p.y - eb.y;
               const dSq = dx * dx + dy * dy;
-              if (dSq > 1 && dSq < 175 * 175) {
+              const dodgeR = mobileAutopilotMode === 2 ? 132 : 175;
+              if (dSq > 1 && dSq < dodgeR * dodgeR) {
                 const inv = 1 / Math.sqrt(dSq);
-                const w = (175 - (1 / inv)) / 175;
-                ax += dx * inv * w * 2.8;
-                ay += dy * inv * w * 2.8;
+                const w = (dodgeR - (1 / inv)) / dodgeR;
+                const dWeight = mobileAutopilotMode === 2 ? 2.15 : 2.8;
+                ax += dx * inv * w * dWeight;
+                ay += dy * inv * w * dWeight;
               }
             }
 
@@ -8270,20 +8457,21 @@
               } else if (nearEn) {
                 const d = Math.sqrt(nearEnSq) || 1;
                 const ux = (nearEn.x - p.x) / d, uy = (nearEn.y - p.y) / d;
-                const optMin = nearEn.type === 'boss' ? 235 : 175;
-                const optMax = nearEn.type === 'boss' ? 330 : 265;
+                // Brave guns-range engagement bands (pulls right inside Vulcan Guns Ring!)
+                const optMin = nearEn.type === 'boss' ? 142 : 88;
+                const optMax = nearEn.type === 'boss' ? 210 : 148;
                 if (d < optMin) {
-                  // Too close — peel away + strafe
-                  ax += (-ux * 1.5 - uy * 0.85);
-                  ay += (-uy * 1.5 + ux * 0.85);
+                  // Just inside minimum — smooth tight combat strafe while peeling slightly
+                  ax += (-ux * 1.15 - uy * 1.05);
+                  ay += (-uy * 1.15 + ux * 1.05);
                 } else if (d > optMax) {
-                  // Close in smoothly to weapons range
-                  ax += ux * 1.1;
-                  ay += uy * 1.1;
+                  // Aggressively close straight into Vulcan guns range!
+                  ax += ux * 1.55 - uy * 0.25;
+                  ay += uy * 1.55 + ux * 0.25;
                 } else {
-                  // Sweet-spot orbital strafe around target!
-                  ax += -uy * 1.25;
-                  ay += ux * 1.25;
+                  // Sweet-spot guns-range dogfight orbit (slight inward lean keeps nose on target!)
+                  ax += -uy * 1.2 + ux * 0.28;
+                  ay += ux * 1.2 + uy * 0.28;
                 }
               } else {
                 // Patrol gently outward into combat zone
@@ -10218,50 +10406,50 @@
         ctx.save();
         ctx.translate(W * 0.5 - state.camX, H * 0.5 - state.camY);
 
-        // Infinite tiled ocean swells, curling whitecaps & golden-hour sea shimmer!
+        // Pre-baked Seamless 2-Layer Living Ocean Swells & Sunlit Shimmer (for Ocean & Coastal Theaters!)
+        const _curMapTh = getCurrentMap().theme;
+        if (_curMapTh !== 'miramar' && _curMapTh !== 'chinalake' && _curMapTh !== 'area51' && FXCache.oceanTile) {
+          if (!FXCache._oceanPat) FXCache._oceanPat = ctx.createPattern(FXCache.oceanTile, 'repeat');
+          if (!FXCache._shimmerPat) FXCache._shimmerPat = ctx.createPattern(FXCache.oceanShimmerTile, 'repeat');
+          const vw = W + 260, vh = H + 260;
+          const vx0 = state.camX - vw * 0.5, vy0 = state.camY - vh * 0.5;
+          // Layer 1: Rolling deep cobalt-teal ocean swells
+          const ox1 = (state.time * 10) % 256, oy1 = (state.time * 4) % 256;
+          ctx.save();
+          ctx.translate(ox1, oy1);
+          ctx.globalAlpha = 0.68;
+          ctx.fillStyle = FXCache._oceanPat;
+          ctx.fillRect(vx0 - ox1, vy0 - oy1, vw, vh);
+          ctx.restore();
+          // Layer 2: Counter-drifting sunlit turquoise wave-crest caustics
+          const ox2 = (-state.time * 7) % 256, oy2 = (state.time * 5.5) % 256;
+          ctx.save();
+          ctx.translate(ox2, oy2);
+          ctx.globalAlpha = 0.52;
+          ctx.fillStyle = FXCache._shimmerPat;
+          ctx.fillRect(vx0 - ox2, vy0 - oy2, vw, vh);
+          ctx.restore();
+        }
+
+        // Organic fractal whitecaps & sea-foam layer (replaces old grid arcs for zero seams & faster FPS!)
         const tile = 96;
         const startX = Math.floor((state.camX - W * 0.6) / tile) * tile;
         const endX = state.camX + W * 0.6 + tile;
         const startY = Math.floor((state.camY - H * 0.6) / tile) * tile;
         const endY = state.camY + H * 0.6 + tile;
-
         const _pal = getActivePalette();
-        ctx.strokeStyle = _pal.swell;
-        ctx.lineWidth = 1.8;
-        const swellDrift = ((state.time * 14) % tile) * 0.3;
-        const swellPhase = state.time * 1.6;
-        ctx.beginPath();
-        for (let y = startY; y <= endY; y += tile) {
-          for (let x = startX; x <= endX; x += tile) {
-            const wy = y + Math.sin(swellPhase + x * 0.012) * 5;
-            const sx = x + swellDrift;
-            ctx.moveTo(sx, wy);
-            ctx.quadraticCurveTo(sx + 18, wy - 6, sx + 38, wy);
-          }
+        if (_curMapTh !== 'miramar' && _curMapTh !== 'chinalake' && _curMapTh !== 'area51' && FXCache.oceanFoamTile) {
+          if (!FXCache._foamPat) FXCache._foamPat = ctx.createPattern(FXCache.oceanFoamTile, 'repeat');
+          const vw = W + 260, vh = H + 260;
+          const vx0 = state.camX - vw * 0.5, vy0 = state.camY - vh * 0.5;
+          const fx = (state.time * 13) % 256, fy = (state.time * 5.2) % 256;
+          ctx.save();
+          ctx.translate(fx, fy);
+          ctx.globalAlpha = 0.48 + 0.12 * Math.sin(state.time * 1.4);
+          ctx.fillStyle = FXCache._foamPat;
+          ctx.fillRect(vx0 - fx, vy0 - fy, vw, vh);
+          ctx.restore();
         }
-        ctx.stroke();
-
-        // Animated ocean whitecaps & frothy foam crests!
-        ctx.strokeStyle = _pal.foam;
-        ctx.lineWidth = 2.0;
-        ctx.beginPath();
-        for (let y = startY; y <= endY; y += tile) {
-          for (let x = startX; x <= endX; x += tile) {
-            const h = Math.sin(x * 0.037 + y * 0.053) * 10000;
-            const f = h - Math.floor(h);
-            if (f > 0.40) {
-              const cx = x + f * 72 + Math.sin(state.time * 1.9 + f * 9) * 8;
-              const cy = y + ((f * 137) % 1) * 76;
-              const len = 10 + f * 15;
-              const crest = 0.5 + 0.5 * Math.sin(state.time * 2.8 + f * 15);
-              if (crest > 0.22) {
-                ctx.moveTo(cx, cy);
-                ctx.quadraticCurveTo(cx + len * 0.5, cy - 3.5 * crest, cx + len, cy);
-              }
-            }
-          }
-        }
-        ctx.stroke();
 
         // Theater-tuned horizon glint sparkles on the water
         ctx.fillStyle = _pal.glint;
@@ -11650,7 +11838,6 @@
         AudioFX.unlock();
         const pfPit = document.getElementById('pitstopOverlay');
         if (pfPit) { pfPit.classList.add('hidden'); pfPit.classList.remove('flex'); }
-        AudioFX.playTrack('menu', false);
         openHangar(state ? state._lastHaul : null);
       });
       document.getElementById('openHangarTitleBtn').addEventListener('click', () => { AudioFX.unlock(); AudioFX.playTrack('menu', false); openHangar(null); });
