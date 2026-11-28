@@ -7577,6 +7577,11 @@
         const mult = (p.superActive ? 2 : 1) * (e.lootMult || 1);
         state.score += Math.round(e.score * mult);
         state.kills++; sessionSplashes++;
+        if (e.type === 'boss') {
+          state.hitStop = 0.55;
+          state.screenShake = Math.max(state.screenShake || 0, 14);
+          addFloatingText(e.x, e.y - 52, 'KILL CONFIRMED', '#fde047', 14);
+        }
         if (!(state.storyMode && state.storyMode.active) && e.type !== 'boss' && Math.random() < 0.07 && !(state.chatterCd > 0)) {
           state.chatterCd = 14;
           const lines = [
@@ -8095,6 +8100,7 @@
           }
         }
         state.mode = 'playing';
+        state.camPunch = { x: 0, y: 38, life: 1 };
         if (!tutorialWelcomeSent && !sessionUnlocks.altitude) {
           tutorialWelcomeSent = true;
           setTimeout(() => {
@@ -8947,6 +8953,8 @@
               state.score += graded.bonus;
               state.lastTrapGrade = graded.grade;
               recordTrapGrade(graded.grade);
+              state.camPunch = { x: -Math.cos(p.heading) * 30, y: -Math.sin(p.heading) * 30, life: 1 };
+              state.screenShake = Math.max(state.screenShake || 0, 10);
               addFloatingText(p.x, p.y - 46, graded.label, graded.color, 14);
               showBanner(graded.banner, graded.bannerClass);
               const quip = graded.grade === 'BOLTER'
@@ -8979,6 +8987,7 @@
           queueInstructorNote('viper', 'UHF 255.4 • AIR BOSS — PADDLES', `"Sun's down. Deck lights and the meatball are up. Call the ball on the way in."`, '★ NIGHT TRAP — DECK LIGHTS ON ★', false);
         }
         if (state.cockpitFlash > 0) state.cockpitFlash = Math.max(0, state.cockpitFlash - dt * 1.4);
+        if (state.camPunch && state.camPunch.life > 0) state.camPunch.life = Math.max(0, state.camPunch.life - dt * 2.4);
         if (state.chatterCd > 0) state.chatterCd = Math.max(0, state.chatterCd - dt);
         updateTanker(dt, p);
         updateDiscoveries(dt, p);
@@ -12058,6 +12067,10 @@
 
         ctx.save();
         if (state.screenShake > 0.2) ctx.translate((Math.random() - 0.5) * state.screenShake, (Math.random() - 0.5) * state.screenShake);
+        if (state.camPunch && state.camPunch.life > 0) {
+          const k = state.camPunch.life * state.camPunch.life;
+          ctx.translate(state.camPunch.x * k, state.camPunch.y * k);
+        }
 
         drawWorldOceanAndCarrier(distNM, threat);
 
@@ -12446,7 +12459,12 @@
         const frameDt = Math.min(MAX_FRAME_DT, Math.max(0, (now - lastTime) / 1000));
         lastTime = now;
         noteFrameTime(frameDt);
-        simAccum += frameDt;
+        let simScale = 1;
+        if (state && state.hitStop > 0) {
+          simScale = 0.22;
+          state.hitStop = Math.max(0, state.hitStop - frameDt);
+        }
+        simAccum += frameDt * simScale;
         let steps = 0;
         while (simAccum >= SIM_DT && steps < MAX_SIM_STEPS) {
           update(SIM_DT);
