@@ -945,6 +945,7 @@
         <div>
           <div class="font-arcade text-[10px] font-black text-emerald-300 tracking-widest">⚓ FLIGHT DECK TURNAROUND • 100% JP-5 &amp; HULL RESTORED</div>
           <div id="pitstopHaulLine" class="text-[11px] text-amber-200 font-semibold mt-0.5">+0 CR BANKED</div>
+          <div id="pitstopGreenie" class="mt-2"></div>
         </div>
         <div id="pitstopVaultBadge" class="px-2.5 py-1 rounded-lg bg-slate-900/90 border border-amber-400/45 font-arcade text-[10px] font-black text-amber-300">
           0 CR • 0 PRT
@@ -1147,6 +1148,7 @@
         </button>
       </div>
       <div id="goRankCallout" class="hidden mt-3 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/60 font-arcade text-[10px] font-black text-amber-300 tracking-wider"></div>
+      <div id="goGreenie" class="mt-3"></div>
     </div>
   </div>
 
@@ -3634,6 +3636,25 @@
           }
         },
         {
+          id: 'av8', short: 'AV-8B', name: 'AV-8B HARRIER', role: 'V/STOL',
+          roleColor: 'text-lime-300', cost: 360,
+          sprite: 'f18', sweptSprite: null, bellySprite: null,
+          hasSwingWings: false, hasAfterburner: true, hasLexVapor: false, hasGroundSplash: true,
+          canHover: true,
+          superType: 'viff', superName: '★ VIFF', superTag: '★ VIFF ★', reversesControls: false,
+          superBanner: '★ NOZZLES — SNAP TURN. THE SALVO GOES WIDE. ★',
+          airDmgMult: 1.02, groundDmgMult: 1.22, speedMult: 0.9, turnMult: 1.05,
+          hullBonus: 20, fuelMax: 96, armorMitigation: 0.06, abMult: 1.55, abFuelMult: 1.15,
+          exhausts: [-4.2, 4.2], exhaustY: 20,
+          desc: 'Shoulder wing, anhedral, side intakes. Hold H for a short thirsty hover. Super is VIFF: a nozzle snap that brakes, yaws, and kicks a nearby salvo aside. Cruise is unchanged when H is up and the super is dark.',
+          arsenal: {
+            vulcan:     { name: 'GAU-12 25mm', icon: 'vulcan', desc: (l) => `Close-In Guns Ring: Lvl ${l+1} equalizer cannon pods.` },
+            sidewinder: { name: 'AIM-9M', icon: 'sidewinder', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} wingtip heaters.` },
+            sparrow:    { name: 'AGM-65E', icon: 'sparrow', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} laser Mavericks.` },
+            phoenix:    { name: 'Mk 82 Slick', icon: 'phoenix', desc: (l) => `Stand-Off Missiles Ring: Lvl ${l+1} iron-bomb splash.` }
+          }
+        },
+        {
           id: 'f35', short: 'F-35B', name: 'F-35B LIGHTNING II', role: 'STEALTH VTOL',
           roleColor: 'text-cyan-300', cost: 420,
           sprite: 'f35', sweptSprite: null, bellySprite: null,
@@ -4747,6 +4768,7 @@
           missilesTreeUnlocked: false,
           freeMissilePick: false,
           aircraftTrees: { f14: { g1_rotary: true } },
+          trapBoard: [],
           pilotTalents: {},
           upgrades: { engines: 0, vulcanCore: 0, titanium: 0, startSidewinder: 0, startFlares: 0, salvageRig: 0 }
         };
@@ -4781,6 +4803,7 @@
                   ownedAircraft: Array.isArray(p.ownedAircraft) && p.ownedAircraft.length ? p.ownedAircraft : ['f14'],
                   selectedAircraft: p.selectedAircraft || 'f14',
                   pilotTalents: { ...(p.pilotTalents || {}) },
+                  trapBoard: Array.isArray(p.trapBoard) ? p.trapBoard.slice(-5) : [],
                   upgrades: { ...defaultPilotRecord().upgrades, ...(p.upgrades || {}) }
                 };
               });
@@ -5050,6 +5073,23 @@
       };
       let sessionSplashes = 0;
       let sessionCombatSec = 0;
+
+      function resetSortieSessionFlags() {
+        sessionUnlocks.afterburner = false;
+        sessionUnlocks.missiles = false;
+        sessionUnlocks.altitude = false;
+        sessionUnlocks.superState = false;
+        sessionUnlocks.vertrep = false;
+        sessionUnlocks.skyhook = false;
+        sessionSplashes = 0;
+        sessionCombatSec = 0;
+        tutorialWelcomeSent = false;
+      }
+
+      function hideStoryObjectiveHud() {
+        const wrap = document.getElementById('storyObjHud');
+        if (wrap) wrap.classList.add('hidden');
+      }
       let radioCommTimer = 0;
       let radioCommBlocking = false;
       const radioCommQueue = [];
@@ -5873,6 +5913,7 @@
           haulLine.textContent = `BANKED: +${haul.credits} CR • +${haul.intel} INTEL • +${haul.parts} PARTS  (MAX ${haul.maxNM.toFixed(1)} NM)`;
         }
         renderPitstopRecs();
+        paintGreenieBoard(document.getElementById('pitstopGreenie'));
         if (ov) { ov.classList.remove('hidden'); ov.classList.add('flex'); }
       }
 
@@ -6508,6 +6549,7 @@
         state.superCount++; state.screenShake = 14;
 
         const ac = getSelectedAircraftCfg();
+        if (ac.superType === 'viff') p.viffPulse = 0.4;
         AudioFX.superIgnite();
         showBanner(ac.superBanner || '★ SUPER STATE ENGAGED! ★', 'border-rose-400 text-amber-300');
         addFloatingText(p.x, p.y - 42, ac.superTag || '★ SUPER ★', '#38bdf8', 13);
@@ -7053,6 +7095,30 @@
             }
             return;
           }
+          if (ac.superType === 'viff') {
+            // AV-8B HARRIER: thrust-vector snap. Brakes, yaws hard, and swats a nearby salvo out of the sky.
+            t.superPhoenix -= dt;
+            if (t.superPhoenix <= 0) {
+              t.superPhoenix = 0.55;
+              p.viffPulse = 0.34;
+              const wipeR = 210;
+              for (let i = state.enemyBullets.length - 1; i >= 0; i--) {
+                const b = state.enemyBullets[i];
+                const dx = b.x - p.x, dy = b.y - p.y;
+                if (dx * dx + dy * dy <= wipeR * wipeR) swapRemove(state.enemyBullets, i);
+              }
+              spawnRing(p.x, p.y, '#86efac', 14, 160, p.plane);
+              const tickDmg = (22 + p.level * 3) * dmgMult;
+              for (const e of state.enemies) {
+                if (e.hp > 0 && Math.hypot(e.x - p.x, e.y - p.y) < 120) {
+                  damageEnemy(e, tickDmg, true, 'missile');
+                }
+              }
+              AudioFX.sparrow();
+              if (Math.random() < 0.55) addFloatingText(p.x, p.y - 30, 'VIFF', '#86efac', 12);
+            }
+            return;
+          }
           if (ac.superType === 'carpetBomb') {
             // A-6E INTRUDER: IRON HAND CARPET BOMB & AGM-65 MAVERICK SATURATION RUN!
             t.superPhoenix -= dt;
@@ -7511,6 +7577,21 @@
         const mult = (p.superActive ? 2 : 1) * (e.lootMult || 1);
         state.score += Math.round(e.score * mult);
         state.kills++; sessionSplashes++;
+        if (e.type === 'boss') {
+          state.hitStop = 0.55;
+          state.screenShake = Math.max(state.screenShake || 0, 14);
+          addFloatingText(e.x, e.y - 52, 'KILL CONFIRMED', '#fde047', 14);
+        }
+        if (!(state.storyMode && state.storyMode.active) && e.type !== 'boss' && Math.random() < 0.07 && !(state.chatterCd > 0)) {
+          state.chatterCd = 14;
+          const lines = [
+            `"Splash. Keep your nose on the boat when the fuel gets honest."`,
+            `"Good hit. Don't admire it — the ocean is bigger than your tanks."`,
+            `"That's a kill. Mother still wants you back on the three-wire."`,
+            `"Nice switch. If you're pointing away from home, the drift will finish the argument."`
+          ];
+          queueInstructorNote('iceman', 'UHF 305.2 • LT "ICEMAN"', lines[Math.floor(Math.random() * lines.length)], 'UHF', false);
+        }
         const _tbKill = getAircraftTreeBonuses(getSelectedAircraftCfg().id);
         const _ptKill = getPilotTalentBonuses();
         const killHeal = ((_tbKill.hullPerGunKill || 0) + (_ptKill.hullOnKill || 0)) * _ptKill.healMult;
@@ -7698,6 +7779,7 @@
         const totalMit = Math.max(-0.55, Math.min(0.78, (_acArm.armorMitigation || 0) + (_ptDef.armorMitigation || 0) + (hasRelic('buran_heatshield') ? 0.18 : 0) + (hasRelic('ekranoplan_fin') ? 0.16 : 0)));
         const mitigated = Math.max(1, Math.round(amount * (1 - totalMit)));
         p.hp = Math.max(0, p.hp - mitigated);
+        if (mitigated >= 18) state.cockpitFlash = Math.max(state.cockpitFlash || 0, 0.32);
         p.lastHitTime = state.time || 0;
         p.invuln = 0.8 + (_ptDef.invulnBonus || 0);
         if (_ptDef.hitDrainsSuper > 0 && !p.superArmed) {
@@ -7874,6 +7956,7 @@
 
       function startCsarRescue(reason = 'hull') {
         state.mode = 'csar';
+        hideStoryObjectiveHud();
         const p = state.player;
         p.plane = 0; // Ditching on surface!
         p.abActive = false;
@@ -7921,12 +8004,16 @@
         if (typeof invalidateAircraftBonusCache === 'function') invalidateAircraftBonusCache();
         const _dfDeath = getDevFlags();
         const _keepSys = !!(_dfDeath && _dfDeath.unlockAllSystems);
-        sessionUnlocks.altitude = _keepSys;
-        sessionUnlocks.missiles = _keepSys;
-        sessionUnlocks.afterburner = _keepSys;
-        sessionUnlocks.superState = _keepSys;
-        sessionSplashes = 0;
-        sessionCombatSec = 0;
+        resetSortieSessionFlags();
+        if (_keepSys) {
+          sessionUnlocks.altitude = true;
+          sessionUnlocks.missiles = true;
+          sessionUnlocks.afterburner = true;
+          sessionUnlocks.superState = true;
+          sessionUnlocks.vertrep = true;
+          sessionUnlocks.skyhook = true;
+        }
+        hideStoryObjectiveHud();
         if (typeof applySessionUnlockHUD === 'function') applySessionUnlockHUD();
         if (state.score > profile.highScore) profile.highScore = state.score;
         const _goCareer = flushPendingCareerXP(Math.round(state.maxDistNM * 2));
@@ -7964,6 +8051,7 @@
           ? `Airframe refits & sortie unlocks reset; unbanked cargo lost (${c.credits} CR, ${c.intel} Intel, ${c.parts} Parts). Banked Vault (${profile.credits} CR) & Pilot Progression remain safe!`
           : `Airframe refits & sortie unlocks reset to fresh launch. Banked Vault (${profile.credits} CR) & Pilot Progression remain safe!`;
 
+        paintGreenieBoard(document.getElementById('goGreenie'));
         document.getElementById('goScore').textContent = state.score.toLocaleString();
         document.getElementById('goMaxDist').textContent = state.maxDistNM.toFixed(1) + ' NM';
         document.getElementById('goKills').textContent = String(state.kills);
@@ -8012,6 +8100,7 @@
           }
         }
         state.mode = 'playing';
+        state.camPunch = { x: 0, y: 38, life: 1 };
         if (!tutorialWelcomeSent && !sessionUnlocks.altitude) {
           tutorialWelcomeSent = true;
           setTimeout(() => {
@@ -8554,7 +8643,42 @@
             iy = -iy;
           }
 
-          if (p.superActive && _ac.superType === 'vtolBlossom') {
+          if (_ac.canHover && !p.superActive && (keys['KeyH']) && (p.hoverLeft == null || p.hoverLeft > 0) && !(p.hoverCd > 0) && p.fuel > 6) {
+            if (p.hoverLeft == null) p.hoverLeft = 2.3;
+            p.hovering = true;
+            p.hoverLeft -= dt;
+            const hoverSpd = speed * 0.26;
+            p.x += ix * hoverSpd * dt;
+            p.y += iy * hoverSpd * dt;
+            p.bank *= Math.pow(0.08, dt);
+            p._moveMult = 1.85;
+            p.fuel = Math.max(0, p.fuel - 7.5 * dt);
+            if (p.hoverLeft <= 0) {
+              p.hovering = false;
+              p.hoverCd = 3.6;
+              p.hoverLeft = 2.3;
+              addFloatingText(p.x, p.y - 24, 'HOVER EMPTY', '#fb923c', 11);
+            }
+          } else if (p.superActive && _ac.superType === 'viff') {
+            // Nozzles slammed. The jet brakes and yaws much harder than a cruise turn. Cruise itself is untouched.
+            p.hovering = false;
+            let diff = 0;
+            if (ix !== 0 || iy !== 0) {
+              const targetAngle = Math.atan2(iy, ix);
+              diff = targetAngle - p.heading;
+              while (diff > Math.PI) diff -= Math.PI * 2;
+              while (diff < -Math.PI) diff += Math.PI * 2;
+            }
+            const snap = (p.viffPulse > 0) ? 24 : 9;
+            p.heading += diff * Math.min(1, dt * snap);
+            const brake = (p.viffPulse > 0) ? 0.22 : 0.55;
+            const vSpd = speed * brake;
+            p.x += Math.cos(p.heading) * vSpd * dt;
+            p.y += Math.sin(p.heading) * vSpd * dt;
+            p.bank += (Math.max(-1, Math.min(1, diff * 2.4)) - p.bank) * Math.min(1, dt * 16);
+            p._moveMult = 1.4;
+            if (p.viffPulse > 0) p.viffPulse = Math.max(0, p.viffPulse - dt);
+          } else if (p.superActive && _ac.superType === 'vtolBlossom') {
             // ★ F-35B VTOL HOVER MODE: Stops forward auto-cruise completely, hovers dead-still (or gentle omnidirectional strafe), and spins in 360° Death Blossom!
             const hoverSpd = speed * 0.45;
             p.x += ix * hoverSpd * dt;
@@ -8586,6 +8710,12 @@
             p.bank *= Math.pow(0.01, dt);
             p._moveMult = p.abActive ? (2.15 * (_ac.abFuelMult || 1.0)) : (0.42 * (_ac.abFuelMult || 1.0));
           }
+          if (p.hovering && !(keys['KeyH']) ) {
+            p.hovering = false;
+            p.hoverCd = 3.2;
+            p.hoverLeft = 2.3;
+          }
+          if (p.hoverCd > 0 && !p.hovering) p.hoverCd = Math.max(0, p.hoverCd - dt);
 
           // 🛑 AWACS ROE CLEARED-AIRSPACE BOUNDARY (Walls off locked outer zones until current zone's bosses are cleared!)
           const _dfRun = getDevFlags();
@@ -8637,6 +8767,12 @@
                 p.bingoBeepTimer = beepInterval;
                 AudioFX.dodgeBonus();
               }
+              if (!p.bingoCalled) {
+                p.bingoCalled = true;
+                callMotherPosition(p);
+              }
+            } else if (p.fuel > 12) {
+              p.bingoCalled = false;
             }
             if (p.fuel <= 0) {
               startCsarRescue('bingo');
@@ -8807,15 +8943,54 @@
 
         // USS ENTERPRISE / AIRBASE (0, 0) EXTRACTION TRAP CHECK!
         const onDeck = Math.abs(p.x) < 86 && Math.abs(p.y) < 156;
+        if (state.waveOffCd > 0) state.waveOffCd = Math.max(0, state.waveOffCd - dt);
         if (state.trapGrace <= 0 && onDeck && canLandAtBase(p)) {
+          if (!(state.trapProgress > 0)) state._trapLine = deckLineupError(p) + Math.min(0.55, Math.abs(p.x) / 120);
           state.trapProgress += dt / 0.72;
           if (state.trapProgress >= 1.0) {
+            if (!(state.storyMode && state.storyMode.active)) {
+              const graded = gradeCarrierTrap(p);
+              state.score += graded.bonus;
+              state.lastTrapGrade = graded.grade;
+              recordTrapGrade(graded.grade);
+              state.camPunch = { x: -Math.cos(p.heading) * 30, y: -Math.sin(p.heading) * 30, life: 1 };
+              state.screenShake = Math.max(state.screenShake || 0, 10);
+              addFloatingText(p.x, p.y - 46, graded.label, graded.color, 14);
+              showBanner(graded.banner, graded.bannerClass);
+              const quip = graded.grade === 'BOLTER'
+                ? `"Bolter, bolter! You still caught a wire — next pass, ease the power."`
+                : (graded.grade === 'NIGHT OK'
+                  ? `"Nice ball. Night trap, three-wire. The boat is yours."`
+                  : `"Trap. ${graded.label}. Welcome aboard."`);
+              queueInstructorNote('viper', 'UHF 255.4 • AIR BOSS — PADDLES', quip, graded.banner, false);
+            }
+            state._trapLine = 0;
             if (!(state.storyMode && state.storyMode.active)) completeExtraction();
             return;
           }
         } else {
+          if (onDeck && state.trapGrace <= 0 && !canLandAtBase(p) && !(state.waveOffCd > 0)) {
+            state.waveOffCd = 2.4;
+            addFloatingText(p.x, p.y - 36, 'WAVE-OFF', '#fb7185', 13);
+            showBanner('WAVE-OFF — DROP TO HARD DECK BEFORE THE WIRES', 'border-rose-400 text-rose-200');
+          }
           state.trapProgress = Math.max(0, state.trapProgress - dt * 1.05);
+          if (!(state.trapProgress > 0)) state._trapLine = 0;
         }
+
+        if (getSelectedAircraftCfg().canHover && !state.hoverHinted && state.launchTimer <= 0 && state.mode === 'playing') {
+          state.hoverHinted = true;
+          showBanner('AV-8B HARRIER — HOLD H TO HOVER. CRUISE RESUMES WHEN YOU LET GO.', 'border-lime-400 text-lime-200');
+        }
+        if (!(state.storyMode && state.storyMode.active) && !state.nightOps && state.time > 78) {
+          state.nightOps = true;
+          queueInstructorNote('viper', 'UHF 255.4 • AIR BOSS — PADDLES', `"Sun's down. Deck lights and the meatball are up. Call the ball on the way in."`, '★ NIGHT TRAP — DECK LIGHTS ON ★', false);
+        }
+        if (state.cockpitFlash > 0) state.cockpitFlash = Math.max(0, state.cockpitFlash - dt * 1.4);
+        if (state.camPunch && state.camPunch.life > 0) state.camPunch.life = Math.max(0, state.camPunch.life - dt * 2.4);
+        if (state.chatterCd > 0) state.chatterCd = Math.max(0, state.chatterCd - dt);
+        updateTanker(dt, p);
+        updateDiscoveries(dt, p);
 
         // ★ MACH 2+ SUPER PLANE COUNTDOWN
         if (p.superActive) {
@@ -9298,7 +9473,14 @@
             }
           }
 
-          if (e.fireRate > 0 && dist < Math.max(W, H) * 0.65 && !((state.empJamTimer || 0) > 0)) {
+          if ((e.fanWindup || 0) > 0) {
+            e.fanWindup -= dt;
+            if (e.fanWindup <= 0) {
+              e.fanWindup = 0;
+              releaseBearFan(e);
+              e.fireTimer = e.fireRate;
+            }
+          } else if (e.fireRate > 0 && dist < Math.max(W, H) * 0.65 && !((state.empJamTimer || 0) > 0) && !pointInSquall(e.x, e.y)) {
             e.fireTimer -= dt;
             // All 8 Level 1 Epic Bosses lock regular turret fire onto the live beat of their boss track!
             let _readyToFire = e.fireTimer <= 0;
@@ -9462,8 +9644,18 @@
                       state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(baseAng + off) * 255, vy: Math.sin(baseAng + off) * 255, plane: e.plane === 0 ? 1 : 0, r: 5.5, color: '#38bdf8', life: 3.6 });
                     }
                   }
+                } else if (bk === 'bear' && !e.isStoryBoss) {
+                  // Tu-95 fan is telegraphed ~0.6s before the bullets exist.
+                  e.fanAim = baseAng;
+                  e.fanHalf = ph >= 3 ? 4 : (ph === 2 ? 3 : 2);
+                  e.fanGap = ph === 1 ? 0.25 : 0.21;
+                  e.fanSpd = 175 + ph * 16;
+                  e.fanPhase = ph;
+                  e.fanSeq = e.attackSeq;
+                  e.fanWindup = 0.62;
+                  e.fireTimer = 0;
                 } else {
-                  // Tu-95 "Bear": readable 5-way Phase 1 fan -> 7-way + radial Phase 2 -> 9-way Phase 3!
+                  // Story lead and any other fallback still use the Bear fan pattern immediately.
                   const half = ph >= 3 ? 4 : (ph === 2 ? 3 : 2);
                   const gap = ph === 1 ? 0.25 : 0.21;
                   const spd = 175 + ph * 16;
@@ -9536,7 +9728,13 @@
           }
 
           if (!p.superActive && e.plane === p.plane && dist < e.r + 16) {
+            const hullBefore = p.hp;
             damagePlayer(e.type === 'boss' ? 24 : 16);
+            if (e.type === 'boss' && e.bossKey === 'bear' && !e.isStoryBoss && p.hp < hullBefore) {
+              p.invuln = Math.max(p.invuln, 1.05);
+              if ((e.fanWindup || 0) > 0) e.fanWindup = Math.max(e.fanWindup, p.invuln + 0.12);
+              else e.fireTimer = Math.max(e.fireTimer || 0, p.invuln + 0.2);
+            }
             if (e.type !== 'boss') damageEnemy(e, 32);
           }
         }
@@ -9880,7 +10078,9 @@
         setHudText(distBadgeMobile, distStr);
         setHudText(threatZoneText, threat.name);
         setHudColor(threatZoneText, threat.color);
-        setHudText(lootMultText, `LOOT ${threat.lootMult.toFixed(1)}×`);
+        const inStoryHud = !!(state.storyMode && state.storyMode.active);
+        setHudHidden(lootMultText, inStoryHud);
+        if (!inStoryHud) setHudText(lootMultText, `LOOT ${threat.lootMult.toFixed(1)}×`);
         // Show active Pilot Callsign & permanent Career Level in top-left HUD
         const _pcHud = getSelectedPilotCfg();
         const _pdHud = getSelectedPilotData();
@@ -9888,6 +10088,9 @@
 
         const zbp = HUD_DOM.zoneBossProgress;
         if (zbp) {
+          setHudHidden(zbp, inStoryHud);
+        }
+        if (zbp && !inStoryHud) {
           const clearedTot = [1,2,3,4].reduce((a,z)=>a+(state.surfaceBossDefeatedStages[z]?1:0)+(state.bossDefeatedStages[z]?1:0),0);
           if (state.allBossesCleared) {
             zbp.textContent = state.buzzPhase === 'buggedOut' ? '★ BOGEYS BUGGED OUT!' : '☕ BUZZ TOWER ON BURNER!';
@@ -10017,6 +10220,58 @@
       // ============================================================
       // OPEN-PACIFIC WORLD-SPACE RENDERER
       // ============================================================
+      function drawHarrierBody(nozzlePuff) {
+        // Local space: nose is -Y. Shoulder wing, anhedral tips, side intakes. Not a Hornet.
+        ctx.fillStyle = '#14532d';
+        ctx.beginPath();
+        ctx.moveTo(0, -34);
+        ctx.quadraticCurveTo(7, -16, 6.2, 8);
+        ctx.lineTo(3.4, 24);
+        ctx.lineTo(-3.4, 24);
+        ctx.lineTo(-6.2, 8);
+        ctx.quadraticCurveTo(-7, -16, 0, -34);
+        ctx.fill();
+        ctx.fillStyle = '#052e16';
+        ctx.beginPath(); ctx.ellipse(-9.5, -8, 4.2, 7.2, 0.35, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(9.5, -8, 4.2, 7.2, -0.35, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#166534';
+        ctx.beginPath();
+        ctx.moveTo(-5, -8);
+        ctx.lineTo(-36, 4);
+        ctx.lineTo(-31, 11);
+        ctx.lineTo(-4, 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(5, -8);
+        ctx.lineTo(36, 4);
+        ctx.lineTo(31, 11);
+        ctx.lineTo(4, 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#4ade80';
+        ctx.fillRect(-34, 6, 6, 2.2);
+        ctx.fillRect(28, 6, 6, 2.2);
+        ctx.fillStyle = '#15803d';
+        ctx.beginPath(); ctx.moveTo(-3, 10); ctx.lineTo(-15, 22); ctx.lineTo(-4, 18); ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(3, 10); ctx.lineTo(15, 22); ctx.lineTo(4, 18); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#bbf7d0';
+        ctx.fillRect(-1.1, -22, 2.2, 10);
+        if (nozzlePuff) {
+          const puff = 7 + Math.random() * 9;
+          ctx.fillStyle = 'rgba(125, 211, 252, 0.9)';
+          ctx.beginPath(); ctx.moveTo(-7, 6); ctx.lineTo(-11, 6 + puff); ctx.lineTo(-3, 6); ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(7, 6); ctx.lineTo(11, 6 + puff); ctx.lineTo(3, 6); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = 'rgba(254, 249, 195, 0.85)';
+          ctx.beginPath(); ctx.arc(-7, 8 + puff * 0.35, 2.1, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(7, 8 + puff * 0.35, 2.1, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.fillStyle = '#dcfce7';
+        ctx.font = '700 6px Orbitron, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('AV-8B', 0, 16);
+      }
+
       function drawF14Tomcat(x, y, heading, scale, bank, rollTimer, wingSweep, isSuper, damageRatio = 0, acCfg = null) {
         const ac = acCfg || AIRCRAFT[0];
         ctx.save();
@@ -10045,7 +10300,7 @@
         const useBelly = isSuper && ac.bellySprite && spriteReady(ac.bellySprite);
         const useSwept = !isSuper && ac.hasSwingWings && wingSweep > 0.42 && ac.sweptSprite && spriteReady(ac.sweptSprite);
         const baseKey = spriteReady(ac.sprite) ? ac.sprite : 'f14';
-        if (useBelly || useSwept || spriteReady(baseKey)) {
+        if (ac.id === 'av8' || useBelly || useSwept || spriteReady(baseKey)) {
           const im = useBelly ? SPRITES[ac.bellySprite] : (useSwept ? SPRITES[ac.sweptSprite] : SPRITES[baseKey]);
           const sh = useSwept ? 72 : (ac.id === 'a6' ? 70 : (68 + (ac.hasSwingWings ? wingSweep * 4 : 0)));
           const sw = (useSwept || !ac.hasSwingWings) ? (sh * (im.naturalWidth / Math.max(1, im.naturalHeight))) : (64 - wingSweep * 10);
@@ -10075,10 +10330,15 @@
               ctx.beginPath(); ctx.arc(0, 0, sh * 0.56, 0, Math.PI * 2); ctx.fill();
             }
           }
-          ctx.drawImage(im, -sw / 2, -sh / 2, sw, sh);
+          if (ac.id === 'av8') {
+            const puff = isSuper || (state && state.player && (state.player.hovering || (state.player.viffPulse > 0)));
+            drawHarrierBody(!!puff);
+          } else {
+            ctx.drawImage(im, -sw / 2, -sh / 2, sw, sh);
+          }
 
           // Progressive Battle Damage Decals (Player F-14 only; wingmen pass damageRatio = 0)
-          if (!isSuper && damageRatio > 0.28) {
+          if (ac.id !== 'av8' && !isSuper && damageRatio > 0.28) {
             // Light-to-medium flak scorch marks & soot streaks
             ctx.fillStyle = 'rgba(15, 23, 42, 0.72)';
             ctx.beginPath(); ctx.ellipse(9, 4, 4.5, 8.5, 0.25, 0, Math.PI * 2); ctx.fill();
@@ -10087,7 +10347,7 @@
             ctx.strokeStyle = 'rgba(30, 41, 59, 0.78)'; ctx.lineWidth = 1.6;
             ctx.beginPath(); ctx.moveTo(9, 4); ctx.lineTo(10, 19); ctx.stroke();
           }
-          if (!isSuper && damageRatio > 0.58) {
+          if (ac.id !== 'av8' && !isSuper && damageRatio > 0.58) {
             // Heavy battle damage: torn wing panel, fuselage burn & glowing orange ember hotspots!
             ctx.fillStyle = 'rgba(2, 6, 23, 0.85)';
             ctx.beginPath(); ctx.ellipse(-7, -6, 4.2, 6.2, -0.15, 0, Math.PI * 2); ctx.fill();
@@ -10109,9 +10369,59 @@
           fillOutlinedText(ac.superTag || '★ INVERTED ★', x, y + 48, '#fde047', '#000000', 3.0);
           ctx.restore();
         }
+        if (ac && ac.id === 'av8' && state && state.player && state.player.hovering) {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(74, 222, 128, 0.75)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(x, y, 28, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      function releaseBearFan(e) {
+        const baseAng = e.fanAim || 0;
+        const half = e.fanHalf || 2;
+        const gap = e.fanGap || 0.25;
+        const spd = e.fanSpd || 191;
+        const ph = e.fanPhase || 1;
+        const seq = e.fanSeq || 0;
+        for (let k = -half; k <= half; k++) {
+          const a = baseAng + k * gap;
+          state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd, plane: e.plane, r: 6.2, color: '#facc15', life: 4.5 });
+        }
+        if (seq % 2 === 0) {
+          const mAng = baseAng + (Math.random() - 0.5) * 1.4;
+          state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(mAng) * 65, vy: Math.sin(mAng) * 65, plane: e.plane, r: 8.2, color: '#fb923c', life: 6.0 });
+        }
+        if (ph >= 2 && seq % 3 === 0) {
+          for (let k = 0; k < 8; k++) {
+            const a = (e.phaseTimer || 0) + (k / 8) * Math.PI * 2;
+            state.enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(a) * 175, vy: Math.sin(a) * 175, plane: e.plane, r: 5.8, color: '#f97316', life: 4.2 });
+          }
+        }
       }
 
       function drawMiG28(e, alpha, scale) {
+        if ((e.fanWindup || 0) > 0 && e.bossKey === 'bear' && !e.isStoryBoss) {
+          const prog = 1 - Math.max(0, Math.min(1, e.fanWindup / 0.62));
+          const half = e.fanHalf || 2;
+          const gap = e.fanGap || 0.25;
+          const len = 64 + prog * 110;
+          ctx.save();
+          ctx.translate(e.x, e.y);
+          ctx.strokeStyle = `rgba(250, 204, 21, ${(0.35 + prog * 0.6).toFixed(2)})`;
+          ctx.lineWidth = 1.5 + prog * 1.8;
+          ctx.beginPath();
+          for (let k = -half; k <= half; k++) {
+            const a = (e.fanAim || 0) + k * gap;
+            ctx.moveTo(Math.cos(a) * 22, Math.sin(a) * 22);
+            ctx.lineTo(Math.cos(a) * len, Math.sin(a) * len);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
         if (!state.player.superActive && e.plane === state.player.plane) {
           const br = e.r * scale + 7 + Math.sin(state.time * 10 + e.id * 5) * 1.5;
           const corner = 5;
@@ -10835,7 +11145,7 @@
         ctx.beginPath();
         for (let i = 0, n = state.enemies.length; i < n; i++) {
           const e = state.enemies[i];
-          if (e.isSurface || e.plane !== planeIdx || Math.abs(e.x - camX) > cullX + 120 || Math.abs(e.y - camY) > cullY + 120) continue;
+          if (e.isSurface || e.plane !== planeIdx || pointInSquall(e.x, e.y) || Math.abs(e.x - camX) > cullX + 120 || Math.abs(e.y - camY) > cullY + 120) continue;
           const rx = e.r * scale * 0.8, ry = e.r * scale * 0.6;
           ctx.moveTo(e.x + 14 + rx, e.y + 16);
           ctx.ellipse(e.x + 14, e.y + 16, rx, ry, 0, 0, Math.PI * 2);
@@ -10845,7 +11155,7 @@
 
         for (let i = 0, n = state.enemies.length; i < n; i++) {
           const e = state.enemies[i];
-          if (e.plane !== planeIdx || Math.abs(e.x - camX) > cullX + 120 || Math.abs(e.y - camY) > cullY + 120) continue;
+          if (e.plane !== planeIdx || pointInSquall(e.x, e.y) || Math.abs(e.x - camX) > cullX + 120 || Math.abs(e.y - camY) > cullY + 120) continue;
           drawMiG28(e, alpha, scale);
         }
 
@@ -10855,7 +11165,7 @@
         const _bBeatScale = (state._hasActiveBoss && state.bossBeatPulse > 0.05) ? (1 + state.bossBeatPulse * 0.30) : 1;
         for (let i = 0, n = state.enemyBullets.length; i < n; i++) {
           const b = state.enemyBullets[i];
-          if (b.plane !== planeIdx || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
+          if (b.plane !== planeIdx || pointInSquall(b.x, b.y) || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
           ctx.fillStyle = b.color;
           ctx.beginPath(); ctx.arc(b.x, b.y, b.r * scale * _bBeatScale, 0, Math.PI * 2); ctx.fill();
         }
@@ -10863,7 +11173,7 @@
         ctx.beginPath();
         for (let i = 0, n = state.enemyBullets.length; i < n; i++) {
           const b = state.enemyBullets[i];
-          if (b.plane !== planeIdx || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
+          if (b.plane !== planeIdx || pointInSquall(b.x, b.y) || Math.abs(b.x - camX) > cullX || Math.abs(b.y - camY) > cullY) continue;
           const cr = b.r * scale * _bBeatScale * 0.48;
           ctx.moveTo(b.x + cr, b.y);
           ctx.arc(b.x, b.y, cr, 0, Math.PI * 2);
@@ -10975,6 +11285,388 @@
         ctx.restore();
       }
 
+      function deckLineupError(p) {
+        const toSouth = Math.abs(Math.atan2(Math.sin(p.heading - Math.PI / 2), Math.cos(p.heading - Math.PI / 2)));
+        const toNorth = Math.abs(Math.atan2(Math.sin(p.heading + Math.PI / 2), Math.cos(p.heading + Math.PI / 2)));
+        return Math.min(toSouth, toNorth);
+      }
+
+      function recordTrapGrade(grade) {
+        if (!Array.isArray(profile.trapBoard)) profile.trapBoard = [];
+        profile.trapBoard.push(grade);
+        if (profile.trapBoard.length > 5) profile.trapBoard = profile.trapBoard.slice(-5);
+        saveProfile();
+      }
+
+      function paintGreenieBoard(el) {
+        if (!el) return;
+        const board = Array.isArray(profile.trapBoard) ? profile.trapBoard.slice(-5) : [];
+        const colorFor = (g) => {
+          if (!g) return '#1e293b';
+          if (g === 'OK' || g === 'NIGHT OK') return '#4ade80';
+          if (g === 'FAIR') return '#fde047';
+          return '#fb923c';
+        };
+        let cells = '';
+        for (let i = 0; i < 5; i++) {
+          const g = board[i] || '';
+          cells += `<span title="${g || 'open'}" style="display:inline-block;width:28px;height:14px;margin:0 3px;border-radius:2px;background:${colorFor(g)};box-shadow:inset 0 0 0 1px rgba(15,23,42,0.45)"></span>`;
+        }
+        el.innerHTML = `<div class="font-arcade text-[8px] tracking-widest text-slate-400 mb-1">GREENIE BOARD · LAST 5 TRAPS</div><div>${cells}</div>`;
+      }
+
+      function gradeCarrierTrap(p) {
+        const line = (state._trapLine || 0);
+        let grade = 'FAIR';
+        let bonus = 160;
+        let label = 'FAIR';
+        let color = '#fde047';
+        if (p.abActive || line > 0.85) {
+          grade = 'BOLTER'; bonus = 40; label = 'BOLTER'; color = '#fb923c';
+        } else if (line < 0.34) {
+          grade = 'OK'; bonus = 420; label = 'OK 3-WIRE'; color = '#4ade80';
+        }
+        if (state.nightOps && grade === 'OK') {
+          grade = 'NIGHT OK'; bonus += 550; label = 'NIGHT OK 3'; color = '#fde047';
+        }
+        const banner = grade === 'NIGHT OK'
+          ? `★ NIGHT TRAP — ${label} • +${bonus} ★`
+          : `${label} • +${bonus} PTS`;
+        return { grade, bonus, label, color, banner, bannerClass: grade === 'BOLTER' ? 'border-orange-400 text-orange-200' : 'border-emerald-400 text-emerald-200' };
+      }
+
+      function drawCarrierWake(distNM) {
+        if (!state || state.mode !== 'playing' && state.mode !== 'catshot') return;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(224, 242, 254, 0.28)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([10, 14]);
+        ctx.beginPath();
+        ctx.moveTo(0, 70);
+        ctx.lineTo(0, 920);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        for (let i = 0; i < 8; i++) {
+          const y = 120 + i * 100;
+          const wob = Math.sin(state.time * 1.4 + i) * 8;
+          ctx.globalAlpha = 0.18 + (i % 3) * 0.05;
+          ctx.fillStyle = 'rgba(224, 242, 254, 0.55)';
+          ctx.beginPath();
+          ctx.ellipse(wob, y, 16, 5, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        if (distNM > 3.2 && state.player) {
+          const p = state.player;
+          const ang = Math.atan2(-p.y, -p.x);
+          const dist = Math.hypot(p.x, p.y);
+          ctx.strokeStyle = state.nightOps ? 'rgba(253, 224, 71, 0.55)' : 'rgba(74, 222, 128, 0.40)';
+          ctx.lineWidth = 1.6;
+          const step = 220;
+          for (let d = 280; d < dist - 80; d += step) {
+            const x = Math.cos(ang) * d;
+            const y = Math.sin(ang) * d;
+            const flick = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(state.time * 3 - d * 0.01));
+            ctx.globalAlpha = flick * 0.85;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - Math.cos(ang) * 16 + Math.sin(ang) * 7, y - Math.sin(ang) * 16 - Math.cos(ang) * 7);
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - Math.cos(ang) * 16 - Math.sin(ang) * 7, y - Math.sin(ang) * 16 + Math.cos(ang) * 7);
+            ctx.stroke();
+          }
+        }
+        if (state.nightOps) {
+          ctx.globalAlpha = 1;
+          const blink = Math.floor(state.time * 3) % 2 === 0;
+          ctx.fillStyle = blink ? '#fde047' : '#fb923c';
+          for (let y = -150; y <= 150; y += 28) {
+            ctx.fillRect(-34, y, 4, 3);
+            ctx.fillRect(30, y, 4, 3);
+          }
+          ctx.fillStyle = '#4ade80';
+          ctx.fillRect(-3, -168, 6, 4);
+          ctx.fillStyle = '#f43f5e';
+          ctx.fillRect(-3, 164, 6, 4);
+        }
+        ctx.restore();
+      }
+
+      function drawMeatball() {
+        if (!state || !state.nightOps || state.mode !== 'playing') return;
+        const p = state.player;
+        const distNM = Math.hypot(p.x, p.y) / 140;
+        if (distNM > 3.4 || distNM < 0.15) return;
+        const homeAng = Math.atan2(-p.y, -p.x);
+        let err = homeAng - p.heading;
+        while (err > Math.PI) err -= Math.PI * 2;
+        while (err < -Math.PI) err += Math.PI * 2;
+        const slot = Math.max(-2, Math.min(2, Math.round(err / 0.22)));
+        const bx = 28;
+        const by = H * 0.5 - 70;
+        ctx.save();
+        ctx.fillStyle = 'rgba(2, 6, 23, 0.72)';
+        ctx.strokeStyle = '#fde047';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(bx, by, 22, 150, 6);
+        ctx.fill();
+        ctx.stroke();
+        for (let i = -2; i <= 2; i++) {
+          const y = by + 18 + (i + 2) * 26;
+          const on = i === slot;
+          ctx.fillStyle = on ? (i === 0 ? '#4ade80' : (i > 0 ? '#fde047' : '#fb7185')) : 'rgba(51, 65, 85, 0.9)';
+          ctx.beginPath();
+          ctx.arc(bx + 11, y, on ? 7 : 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.font = '800 8px Orbitron, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillText(slot === 0 ? 'BALL' : (slot > 0 ? 'HIGH' : 'LOW'), bx + 28, by + 78);
+        ctx.restore();
+      }
+
+      function updateTanker(dt, p) {
+        if (!state || state.mode !== 'playing') return;
+        if (state.storyMode && state.storyMode.active) return;
+        if (!state.tanker) {
+          state.tankerTimer = (state.tankerTimer == null ? 22 : state.tankerTimer) - dt;
+          if (state.tankerTimer > 0) return;
+          const ang = Math.random() * Math.PI * 2;
+          const dist = 980 + Math.random() * 1200;
+          state.tanker = {
+            x: p.x + Math.cos(ang) * dist,
+            y: p.y + Math.sin(ang) * dist,
+            heading: ang + Math.PI / 2,
+            life: 52,
+            plug: 0,
+            called: false,
+            basketX: p.x + Math.cos(ang) * dist,
+            basketY: p.y + Math.sin(ang) * dist,
+            inBasket: false
+          };
+          state.tankerTimer = 62;
+          return;
+        }
+        const t = state.tanker;
+        t.life -= dt;
+        t.heading += Math.sin(state.time * 0.35) * dt * 0.15;
+        t.x += Math.cos(t.heading) * 78 * dt;
+        t.y += Math.sin(t.heading) * 78 * dt;
+        const bx = t.x - Math.cos(t.heading) * 58;
+        const by = t.y - Math.sin(t.heading) * 58;
+        const d = Math.hypot(p.x - bx, p.y - by);
+        t.basketX = bx;
+        t.basketY = by;
+        t.inBasket = d < 46;
+        if (t.inBasket && p.fuel < p.maxFuel - 1) {
+          t.plug += dt;
+          p.fuel = Math.min(p.maxFuel, p.fuel + 22 * dt);
+          if (!t.called) {
+            t.called = true;
+            queueInstructorNote('viper', 'UHF 307.5 • TEXACO 11 — KA-6D', `"Texaco 11, you are cleared astern. Steady in the basket — we'll pass JP-5."`, '★ TANKER — STAY IN THE BASKET ★', false);
+          }
+          if (p.fuel >= p.maxFuel - 1 || t.plug > 3.2) {
+            addFloatingText(p.x, p.y - 28, 'TANKS TOPPED', '#38bdf8', 12);
+            showBanner('TEXACO 11 — FUEL ONBOARD. CLEARED TO DEPART.', 'border-sky-400 text-sky-200');
+            state.tanker = null;
+            return;
+          }
+        } else {
+          t.plug = Math.max(0, t.plug - dt * 0.5);
+        }
+        if (t.life <= 0 || Math.hypot(t.x - p.x, t.y - p.y) > 3200) state.tanker = null;
+      }
+
+      function drawTanker() {
+        const t = state && state.tanker;
+        if (!t || state.mode !== 'playing') return;
+        ctx.save();
+        ctx.translate(t.x, t.y);
+        ctx.rotate(t.heading + Math.PI / 2);
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.95)';
+        ctx.beginPath();
+        ctx.moveTo(0, -28);
+        ctx.lineTo(7, 22);
+        ctx.lineTo(-7, 22);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#64748b';
+        ctx.fillRect(-26, -4, 52, 6);
+        ctx.fillStyle = '#fde047';
+        ctx.fillRect(-2, -18, 4, 6);
+        ctx.restore();
+        ctx.save();
+        ctx.translate(t.basketX, t.basketY);
+        ctx.strokeStyle = t.inBasket ? '#4ade80' : '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, 28, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.font = '800 8px Orbitron, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillText('TEXACO', 0, -36);
+        ctx.restore();
+      }
+
+      function pointInSquall(x, y) {
+        const s = state && state.squall;
+        if (!s) return false;
+        const dx = x - s.x, dy = y - s.y;
+        return dx * dx + dy * dy < s.r * s.r;
+      }
+
+      function spawnDiscovery(p) {
+        const pool = ['pilot', 'trawler', 'squall'];
+        if (!profile.ghostMet) pool.push('radar');
+        const kind = pool[Math.floor(Math.random() * pool.length)];
+        const ang = Math.random() * Math.PI * 2;
+        const dist = 980 + Math.random() * 780;
+        let x = p.x + Math.cos(ang) * dist;
+        let y = p.y + Math.sin(ang) * dist;
+        if (Math.hypot(x, y) < 420) {
+          x += Math.cos(ang) * 640;
+          y += Math.sin(ang) * 640;
+        }
+        state.discovery = {
+          kind, x, y,
+          life: kind === 'squall' ? 18 : 34,
+          r: kind === 'squall' ? 270 : 48,
+          vx: kind === 'squall' ? Math.cos(ang + 1.4) * 46 : (kind === 'trawler' ? Math.cos(ang) * 26 : 0),
+          vy: kind === 'squall' ? Math.sin(ang + 1.4) * 46 : (kind === 'trawler' ? Math.sin(ang) * 16 : 0),
+          heading: ang,
+          hailed: false,
+          seen: false
+        };
+        state.squall = kind === 'squall' ? state.discovery : null;
+      }
+
+      function updateDiscoveries(dt, p) {
+        if (!state || state.mode !== 'playing') return;
+        if (state.storyMode && state.storyMode.active) {
+          state.discovery = null;
+          state.squall = null;
+          state.inSquall = false;
+          return;
+        }
+        if (!state.discovery) {
+          state.squall = null;
+          state.inSquall = false;
+          if (state.discoveryWait == null) state.discoveryWait = 22;
+          state.discoveryWait -= dt;
+          if (state.discoveryWait <= 0) {
+            spawnDiscovery(p);
+            state.discoveryWait = 50 + Math.random() * 24;
+          }
+          return;
+        }
+        const d = state.discovery;
+        d.life -= dt;
+        d.x += (d.vx || 0) * dt;
+        d.y += (d.vy || 0) * dt;
+        const dist = Math.hypot(p.x - d.x, p.y - d.y);
+        if (d.kind === 'squall') state.squall = d;
+        else state.squall = null;
+        state.inSquall = d.kind === 'squall' && dist < d.r;
+        if (d.life <= 0 || dist > 3800) {
+          state.discovery = null;
+          state.squall = null;
+          state.inSquall = false;
+          return;
+        }
+        if (d.kind === 'squall') {
+          if (state.inSquall) state.screenShake = Math.max(state.screenShake || 0, 3.4);
+          if (state.inSquall && !d.hailed) {
+            d.hailed = true;
+            state.score += 90;
+            queueInstructorNote('iceman', 'UHF 305.2 • LT "ICEMAN"', `"Squall line. I can't paint a thing inside it. Ride the rain and don't trust the scope."`, '★ SQUALL — SCOPE BLIND ★', false);
+          }
+          return;
+        }
+        if (d.kind === 'radar' && dist < 460 && !d.seen) {
+          d.seen = true;
+          queueInstructorNote('hollywood', 'UHF 243.0 • UNKNOWN', `"One contact. No IFF, no speed. It is not on any plot I have."`, '★ RADAR CONTACT ★', false);
+        }
+        const grab = d.kind === 'radar' ? 62 : 52;
+        if (dist >= grab || d.hailed) return;
+        d.hailed = true;
+        if (d.kind === 'pilot') {
+          state.score += 260;
+          p.fuel = Math.min((p.maxFuel || 100), p.fuel + 14);
+          queueInstructorNote('viper', 'UHF 243.0 • CSAR', `"Raft in sight. The pilot is in the back seat. That's a pickup — take him to the boat."`, '★ CSAR PICKUP +260 ★', false);
+          addFloatingText(p.x, p.y - 36, 'CSAR +260', '#fde047', 13);
+        } else if (d.kind === 'trawler') {
+          state.cargo.intel = (state.cargo.intel || 0) + 2;
+          state.cargo.credits = (state.cargo.credits || 0) + 70;
+          queueInstructorNote('iceman', 'UHF 305.2 • LT "ICEMAN"', `"Soviet trawler. Too many antennas for a fishing boat. Their plot is in your bag."`, '★ AGI TRAWLER — INTEL ★', false);
+          addFloatingText(p.x, p.y - 36, 'INTEL +2', '#7dd3fc', 13);
+        } else {
+          profile.ghostMet = true;
+          state.score += 500;
+          saveProfile();
+          queueInstructorNote('hollywood', 'UHF 243.0 • UNKNOWN', `"It merged on you and fell off the scope. Don't put this one in the book."`, '★ GHOST CONTACT +500 ★', false);
+          addFloatingText(p.x, p.y - 36, 'GHOST +500', '#a7f3d0', 13);
+        }
+        state.discovery = null;
+        state.squall = null;
+      }
+
+      function drawDiscovery() {
+        const d = state && state.discovery;
+        if (!d || state.mode !== 'playing') return;
+        if (d.kind === 'squall') {
+          ctx.save();
+          const g = ctx.createRadialGradient(d.x, d.y, 30, d.x, d.y, d.r);
+          g.addColorStop(0, 'rgba(148, 163, 184, 0.05)');
+          g.addColorStop(0.62, 'rgba(71, 85, 105, 0.42)');
+          g.addColorStop(1, 'rgba(15, 23, 42, 0)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+          return;
+        }
+        if (d.kind === 'radar' && Math.hypot(d.x - state.camX, d.y - state.camY) > 500) return;
+        ctx.save();
+        ctx.translate(d.x, d.y);
+        if (d.kind === 'pilot') {
+          ctx.fillStyle = '#ea580c';
+          ctx.beginPath(); ctx.ellipse(0, 8, 18, 7, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = '#fdba74';
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(0, -2, 7, Math.PI, 0); ctx.stroke();
+          ctx.fillStyle = '#fef3c7';
+          ctx.font = '700 8px Orbitron, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('RAFT', 0, -16);
+        } else if (d.kind === 'trawler') {
+          ctx.rotate((d.heading || 0) + Math.PI / 2);
+          ctx.fillStyle = '#1e293b';
+          ctx.fillRect(-9, -26, 18, 52);
+          ctx.fillStyle = '#64748b';
+          ctx.fillRect(-14, -4, 28, 4);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.fillRect(-1, -40, 2, 18);
+          ctx.fillStyle = '#e2e8f0';
+          ctx.font = '700 8px Orbitron, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('AGI', 0, 40);
+        } else {
+          const pulse = 8 + Math.sin(state.time * 5) * 4;
+          ctx.strokeStyle = 'rgba(167, 243, 208, 0.85)';
+          ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.arc(0, 0, pulse, 0, Math.PI * 2); ctx.stroke();
+          ctx.fillStyle = '#a7f3d0';
+          ctx.font = '700 9px Orbitron, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('?', -0.5, 3);
+        }
+        ctx.restore();
+      }
+
       function drawGlideslopeHudCue(distNM) {
         if (state.mode !== 'playing' || state.trapGrace > 0 || distNM > 6.4) return;
         const p = state.player;
@@ -11030,6 +11722,51 @@
         ctx.restore();
       }
 
+      function homeBearingCall(p) {
+        let rel = Math.atan2(-p.y, -p.x) - p.heading;
+        while (rel > Math.PI) rel -= Math.PI * 2;
+        while (rel < -Math.PI) rel += Math.PI * 2;
+        const clock = Math.round((rel < 0 ? rel + Math.PI * 2 : rel) / (Math.PI / 6)) % 12 || 12;
+        let deg = Math.atan2(-p.x, -p.y) * 180 / Math.PI;
+        if (deg < 0) deg += 360;
+        const cards = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+        const card = cards[Math.round(deg / 22.5) % 16];
+        return { clock, card, deg: Math.round(deg) };
+      }
+
+      function cruiseHomeRange(p) {
+        const ac = getSelectedAircraftCfg();
+        const pc = getSelectedPilotCfg();
+        const pt = getPilotTalentBonuses();
+        const snow = pt.creditSnowball ? (1 + Math.min(0.30, Math.floor(((state.cargo && state.cargo.credits) || 0) / 100) * 0.02)) : 1;
+        const low = (p.hp < p.maxHp * 0.50) ? (pt.lowHpSpeedMult || 1) : 1;
+        const rel = (hasRelic('foxbat_scramjet') ? 1.22 : 1) * (hasRelic('backfire_burner') ? 1.22 : 1) * (hasRelic('e115_gravity_core') ? 1.25 : 1);
+        const spd = (305 + (p.weapons.sweep || 0) * 38) * (1 + (profile.upgrades.engines || 0) * 0.1) * (pc.speedMult || 1) * (pt.speedMult || 1) * snow * low * rel * (ac.speedMult || 1);
+        const cruisePx = spd * 0.42;
+        const fMult = (pc.fuelMult || 1) * (pt.fuelBurnMult || 1) * (hasRelic('foxbat_scramjet') ? 0.80 : 1) * (hasRelic('e115_gravity_core') ? 0.70 : 1) * Math.max(0.65, 1 - Math.max(0, (getSelectedPilotData().level || 1) - 1) * 0.02);
+        const burnPerSec = 0.42 * (ac.abFuelMult || 1) * fMult;
+        const seconds = burnPerSec > 0.0001 ? (p.fuel / burnPerSec) : 9999;
+        const rangeNM = (cruisePx * seconds) / 140;
+        const distNM = Math.hypot(p.x, p.y) / 140;
+        return { rangeNM, distNM, shortNM: Math.max(0, distNM - rangeNM) };
+      }
+
+      function callMotherPosition(p) {
+        const b = homeBearingCall(p);
+        const nm = (Math.hypot(p.x, p.y) / 140).toFixed(1);
+        const reach = cruiseHomeRange(p);
+        const reachLine = reach.shortNM <= 0.05
+          ? 'You are in range at cruise.'
+          : `At cruise you are short ${reach.shortNM.toFixed(1)} miles.`;
+        queueInstructorNote(
+          'viper',
+          'UHF 243.0 • MOTHER — USS ENTERPRISE',
+          `"Mother, say position. Home bearing ${b.deg} ${b.card}, ${b.clock} o'clock off your nose, ${nm} nautical miles. ${reachLine} You are BINGO. Turn for the boat."`,
+          `★ BINGO • ${b.card} ${String(b.deg).padStart(3, '0')} • ${nm} NM ★`,
+          false
+        );
+      }
+
       function drawCarrierHomeBeacon(distNM) {
         if (state.mode !== 'playing') return;
         const p = state.player;
@@ -11054,11 +11791,17 @@
         homeBeaconPos.x = bx;
         homeBeaconPos.y = by;
 
+        const fuelPct = p.maxFuel > 0 ? (p.fuel / p.maxFuel) : 1;
+        const bingoPulse = (p.fuel > 0 && p.fuel <= 10);
+        const pulse = bingoPulse ? (0.55 + 0.45 * Math.abs(Math.sin(state.time * 8))) : 1;
+        const bead = bingoPulse ? (21 + 5 * Math.abs(Math.sin(state.time * 8))) : 21;
         ctx.save();
         ctx.translate(bx, by);
+        ctx.globalAlpha = pulse;
         ctx.fillStyle = 'rgba(6, 78, 59, 0.90)';
-        ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(0, 0, 21, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.strokeStyle = bingoPulse ? '#fde047' : '#4ade80'; ctx.lineWidth = bingoPulse ? 3.2 : 2;
+        ctx.beginPath(); ctx.arc(0, 0, bead, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.globalAlpha = 1;
 
         ctx.save();
         ctx.rotate(ang);
@@ -11078,6 +11821,18 @@
           ctx.fillText(`${distNM.toFixed(1)} NM`, 0, 33);
           ctx.fillStyle = '#4ade80';
           const cm = getCurrentMap(); ctx.fillText((cm.baseType === 'airbase' ? '★' : '⚓') + cm.baseShort, 0, -25);
+        }
+        if (fuelPct <= 0.30) {
+          const reach = cruiseHomeRange(p);
+          ctx.font = '800 8px Orbitron, sans-serif';
+          ctx.textAlign = 'center';
+          if (reach.shortNM <= 0.05) {
+            ctx.fillStyle = '#4ade80';
+            ctx.fillText('IN RANGE', 0, 46);
+          } else {
+            ctx.fillStyle = '#fb7185';
+            ctx.fillText(`SHORT ${reach.shortNM.toFixed(1)} NM`, 0, 46);
+          }
         }
         ctx.restore();
       }
@@ -11312,6 +12067,10 @@
 
         ctx.save();
         if (state.screenShake > 0.2) ctx.translate((Math.random() - 0.5) * state.screenShake, (Math.random() - 0.5) * state.screenShake);
+        if (state.camPunch && state.camPunch.life > 0) {
+          const k = state.camPunch.life * state.camPunch.life;
+          ctx.translate(state.camPunch.x * k, state.camPunch.y * k);
+        }
 
         drawWorldOceanAndCarrier(distNM, threat);
 
@@ -11509,6 +12268,10 @@
           }
         }
 
+        drawCarrierWake(Math.hypot(state.player.x, state.player.y) / 140);
+        drawTanker();
+        drawDiscovery();
+
         for (const ft of state.floatingTexts) {
           ctx.save(); ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
           ctx.font = `800 ${ft.size || 11}px Orbitron, sans-serif`; ctx.textAlign = 'center';
@@ -11535,10 +12298,21 @@
           BgCache.blitSuperVignette();
         }
 
+        if (state.nightOps && state.mode === 'playing') {
+          const night = Math.max(0, Math.min(0.48, (state.time - 78) / 28));
+          ctx.fillStyle = `rgba(2, 6, 23, ${night.toFixed(3)})`;
+          ctx.fillRect(0, 0, W, H);
+        }
+        if (state.cockpitFlash > 0) {
+          ctx.fillStyle = `rgba(244, 63, 94, ${Math.min(0.34, state.cockpitFlash).toFixed(3)})`;
+          ctx.fillRect(0, 0, W, H);
+        }
+
         // Always-on Home Bearing Beacon back to home base
         drawCarrierHomeBeacon(distNM);
         drawBossGuidanceArrow();
         drawGlideslopeHudCue(distNM);
+        drawMeatball();
         drawCatShotOverlay();
         // Escalating BINGO FUEL Warning (starts at <= 10%, flashes faster as it nears 0%)
         if (state.mode === 'playing' && !p.superActive && p.fuel <= 10 && p.fuel > 0) {
@@ -11622,8 +12396,10 @@
       function startGame() {
         AudioFX.unlock();
         const _hasMidSave = !!(profile.missionSave && profile.missionSave.mapId === getCurrentMap().id);
+        if (!_hasMidSave) resetSortieSessionFlags();
         const showPreflight = !_hasMidSave && !profile.skipPreflightCheck;
         state = createInitialState(showPreflight ? 'preflight' : 'catshot');
+        hideStoryObjectiveHud();
         if (showPreflight) {
           const pfOv = document.getElementById('preflightOverlay');
           const pfBar = document.getElementById('preflightFuelBar');
@@ -11683,7 +12459,12 @@
         const frameDt = Math.min(MAX_FRAME_DT, Math.max(0, (now - lastTime) / 1000));
         lastTime = now;
         noteFrameTime(frameDt);
-        simAccum += frameDt;
+        let simScale = 1;
+        if (state && state.hitStop > 0) {
+          simScale = 0.22;
+          state.hitStop = Math.max(0, state.hitStop - frameDt);
+        }
+        simAccum += frameDt * simScale;
         let steps = 0;
         while (simAccum >= SIM_DT && steps < MAX_SIM_STEPS) {
           update(SIM_DT);
@@ -11913,8 +12694,14 @@
       // Completely decoupled from Arcade Mode — zero zones, scripted beats!
       // ============================================================
       function getStoryProgress() {
-        if (!profileStore.storyProgress) profileStore.storyProgress = { m1Cleared: false, mg1Best: null };
+        if (!profileStore.storyProgress) profileStore.storyProgress = { m1Cleared: false, mg1Best: null, m1Checkpoint: null };
         return profileStore.storyProgress;
+      }
+
+      function saveStoryM1Checkpoint(phase, cougarLanded) {
+        const sp = getStoryProgress();
+        sp.m1Checkpoint = { phase, cougarLanded: !!cougarLanded };
+        saveProfile();
       }
 
       function hideAllMajorOverlays() {
@@ -11978,8 +12765,15 @@
             desc: 'Scramble off USS Enterprise CVN-65 to investigate unidentified bogeys closing on Cougar\'s wing in the Indian Ocean.',
             unlocked: true,
             cleared: !!sp.m1Cleared,
-            btnText: sp.m1Cleared ? 'REPLAY MISSION 1 ▶' : 'LAUNCH MISSION 1 ▶',
-            onStart: () => startStoryMission1()
+            btnText: sp.m1Cleared ? 'REPLAY MISSION 1 ▶' : ((sp.m1Checkpoint && sp.m1Checkpoint.phase >= 4) ? 'RESUME ESCORT ▶' : 'LAUNCH MISSION 1 ▶'),
+            onStart: () => {
+              if (sp.m1Cleared) {
+                const prog = getStoryProgress();
+                prog.m1Checkpoint = null;
+                saveProfile();
+              }
+              startStoryMission1();
+            }
           },
           {
             id: 'mg1',
@@ -12133,6 +12927,12 @@
         sessionUnlocks.superState = true;
         if (typeof applySessionUnlockHUD === 'function') applySessionUnlockHUD();
 
+        const _ck = getStoryProgress().m1Checkpoint;
+        if (_ck && _ck.phase >= 4 && !getStoryProgress().m1Cleared) {
+          resumeStoryMission1Escort(_ck);
+          return;
+        }
+
         state = createInitialState('story_cutscene');
         const p = state.player;
         p.weapons.vulcan = 2;
@@ -12175,6 +12975,58 @@
         const sk = document.getElementById('skipCutsceneBtn');
         if (sk) sk.classList.remove('hidden');
         AudioFX.playTrack(getCurrentMap().theme, false);
+      }
+
+      function resumeStoryMission1Escort(ck) {
+        state = createInitialState('story_cutscene');
+        const p = state.player;
+        p.weapons.vulcan = 2;
+        p.weapons.sidewinder = 2;
+        p.weapons.sparrow = Math.max(p.weapons.sparrow || 0, 2);
+        p.weapons.phoenix = 0;
+        p.weapons.flares = Math.max(p.weapons.flares || 0, 1);
+        p.weapons.afterburner = Math.max(p.weapons.afterburner || 0, 1);
+        p.hp = p.maxHp;
+        p.fuel = p.maxFuel * 0.4;
+        p.invuln = 2.4;
+        p.plane = 1; p.visualPlane = 1; p.savedPlane = 1;
+        p.x = 0;
+        p.y = ck.cougarLanded ? -980 : -1540;
+        p.heading = Math.PI / 2;
+        state.camX = p.x;
+        state.camY = p.y;
+        state.launchTimer = 0;
+        state.trapGrace = 1.4;
+        state.mode = 'playing';
+        state.storyMode = {
+          active: true,
+          missionId: 'm1',
+          phase: 4,
+          phaseKills: 0,
+          phaseTarget: 1,
+          spawnTimer: 0,
+          completed: false,
+          cougar: ck.cougarLanded ? null : { x: 90, y: p.y + 70, heading: Math.PI / 2 },
+          cougarLanded: !!ck.cougarLanded
+        };
+        hudLayer.classList.remove('hidden'); hudLayer.classList.add('flex');
+        updateWeaponsHud();
+        updateStoryObjHud();
+        AudioFX.playTrack(getCurrentMap().theme, false);
+        const nm = (Math.abs(p.y) / 140).toFixed(1);
+        showBanner(ck.cougarLanded
+          ? `★ COUGAR IS ON DECK — BRING THE TOMCAT HOME (${nm} NM) ★`
+          : `★ ESCORT RESUMES — COUGAR IS WITH YOU, ${nm} NM NORTH OF THE BOAT ★`,
+          'border-amber-400 text-amber-200');
+        queueInstructorNote(
+          'viper',
+          'UHF 243.0 • CDR "VIPER" — TOPGUN CO',
+          ck.cougarLanded
+            ? `"Cougar is already on the 3-wire. You ditched on the way in — you've got a partial bag of JP-5. Fly south and trap."`
+            : `"Red Baron is down and Cougar is still with you. You ditched short of the boat. Form up and walk him south onto Enterprise."`,
+          '★ STORY CHECKPOINT — ESCORT / RTB ★',
+          false
+        );
       }
 
       function finishStoryM1CutsceneToAlert5() {
@@ -12397,6 +13249,7 @@
           // Spawn Cougar's shaken F-14 nearby so you literally escort him back to USS Enterprise!
           sm.cougar = { x: p.x + 90, y: p.y - 60, heading: Math.atan2(-p.y, -p.x) };
           sm.cougarLanded = false;
+          saveStoryM1Checkpoint(4, false);
           updateStoryObjHud();
           AudioFX.playTrack(getCurrentMap().theme, false);
           queueInstructorNote(
@@ -12428,6 +13281,7 @@
             const dHome = Math.hypot(c.x, c.y);
             if (dHome < 120) {
               sm.cougarLanded = true;
+              saveStoryM1Checkpoint(4, true);
               updateStoryObjHud();
               AudioFX.levelUp();
               showBanner('✓ COUGAR TRAPPED THE 3-WIRE! NOW BRING YOUR F-14 HOME, MAVERICK!', 'border-emerald-400 text-emerald-200');
@@ -12453,6 +13307,7 @@
         state.mode = 'story_complete';
         const sp = getStoryProgress();
         sp.m1Cleared = true;
+        sp.m1Checkpoint = null;
         const cDebrief = flushPendingCareerXP(250);
         saveProfile();
 
