@@ -5050,6 +5050,23 @@
       };
       let sessionSplashes = 0;
       let sessionCombatSec = 0;
+
+      function resetSortieSessionFlags() {
+        sessionUnlocks.afterburner = false;
+        sessionUnlocks.missiles = false;
+        sessionUnlocks.altitude = false;
+        sessionUnlocks.superState = false;
+        sessionUnlocks.vertrep = false;
+        sessionUnlocks.skyhook = false;
+        sessionSplashes = 0;
+        sessionCombatSec = 0;
+        tutorialWelcomeSent = false;
+      }
+
+      function hideStoryObjectiveHud() {
+        const wrap = document.getElementById('storyObjHud');
+        if (wrap) wrap.classList.add('hidden');
+      }
       let radioCommTimer = 0;
       let radioCommBlocking = false;
       const radioCommQueue = [];
@@ -7874,6 +7891,7 @@
 
       function startCsarRescue(reason = 'hull') {
         state.mode = 'csar';
+        hideStoryObjectiveHud();
         const p = state.player;
         p.plane = 0; // Ditching on surface!
         p.abActive = false;
@@ -7921,12 +7939,16 @@
         if (typeof invalidateAircraftBonusCache === 'function') invalidateAircraftBonusCache();
         const _dfDeath = getDevFlags();
         const _keepSys = !!(_dfDeath && _dfDeath.unlockAllSystems);
-        sessionUnlocks.altitude = _keepSys;
-        sessionUnlocks.missiles = _keepSys;
-        sessionUnlocks.afterburner = _keepSys;
-        sessionUnlocks.superState = _keepSys;
-        sessionSplashes = 0;
-        sessionCombatSec = 0;
+        resetSortieSessionFlags();
+        if (_keepSys) {
+          sessionUnlocks.altitude = true;
+          sessionUnlocks.missiles = true;
+          sessionUnlocks.afterburner = true;
+          sessionUnlocks.superState = true;
+          sessionUnlocks.vertrep = true;
+          sessionUnlocks.skyhook = true;
+        }
+        hideStoryObjectiveHud();
         if (typeof applySessionUnlockHUD === 'function') applySessionUnlockHUD();
         if (state.score > profile.highScore) profile.highScore = state.score;
         const _goCareer = flushPendingCareerXP(Math.round(state.maxDistNM * 2));
@@ -9880,7 +9902,9 @@
         setHudText(distBadgeMobile, distStr);
         setHudText(threatZoneText, threat.name);
         setHudColor(threatZoneText, threat.color);
-        setHudText(lootMultText, `LOOT ${threat.lootMult.toFixed(1)}×`);
+        const inStoryHud = !!(state.storyMode && state.storyMode.active);
+        setHudHidden(lootMultText, inStoryHud);
+        if (!inStoryHud) setHudText(lootMultText, `LOOT ${threat.lootMult.toFixed(1)}×`);
         // Show active Pilot Callsign & permanent Career Level in top-left HUD
         const _pcHud = getSelectedPilotCfg();
         const _pdHud = getSelectedPilotData();
@@ -9888,6 +9912,9 @@
 
         const zbp = HUD_DOM.zoneBossProgress;
         if (zbp) {
+          setHudHidden(zbp, inStoryHud);
+        }
+        if (zbp && !inStoryHud) {
           const clearedTot = [1,2,3,4].reduce((a,z)=>a+(state.surfaceBossDefeatedStages[z]?1:0)+(state.bossDefeatedStages[z]?1:0),0);
           if (state.allBossesCleared) {
             zbp.textContent = state.buzzPhase === 'buggedOut' ? '★ BOGEYS BUGGED OUT!' : '☕ BUZZ TOWER ON BURNER!';
@@ -11622,8 +11649,10 @@
       function startGame() {
         AudioFX.unlock();
         const _hasMidSave = !!(profile.missionSave && profile.missionSave.mapId === getCurrentMap().id);
+        if (!_hasMidSave) resetSortieSessionFlags();
         const showPreflight = !_hasMidSave && !profile.skipPreflightCheck;
         state = createInitialState(showPreflight ? 'preflight' : 'catshot');
+        hideStoryObjectiveHud();
         if (showPreflight) {
           const pfOv = document.getElementById('preflightOverlay');
           const pfBar = document.getElementById('preflightFuelBar');
